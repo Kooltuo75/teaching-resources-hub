@@ -1,0 +1,291 @@
+{% extends "base.html" %}
+
+{% block title %}Teaching Resources Directory - {{ app_name }}{% endblock %}
+
+{% block content %}
+<!-- Enhanced Resources Page Header -->
+<div class="resources-page-header">
+    <div class="resources-hero">
+        <h1 class="resources-page-title">Teaching Resources Directory</h1>
+        <p class="resources-page-subtitle">Explore {{ total_resources }} carefully curated educational tools across {{ categories|length }} specialized categories</p>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="resources-controls">
+        <div class="search-box-enhanced">
+            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+            </svg>
+            <input type="text" id="resourceSearch" placeholder="Search by name, description, or tag..." />
+            <button id="clearSearch" class="clear-btn">Clear</button>
+        </div>
+
+        <!-- Advanced Filters Toggle -->
+        <div class="filter-toggle-container">
+            <button id="toggleFilters" class="toggle-filters-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="4" y1="21" x2="4" y2="14"></line>
+                    <line x1="4" y1="10" x2="4" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12" y2="3"></line>
+                    <line x1="20" y1="21" x2="20" y2="16"></line>
+                    <line x1="20" y1="12" x2="20" y2="3"></line>
+                    <line x1="1" y1="14" x2="7" y2="14"></line>
+                    <line x1="9" y1="8" x2="15" y2="8"></line>
+                    <line x1="17" y1="16" x2="23" y2="16"></line>
+                </svg>
+                Advanced Filters
+            </button>
+            <select id="sortResources" class="sort-select">
+                <option value="default">Sort by: Default</option>
+                <option value="az">A-Z</option>
+                <option value="za">Z-A</option>
+                <option value="category">By Category</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Advanced Filters Panel -->
+    <div id="advancedFilters" class="advanced-filters-panel" style="display: none;">
+        <div class="filters-content">
+            <!-- Cost Filters -->
+            <div class="filter-group">
+                <h4 class="filter-group-title">💰 Cost</h4>
+                <div class="filter-options">
+                    <label class="filter-checkbox">
+                        <input type="checkbox" name="cost" value="free" checked>
+                        <span>Free</span>
+                    </label>
+                    <label class="filter-checkbox">
+                        <input type="checkbox" name="cost" value="freemium" checked>
+                        <span>Freemium</span>
+                    </label>
+                    <label class="filter-checkbox">
+                        <input type="checkbox" name="cost" value="paid" checked>
+                        <span>Premium/Paid</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Grade Level Filters -->
+            <div class="filter-group">
+                <h4 class="filter-group-title">📚 Grade Level</h4>
+                <div class="filter-options">
+                    <label class="filter-checkbox">
+                        <input type="checkbox" name="grade" value="pre-k" checked>
+                        <span>Pre-K</span>
+                    </label>
+                    <label class="filter-checkbox">
+                        <input type="checkbox" name="grade" value="elementary" checked>
+                        <span>Elementary (K-5)</span>
+                    </label>
+                    <label class="filter-checkbox">
+                        <input type="checkbox" name="grade" value="middle" checked>
+                        <span>Middle School (6-8)</span>
+                    </label>
+                    <label class="filter-checkbox">
+                        <input type="checkbox" name="grade" value="high" checked>
+                        <span>High School (9-12)</span>
+                    </label>
+                    <label class="filter-checkbox">
+                        <input type="checkbox" name="grade" value="college" checked>
+                        <span>College/Higher Ed</span>
+                    </label>
+                    <label class="filter-checkbox">
+                        <input type="checkbox" name="grade" value="k-12" checked>
+                        <span>K-12 (All)</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Subject Filters -->
+            <div class="filter-group">
+                <h4 class="filter-group-title">📖 Subject</h4>
+                <div class="filter-options">
+                    <label class="filter-checkbox">
+                        <input type="checkbox" name="subject" value="math" checked>
+                        <span>Mathematics</span>
+                    </label>
+                    <label class="filter-checkbox">
+                        <input type="checkbox" name="subject" value="science" checked>
+                        <span>Science</span>
+                    </label>
+                    <label class="filter-checkbox">
+                        <input type="checkbox" name="subject" value="ela" checked>
+                        <span>ELA/Literacy</span>
+                    </label>
+                    <label class="filter-checkbox">
+                        <input type="checkbox" name="subject" value="social" checked>
+                        <span>Social Studies</span>
+                    </label>
+                    <label class="filter-checkbox">
+                        <input type="checkbox" name="subject" value="arts" checked>
+                        <span>Arts & Music</span>
+                    </label>
+                    <label class="filter-checkbox">
+                        <input type="checkbox" name="subject" value="pe" checked>
+                        <span>PE/Health</span>
+                    </label>
+                    <label class="filter-checkbox">
+                        <input type="checkbox" name="subject" value="languages" checked>
+                        <span>World Languages</span>
+                    </label>
+                    <label class="filter-checkbox">
+                        <input type="checkbox" name="subject" value="cs" checked>
+                        <span>CS/Technology</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Filter Actions -->
+            <div class="filter-actions">
+                <button id="clearAllFilters" class="filter-action-btn clear-btn-filters">Clear All</button>
+                <button id="closeFilters" class="filter-action-btn apply-btn">Apply Filters</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Filters Display -->
+    <div id="activeFiltersContainer" class="active-filters-container" style="display: none;">
+        <div class="active-filters-header">
+            <span class="active-filters-label">Active Filters:</span>
+            <button id="clearActiveFilters" class="clear-all-active-btn">Clear All</button>
+        </div>
+        <div id="activeFiltersPills" class="active-filters-pills"></div>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="resources-stats-bar">
+        <div class="stat-item">
+            <span class="stat-number" id="visibleCount">{{ total_resources }}</span>
+            <span class="stat-label">Resources Shown</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number" id="categoryCount">{{ categories|length }}</span>
+            <span class="stat-label">Categories</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">100%</span>
+            <span class="stat-label">Free to Browse</span>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Category Navigation -->
+<div class="category-nav-container">
+    <div class="category-quick-nav">
+        <span class="nav-label">Jump to:</span>
+        <select id="categoryJump" class="category-select">
+            <option value="">Select a category...</option>
+            {% for category in categories %}
+            <option value="{{ category.name }}">{{ category.icon }} {{ category.name }} ({{ category.resources|length }})</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+
+<!-- Resources Container -->
+<div class="resources-container-enhanced">
+    {% for category in categories %}
+    <div class="category-section-enhanced" id="{{ category.name }}" data-category="{{ category.name }}">
+        <div class="category-header-enhanced">
+            <div class="category-title-row">
+                <div class="category-title-content">
+                    <span class="category-icon-large">{{ category.icon }}</span>
+                    <div class="category-text">
+                        <h2 class="category-name">
+                            <a href="{{ url_for('main.category_detail', category_name=category.name) }}" class="category-name-link">
+                                {{ category.name }}
+                                <svg class="category-link-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                            </a>
+                        </h2>
+                        <p class="category-description-enhanced">{{ category.description }}</p>
+                    </div>
+                </div>
+                <div class="category-meta">
+                    <span class="category-badge">{{ category.resources|length }} resources</span>
+                    <button class="toggle-category-btn" data-expanded="true" aria-label="Toggle category">
+                        <svg class="toggle-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="resources-grid-enhanced">
+            {% for resource in category.resources %}
+            <div class="resource-card-enhanced" data-tags="{{ resource.tags|join(',') }}" data-name="{{ resource.name|lower }}" data-description="{{ resource.description|lower }}">
+                <div class="resource-card-header">
+                    <span class="resource-category-icon">{{ category.icon }}</span>
+                </div>
+
+                <div class="resource-card-body">
+                    <h3 class="resource-title">{{ resource.name }}</h3>
+                    <p class="resource-description-enhanced">{{ resource.description }}</p>
+                </div>
+
+                <div class="resource-card-footer">
+                    <div class="resource-tags-enhanced">
+                        {% for tag in resource.tags[:4] %}
+                        <span class="tag-enhanced tag-{{ 'free' if 'free' in tag.lower() else ('premium' if 'premium' in tag.lower() or 'paid' in tag.lower() else 'neutral') }}">
+                            {{ tag }}
+                        </span>
+                        {% endfor %}
+                        {% if resource.tags|length > 4 %}
+                        <span class="tag-enhanced tag-neutral">+{{ resource.tags|length - 4 }} more</span>
+                        {% endif %}
+                    </div>
+
+                    <a href="{{ resource.url }}" target="_blank" rel="noopener noreferrer" class="resource-visit-btn">
+                        Visit Resource
+                        <svg class="external-icon-svg" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                            <polyline points="15 3 21 3 21 9"></polyline>
+                            <line x1="10" y1="14" x2="21" y2="3"></line>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- No Results Message -->
+<div id="noResultsMessage" class="no-results-enhanced" style="display: none;">
+    <div class="no-results-content">
+        <svg class="no-results-icon" xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+        </svg>
+        <h3>No resources found</h3>
+        <p>Try adjusting your search or filter criteria</p>
+        <button id="resetFilters" class="reset-btn">Reset All Filters</button>
+    </div>
+</div>
+
+<!-- Scroll to Top Button -->
+<button id="scrollToTop" class="scroll-to-top" style="display: none;" aria-label="Scroll to top">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="18 15 12 9 6 15"></polyline>
+    </svg>
+</button>
+
+<!-- Resources Footer -->
+<div class="resources-footer-enhanced">
+    <div class="footer-content">
+        <div class="footer-section">
+            <h4>Can't find what you need?</h4>
+            <p>More resources are continually being added. Check back soon for updates!</p>
+        </div>
+        <div class="footer-section">
+            <p class="disclaimer"><strong>Disclaimer:</strong> All resources listed are third-party tools. Please verify pricing, terms, and suitability before use.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

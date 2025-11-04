@@ -1,0 +1,13 @@
+# Teaching Resources Hub - Python Dependencies
+
+# Web Framework
+Flask==3.0.0
+Werkzeug==3.0.1
+
+# Environment Variables
+python-dotenv==1.0.0
+
+# Future dependencies (uncomment when needed)
+# anthropic==0.18.1  # Claude API integration
+# SQLAlchemy==2.0.25  # Database ORM
+# Flask-SQLAlchemy==3.1.1  # Flask database integration

@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}{{ app_name }} - The Ultimate Teacher Resource Directory{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="homepage-hero">
+    <div class="hero-content">
+        <h1 class="hero-title">The Ultimate Teacher Resource Directory</h1>
+        <p class="hero-subtitle">Discover 280+ curated educational tools, platforms, and resources for teachers</p>
+        <div class="hero-search-container">
+            <div class="hero-search">
+                <input type="text" id="heroSearch" placeholder="Search for resources, tools, or platforms..." autocomplete="off" />
+                <button id="heroSearchBtn">Browse All Resources</button>
+            </div>
+            <!-- Autocomplete Dropdown -->
+            <div id="autocompleteDropdown" class="autocomplete-dropdown" style="display: none;">
+                <div id="autocompleteResults" class="autocomplete-results"></div>
+                <div id="autocompleteFooter" class="autocomplete-footer" style="display: none;">
+                    <span id="autocompleteCount"></span>
+                </div>
+            </div>
+        </div>
+        <p class="hero-tagline">Free • Trusted • Comprehensive • Always Updated</p>
+    </div>
+</div>
+
+<!-- Stats Dashboard -->
+<section class="stats-section">
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">📚</div>
+            <div class="stat-number">{{ stats.total_resources }}+</div>
+            <div class="stat-label">Teaching Resources</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">🗂️</div>
+            <div class="stat-number">{{ stats.total_categories }}</div>
+            <div class="stat-label">Categories</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">🎁</div>
+            <div class="stat-number">{{ stats.free_resources }}+</div>
+            <div class="stat-label">Free Resources</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">🎯</div>
+            <div class="stat-number">{{ stats.subjects_covered }}+</div>
+            <div class="stat-label">Subjects Covered</div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Resources -->
+<section class="featured-section">
+    <h2 class="section-title">Featured Resources</h2>
+    <p class="section-subtitle">Handpicked tools that teachers love</p>
+    <div class="featured-grid">
+        {% for resource in featured_resources %}
+        <div class="featured-card">
+            <div class="featured-card-header">
+                <span class="featured-category">
+                    {{ resource.category_icon }} {{ resource.category }}
+                </span>
+            </div>
+            <h3 class="featured-title">{{ resource.name }}</h3>
+            <p class="featured-description">{{ resource.description }}</p>
+            <div class="featured-tags">
+                {% for tag in resource.tags[:3] %}
+                <span class="featured-tag tag-{{ 'free' if 'free' in tag else ('premium' if 'premium' in tag or 'paid' in tag else 'neutral') }}">
+                    {{ tag }}
+                </span>
+                {% endfor %}
+            </div>
+            <a href="{{ resource.url }}" target="_blank" rel="noopener noreferrer" class="featured-link">
+                Visit Resource →
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="section-cta">
+        <a href="/resources" class="cta-button-large">Explore All {{ stats.total_resources }}+ Resources</a>
+    </div>
+</section>
+
+<!-- Quick Category Navigation -->
+<section class="categories-section">
+    <h2 class="section-title">Browse by Category</h2>
+    <p class="section-subtitle">Find exactly what you need for your classroom</p>
+    <div class="categories-grid">
+        {% for category in categories %}
+        <a href="/resources#{{ category.name }}" class="category-card-link">
+            <div class="category-card-home">
+                <div class="category-card-icon">{{ category.icon }}</div>
+                <h3 class="category-card-title">{{ category.name }}</h3>
+                <p class="category-card-description">{{ category.description[:80] }}...</p>
+                <div class="category-card-count">{{ category.count }} resources</div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    <div class="section-cta">
+        <a href="/resources" class="cta-button-secondary">View All {{ stats.total_categories }} Categories</a>
+    </div>
+</section>
+
+<!-- Value Proposition -->
+<section class="value-section">
+    <h2 class="section-title">Why Teachers Love Our Directory</h2>
+    <div class="value-grid">
+        <div class="value-card">
+            <div class="value-icon">✨</div>
+            <h3>Curated Quality</h3>
+            <p>Every resource is carefully selected and verified for educational value</p>
+        </div>
+        <div class="value-card">
+            <div class="value-icon">🔍</div>
+            <h3>Easy Discovery</h3>
+            <p>Advanced search and filters help you find exactly what you need</p>
+        </div>
+        <div class="value-card">
+            <div class="value-icon">💰</div>
+            <h3>Budget-Friendly</h3>
+            <p>Over {{ stats.free_resources }} free resources for teachers on any budget</p>
+        </div>
+        <div class="value-card">
+            <div class="value-icon">📱</div>
+            <h3>Always Accessible</h3>
+            <p>Browse on any device, anytime, anywhere you teach</p>
+        </div>
+        <div class="value-card">
+            <div class="value-icon">🎓</div>
+            <h3>All Grade Levels</h3>
+            <p>From Pre-K to college, find resources for every student</p>
+        </div>
+        <div class="value-card">
+            <div class="value-icon">🌟</div>
+            <h3>Regularly Updated</h3>
+            <p>New resources added weekly to keep you current with EdTech</p>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="cta-section">
+    <div class="cta-content">
+        <h2>Ready to Transform Your Teaching?</h2>
+        <p>Join thousands of teachers discovering amazing educational resources</p>
+        <a href="/resources" class="cta-button-hero">Start Exploring Resources</a>
+    </div>
+</section>
+{% endblock %}

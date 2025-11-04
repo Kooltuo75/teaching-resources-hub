@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block title %}{{ category.name }} - {{ app_name }}{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb Navigation -->
+<div class="breadcrumb-container">
+    <nav class="breadcrumb">
+        <a href="/" class="breadcrumb-item">Home</a>
+        <span class="breadcrumb-separator">›</span>
+        <a href="/resources" class="breadcrumb-item">All Resources</a>
+        <span class="breadcrumb-separator">›</span>
+        <span class="breadcrumb-current">{{ category.name }}</span>
+    </nav>
+</div>
+
+<!-- Category Hero Section -->
+<div class="category-hero">
+    <div class="category-hero-content">
+        <div class="category-icon-large-detail">{{ category.icon }}</div>
+        <div class="category-hero-text">
+            <h1 class="category-title-detail">{{ category.name }}</h1>
+            <p class="category-description-detail">{{ category.description }}</p>
+        </div>
+    </div>
+
+    <!-- Category Stats Bar -->
+    <div class="category-stats-bar">
+        <div class="category-stat-item">
+            <span class="stat-number-cat">{{ stats.total }}</span>
+            <span class="stat-label-cat">Resources</span>
+        </div>
+        <div class="category-stat-item">
+            <span class="stat-number-cat">{{ stats.free }}</span>
+            <span class="stat-label-cat">Free</span>
+        </div>
+        <div class="category-stat-item">
+            <span class="stat-number-cat">{{ stats.freemium }}</span>
+            <span class="stat-label-cat">Freemium</span>
+        </div>
+        <div class="category-stat-item">
+            <span class="stat-number-cat">{{ stats.paid }}</span>
+            <span class="stat-label-cat">Premium</span>
+        </div>
+    </div>
+</div>
+
+<!-- Grade Level Distribution (if applicable) -->
+{% set has_grade_data = stats.grade_breakdown.values()|sum > 0 %}
+{% if has_grade_data %}
+<div class="grade-distribution-section">
+    <h3 class="section-title-cat">Grade Level Distribution</h3>
+    <div class="grade-bars">
+        {% for grade, count in stats.grade_breakdown.items() %}
+        {% if count > 0 %}
+        <div class="grade-bar-item">
+            <div class="grade-bar-label">
+                <span class="grade-name">{{ grade }}</span>
+                <span class="grade-count">{{ count }} resources</span>
+            </div>
+            <div class="grade-bar-bg">
+                <div class="grade-bar-fill" style="width: {{ (count / stats.total * 100)|round|int }}%"></div>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Resources Grid -->
+<div class="category-resources-section">
+    <div class="section-header-cat">
+        <h2 class="section-title-cat">All {{ category.name }} Resources</h2>
+        <a href="/resources" class="back-to-all-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back to All Resources
+        </a>
+    </div>
+
+    <div class="resources-grid-category">
+        {% for resource in category.resources %}
+        <div class="resource-card-category">
+            <div class="resource-card-header-cat">
+                <span class="resource-icon-cat">{{ category.icon }}</span>
+            </div>
+
+            <div class="resource-card-body-cat">
+                <h3 class="resource-title-cat">{{ resource.name }}</h3>
+                <p class="resource-description-cat">{{ resource.description }}</p>
+            </div>
+
+            <div class="resource-card-footer-cat">
+                <div class="resource-tags-cat">
+                    {% for tag in resource.tags[:3] %}
+                    <span class="tag-cat tag-{{ 'free' if 'free' in tag.lower() else ('premium' if 'premium' in tag.lower() or 'paid' in tag.lower() else 'neutral') }}">
+                        {{ tag }}
+                    </span>
+                    {% endfor %}
+                    {% if resource.tags|length > 3 %}
+                    <span class="tag-cat tag-neutral">+{{ resource.tags|length - 3 }}</span>
+                    {% endif %}
+                </div>
+
+                <a href="{{ resource.url }}" target="_blank" rel="noopener noreferrer" class="resource-visit-btn-cat">
+                    Visit
+                    <svg class="external-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                    </svg>
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Related Categories -->
+{% if related_categories %}
+<div class="related-categories-section">
+    <h2 class="section-title-cat">Related Categories</h2>
+    <p class="related-subtitle">Explore more resources in similar categories</p>
+
+    <div class="related-categories-grid">
+        {% for cat in related_categories %}
+        <a href="{{ url_for('main.category_detail', category_name=cat.name) }}" class="related-category-card">
+            <div class="related-cat-icon">{{ cat.icon }}</div>
+            <div class="related-cat-content">
+                <h3 class="related-cat-name">{{ cat.name }}</h3>
+                <p class="related-cat-description">{{ cat.description[:80] }}{% if cat.description|length > 80 %}...{% endif %}</p>
+                <span class="related-cat-count">{{ cat.count }} resources</span>
+            </div>
+            <div class="related-cat-arrow">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Quick Actions Footer -->
+<div class="category-footer-actions">
+    <a href="/resources" class="footer-action-btn primary-action">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+        </svg>
+        Browse All {{ total_categories }} Categories
+    </a>
+    <a href="/" class="footer-action-btn secondary-action">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+        Back to Home
+    </a>
+</div>
+{% endblock %}
