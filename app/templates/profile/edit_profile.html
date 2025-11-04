@@ -1,0 +1,539 @@
+{% extends "base.html" %}
+
+{% block title %}Customize My Room - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="edit-profile-page">
+    <div class="edit-profile-container">
+        <div class="page-header-edit">
+            <h1>✨ Customize Your Teacher Room</h1>
+            <p>Make your profile uniquely yours! Just like the old MySpace days.</p>
+        </div>
+
+        <form method="POST" class="edit-profile-form">
+            <!-- Live Preview Section -->
+            <div class="preview-section">
+                <h2>Live Preview</h2>
+                <div class="profile-preview" id="profilePreview" style="
+                    background-color: {{ current_user.background_color }};
+                    color: {{ current_user.text_color }};
+                    padding: 2rem;
+                    border-radius: 12px;
+                    border-left: 5px solid {{ current_user.accent_color }};
+                ">
+                    <div class="preview-header">
+                        <div class="preview-avatar">{{ current_user.username[0].upper() }}</div>
+                        <div>
+                            <h3 style="color: {{ current_user.text_color }};">{{ current_user.display_name or current_user.username }}</h3>
+                            <p style="color: {{ current_user.text_color }}; opacity: 0.7;">@{{ current_user.username }}</p>
+                        </div>
+                    </div>
+                    <div class="preview-section-box" style="border-color: {{ current_user.accent_color }};">
+                        <h4 style="color: {{ current_user.accent_color }};">About Me</h4>
+                        <p id="previewBio" style="color: {{ current_user.text_color }};">
+                            {{ current_user.bio or 'Your bio will appear here...' }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Basic Information -->
+            <div class="form-section">
+                <h2>📝 Basic Information</h2>
+
+                <div class="form-group">
+                    <label for="display_name">Display Name</label>
+                    <input type="text" id="display_name" name="display_name" value="{{ current_user.display_name or current_user.username }}" placeholder="How you'd like to be called">
+                </div>
+
+                <div class="form-group">
+                    <label for="bio">About Me</label>
+                    <textarea id="bio" name="bio" rows="4" placeholder="Tell other teachers about yourself..." oninput="updatePreview()">{{ current_user.bio or '' }}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="teaching_philosophy">Teaching Philosophy</label>
+                    <textarea id="teaching_philosophy" name="teaching_philosophy" rows="4" placeholder="Share your educational beliefs and approach...">{{ current_user.teaching_philosophy or '' }}</textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="school">School/Institution</label>
+                        <input type="text" id="school" name="school" value="{{ current_user.school or '' }}" placeholder="Where you teach">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="grade_levels">Grade Levels</label>
+                        <input type="text" id="grade_levels" name="grade_levels" value="{{ current_user.grade_levels or '' }}" placeholder="e.g., K-5, 9-12">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="subjects">Subjects</label>
+                    <input type="text" id="subjects" name="subjects" value="{{ current_user.subjects or '' }}" placeholder="e.g., Math, Science, English">
+                </div>
+            </div>
+
+            <!-- Theme Customization -->
+            <div class="form-section theme-section">
+                <h2>🎨 Theme Customization</h2>
+                <p class="section-description">Customize the colors and theme of your room (MySpace style!)</p>
+
+                <div class="theme-presets">
+                    <h3>Quick Themes</h3>
+                    <div class="preset-buttons">
+                        <button type="button" class="preset-btn" onclick="applyPreset('light')" data-theme="light">
+                            <div class="preset-preview" style="background: #ffffff; border: 2px solid #667eea;"></div>
+                            Light
+                        </button>
+                        <button type="button" class="preset-btn" onclick="applyPreset('dark')" data-theme="dark">
+                            <div class="preset-preview" style="background: #2c3e50; border: 2px solid #667eea;"></div>
+                            Dark
+                        </button>
+                        <button type="button" class="preset-btn" onclick="applyPreset('ocean')" data-theme="ocean">
+                            <div class="preset-preview" style="background: #e3f2fd; border: 2px solid #1976d2;"></div>
+                            Ocean
+                        </button>
+                        <button type="button" class="preset-btn" onclick="applyPreset('sunset')" data-theme="sunset">
+                            <div class="preset-preview" style="background: #fff3e0; border: 2px solid #f57c00;"></div>
+                            Sunset
+                        </button>
+                        <button type="button" class="preset-btn" onclick="applyPreset('forest')" data-theme="forest">
+                            <div class="preset-preview" style="background: #e8f5e9; border: 2px solid #2e7d32;"></div>
+                            Forest
+                        </button>
+                        <button type="button" class="preset-btn" onclick="applyPreset('lavender')" data-theme="lavender">
+                            <div class="preset-preview" style="background: #f3e5f5; border: 2px solid #7b1fa2;"></div>
+                            Lavender
+                        </button>
+                    </div>
+                </div>
+
+                <div class="color-pickers">
+                    <div class="form-group">
+                        <label for="background_color">Background Color</label>
+                        <div class="color-input-group">
+                            <input type="color" id="background_color" name="background_color" value="{{ current_user.background_color }}" onchange="updatePreview()">
+                            <input type="text" id="background_color_text" value="{{ current_user.background_color }}" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="text_color">Text Color</label>
+                        <div class="color-input-group">
+                            <input type="color" id="text_color" name="text_color" value="{{ current_user.text_color }}" onchange="updatePreview()">
+                            <input type="text" id="text_color_text" value="{{ current_user.text_color }}" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="accent_color">Accent Color</label>
+                        <div class="color-input-group">
+                            <input type="color" id="accent_color" name="accent_color" value="{{ current_user.accent_color }}" onchange="updatePreview()">
+                            <input type="text" id="accent_color_text" value="{{ current_user.accent_color }}" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <input type="hidden" id="profile_theme" name="profile_theme" value="{{ current_user.profile_theme }}">
+            </div>
+
+            <!-- Social Links -->
+            <div class="form-section">
+                <h2>🔗 Connect</h2>
+
+                <div class="form-group">
+                    <label for="website_url">Website URL</label>
+                    <input type="url" id="website_url" name="website_url" value="{{ current_user.website_url or '' }}" placeholder="https://yourwebsite.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="twitter_handle">Twitter Handle</label>
+                    <input type="text" id="twitter_handle" name="twitter_handle" value="{{ current_user.twitter_handle or '' }}" placeholder="username (without @)">
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="form-actions">
+                <a href="{{ url_for('main.profile', username=current_user.username) }}" class="btn-secondary">Cancel</a>
+                <button type="submit" class="btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.edit-profile-page {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 2rem;
+}
+
+.page-header-edit {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.page-header-edit h1 {
+    font-size: 2.5rem;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.page-header-edit p {
+    color: #7f8c8d;
+    font-size: 1.1rem;
+}
+
+.edit-profile-form {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+}
+
+.form-section {
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid #f1f3f4;
+}
+
+.form-section:last-of-type {
+    border-bottom: none;
+}
+
+.form-section h2 {
+    color: #2c3e50;
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+}
+
+.section-description {
+    color: #7f8c8d;
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.form-group input[type="text"],
+.form-group input[type="url"],
+.form-group input[type="email"],
+.form-group textarea {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    border: 2px solid #e1e8ed;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+/* Preview Section */
+.preview-section {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+}
+
+.preview-section h2 {
+    margin-top: 0;
+    color: #2c3e50;
+}
+
+.profile-preview {
+    transition: all 0.3s ease;
+}
+
+.preview-header {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.preview-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.preview-section-box {
+    background: rgba(255,255,255,0.3);
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid;
+}
+
+.preview-section-box h4 {
+    margin-top: 0;
+}
+
+/* Theme Customization */
+.theme-presets {
+    margin-bottom: 2rem;
+}
+
+.theme-presets h3 {
+    color: #2c3e50;
+    margin-bottom: 1rem;
+}
+
+.preset-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
+}
+
+.preset-btn {
+    background: white;
+    border: 2px solid #e1e8ed;
+    padding: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.preset-btn:hover {
+    border-color: #667eea;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.preset-preview {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+}
+
+.color-pickers {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.color-input-group {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.color-input-group input[type="color"] {
+    width: 60px;
+    height: 40px;
+    border: 2px solid #e1e8ed;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.color-input-group input[type="text"] {
+    flex: 1;
+    padding: 0.5rem;
+    border: 2px solid #e1e8ed;
+    border-radius: 8px;
+    text-align: center;
+    font-family: monospace;
+}
+
+/* Action Buttons */
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    padding-top: 2rem;
+}
+
+.btn-primary,
+.btn-secondary {
+    padding: 0.9rem 2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+    background: #f8f9fa;
+    color: #495057;
+    border: 2px solid #dee2e6;
+}
+
+.btn-secondary:hover {
+    background: #e9ecef;
+}
+
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .color-pickers {
+        grid-template-columns: 1fr;
+    }
+
+    .preset-buttons {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        width: 100%;
+        text-align: center;
+    }
+}
+</style>
+
+<script>
+// Theme presets
+const presets = {
+    light: {
+        background_color: '#ffffff',
+        text_color: '#333333',
+        accent_color: '#667eea',
+        theme: 'light'
+    },
+    dark: {
+        background_color: '#2c3e50',
+        text_color: '#ecf0f1',
+        accent_color: '#667eea',
+        theme: 'dark'
+    },
+    ocean: {
+        background_color: '#e3f2fd',
+        text_color: '#0d47a1',
+        accent_color: '#1976d2',
+        theme: 'ocean'
+    },
+    sunset: {
+        background_color: '#fff3e0',
+        text_color: '#e65100',
+        accent_color: '#f57c00',
+        theme: 'sunset'
+    },
+    forest: {
+        background_color: '#e8f5e9',
+        text_color: '#1b5e20',
+        accent_color: '#2e7d32',
+        theme: 'forest'
+    },
+    lavender: {
+        background_color: '#f3e5f5',
+        text_color: '#4a148c',
+        accent_color: '#7b1fa2',
+        theme: 'lavender'
+    }
+};
+
+function applyPreset(presetName) {
+    const preset = presets[presetName];
+    if (!preset) return;
+
+    // Set color inputs
+    document.getElementById('background_color').value = preset.background_color;
+    document.getElementById('background_color_text').value = preset.background_color;
+    document.getElementById('text_color').value = preset.text_color;
+    document.getElementById('text_color_text').value = preset.text_color;
+    document.getElementById('accent_color').value = preset.accent_color;
+    document.getElementById('accent_color_text').value = preset.accent_color;
+    document.getElementById('profile_theme').value = preset.theme;
+
+    updatePreview();
+
+    // Highlight selected preset
+    document.querySelectorAll('.preset-btn').forEach(btn => {
+        btn.style.borderColor = btn.dataset.theme === presetName ? '#667eea' : '#e1e8ed';
+        btn.style.borderWidth = btn.dataset.theme === presetName ? '3px' : '2px';
+    });
+}
+
+function updatePreview() {
+    const preview = document.getElementById('profilePreview');
+    const backgroundColor = document.getElementById('background_color').value;
+    const textColor = document.getElementById('text_color').value;
+    const accentColor = document.getElementById('accent_color').value;
+    const bio = document.getElementById('bio').value || 'Your bio will appear here...';
+
+    // Update preview
+    preview.style.backgroundColor = backgroundColor;
+    preview.style.color = textColor;
+    preview.style.borderLeftColor = accentColor;
+
+    // Update text in preview
+    const previewBio = document.getElementById('previewBio');
+    previewBio.textContent = bio;
+    previewBio.style.color = textColor;
+
+    // Update preview header text
+    const previewH3 = preview.querySelector('h3');
+    const previewP = preview.querySelector('p');
+    const previewH4 = preview.querySelector('h4');
+    if (previewH3) previewH3.style.color = textColor;
+    if (previewP) previewP.style.color = textColor;
+    if (previewH4) previewH4.style.color = accentColor;
+
+    const previewBox = preview.querySelector('.preview-section-box');
+    if (previewBox) previewBox.style.borderColor = accentColor;
+
+    // Update text displays
+    document.getElementById('background_color_text').value = backgroundColor;
+    document.getElementById('text_color_text').value = textColor;
+    document.getElementById('accent_color_text').value = accentColor;
+}
+
+// Initialize color input listeners
+document.getElementById('background_color').addEventListener('input', updatePreview);
+document.getElementById('text_color').addEventListener('input', updatePreview);
+document.getElementById('accent_color').addEventListener('input', updatePreview);
+</script>
+{% endblock %}

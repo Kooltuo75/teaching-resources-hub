@@ -1,0 +1,456 @@
+{% extends "base.html" %}
+
+{% block title %}{{ profile_user.display_name or profile_user.username }}'s Room - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="profile-room" style="
+    background-color: {{ profile_user.background_color }};
+    color: {{ profile_user.text_color }};
+    min-height: calc(100vh - 200px);
+    padding: 2rem;
+">
+    <div class="profile-container">
+        <!-- Profile Header -->
+        <div class="profile-header" style="border-color: {{ profile_user.accent_color }};">
+            <div class="profile-avatar">
+                {{ profile_user.username[0].upper() }}
+            </div>
+            <div class="profile-info">
+                <h1 class="profile-name">{{ profile_user.display_name or profile_user.username }}</h1>
+                <p class="profile-username">@{{ profile_user.username }}</p>
+
+                {% if profile_user.school %}
+                <p class="profile-school">🏫 {{ profile_user.school }}</p>
+                {% endif %}
+
+                {% if profile_user.grade_levels %}
+                <p class="profile-grades">📚 {{ profile_user.grade_levels }}</p>
+                {% endif %}
+
+                {% if profile_user.subjects %}
+                <p class="profile-subjects">📖 {{ profile_user.subjects }}</p>
+                {% endif %}
+
+                <div class="profile-stats">
+                    <span class="stat-item" style="color: {{ profile_user.accent_color }};">
+                        <strong>{{ total_favorites }}</strong> Favorites
+                    </span>
+                    <span class="stat-item" style="color: {{ profile_user.accent_color }};">
+                        <strong>{{ total_visits }}</strong> Visits
+                    </span>
+                    <span class="stat-item" style="color: {{ profile_user.accent_color }};">
+                        Member since <strong>{{ profile_user.created_at.strftime('%B %Y') }}</strong>
+                    </span>
+                </div>
+
+                {% if is_own_profile %}
+                <div class="profile-actions">
+                    <a href="{{ url_for('main.edit_profile') }}" class="btn-edit-profile" style="background-color: {{ profile_user.accent_color }};">
+                        ✏️ Customize My Room
+                    </a>
+
+                    {% if profile_user.google_connected %}
+                    <div class="google-classroom-status">
+                        <span class="connected-badge">✓ Google Classroom Connected</span>
+                        <form method="POST" action="{{ url_for('main.google_disconnect') }}" style="display: inline;">
+                            <button type="submit" class="btn-disconnect" onclick="return confirm('Disconnect Google Classroom?');">
+                                Disconnect
+                            </button>
+                        </form>
+                    </div>
+                    {% else %}
+                    <a href="{{ url_for('main.google_connect') }}" class="btn-connect-google">
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 8px;">
+                            <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
+                            <path d="M9.003 18c2.43 0 4.467-.806 5.956-2.183l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.96v2.332C2.44 15.983 5.485 18 9.003 18z" fill="#34A853"/>
+                            <path d="M3.964 10.712c-.18-.54-.282-1.117-.282-1.71s.102-1.17.282-1.71V4.96H.957C.347 6.175 0 7.55 0 9.002c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
+                            <path d="M9.003 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.464.891 11.428 0 9.003 0 5.485 0 2.44 2.017.96 4.958L3.967 7.29c.708-2.127 2.692-3.71 5.036-3.71z" fill="#EA4335"/>
+                        </svg>
+                        Connect Google Classroom
+                    </a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Profile Content Grid -->
+        <div class="profile-content-grid">
+            <!-- About Me Section -->
+            {% if profile_user.bio %}
+            <div class="profile-section" style="border-color: {{ profile_user.accent_color }};">
+                <h2 style="color: {{ profile_user.accent_color }};">About Me</h2>
+                <p>{{ profile_user.bio }}</p>
+            </div>
+            {% endif %}
+
+            <!-- Teaching Philosophy Section -->
+            {% if profile_user.teaching_philosophy %}
+            <div class="profile-section" style="border-color: {{ profile_user.accent_color }};">
+                <h2 style="color: {{ profile_user.accent_color }};">Teaching Philosophy</h2>
+                <p>{{ profile_user.teaching_philosophy }}</p>
+            </div>
+            {% endif %}
+
+            <!-- Favorite Resources Section -->
+            {% if favorites %}
+            <div class="profile-section profile-favorites" style="border-color: {{ profile_user.accent_color }};">
+                <h2 style="color: {{ profile_user.accent_color }};">Favorite Resources</h2>
+                <div class="profile-resources-grid">
+                    {% for resource in favorites %}
+                    <div class="profile-resource-card">
+                        <h3>{{ resource.name }}</h3>
+                        <p class="resource-mini-desc">{{ resource.description[:100] }}...</p>
+                        <a href="{{ resource.url }}" target="_blank" rel="noopener noreferrer" class="resource-link" style="color: {{ profile_user.accent_color }};">
+                            Visit →
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% if total_favorites > 12 %}
+                <p class="more-favorites">And {{ total_favorites - 12 }} more favorites...</p>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Contact/Links Section -->
+            {% if profile_user.website_url or profile_user.twitter_handle %}
+            <div class="profile-section" style="border-color: {{ profile_user.accent_color }};">
+                <h2 style="color: {{ profile_user.accent_color }};">Connect</h2>
+                <div class="profile-links">
+                    {% if profile_user.website_url %}
+                    <a href="{{ profile_user.website_url }}" target="_blank" rel="noopener noreferrer" class="profile-link" style="color: {{ profile_user.accent_color }};">
+                        🌐 Website
+                    </a>
+                    {% endif %}
+                    {% if profile_user.twitter_handle %}
+                    <a href="https://twitter.com/{{ profile_user.twitter_handle }}" target="_blank" rel="noopener noreferrer" class="profile-link" style="color: {{ profile_user.accent_color }};">
+                        🐦 @{{ profile_user.twitter_handle }}
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Recent Visitors Section -->
+            {% if recent_visitors and is_own_profile %}
+            <div class="profile-section" style="border-color: {{ profile_user.accent_color }};">
+                <h2 style="color: {{ profile_user.accent_color }};">Recent Visitors</h2>
+                <div class="recent-visitors">
+                    {% for visitor in recent_visitors %}
+                    <a href="{{ url_for('main.profile', username=visitor.username) }}" class="visitor-link" style="border-color: {{ profile_user.accent_color }};">
+                        <div class="visitor-avatar">{{ visitor.username[0].upper() }}</div>
+                        <span>{{ visitor.display_name or visitor.username }}</span>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.profile-room {
+    transition: background-color 0.3s ease;
+}
+
+.profile-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.profile-header {
+    background: rgba(255,255,255,0.9);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    border-left: 5px solid;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.profile-info {
+    flex: 1;
+}
+
+.profile-name {
+    font-size: 2.5rem;
+    margin: 0 0 0.5rem 0;
+    color: #2c3e50;
+}
+
+.profile-username {
+    font-size: 1.2rem;
+    color: #7f8c8d;
+    margin: 0 0 1rem 0;
+}
+
+.profile-school,
+.profile-grades,
+.profile-subjects {
+    margin: 0.3rem 0;
+    color: #555;
+}
+
+.profile-stats {
+    display: flex;
+    gap: 2rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    font-size: 0.95rem;
+}
+
+.profile-actions {
+    margin-top: 1rem;
+}
+
+.btn-edit-profile {
+    display: inline-block;
+    color: white;
+    text-decoration: none;
+    padding: 0.7rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: transform 0.2s;
+}
+
+.btn-edit-profile:hover {
+    transform: translateY(-2px);
+}
+
+.profile-content-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+.profile-section {
+    background: rgba(255,255,255,0.9);
+    border-radius: 12px;
+    padding: 2rem;
+    border-left: 5px solid;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.profile-section h2 {
+    margin-top: 0;
+    font-size: 1.8rem;
+}
+
+.profile-section p {
+    line-height: 1.8;
+    color: #555;
+}
+
+.profile-resources-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.profile-resource-card {
+    background: rgba(248, 249, 250, 0.8);
+    padding: 1rem;
+    border-radius: 8px;
+    transition: transform 0.2s;
+}
+
+.profile-resource-card:hover {
+    transform: translateY(-2px);
+}
+
+.profile-resource-card h3 {
+    margin: 0 0 0.5rem 0;
+    color: #2c3e50;
+    font-size: 1.1rem;
+}
+
+.resource-mini-desc {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0.5rem 0;
+}
+
+.resource-link {
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-block;
+    margin-top: 0.5rem;
+}
+
+.resource-link:hover {
+    text-decoration: underline;
+}
+
+.more-favorites {
+    text-align: center;
+    margin-top: 1rem;
+    font-style: italic;
+    color: #666;
+}
+
+.profile-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.profile-link {
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: transform 0.2s;
+    display: inline-block;
+}
+
+.profile-link:hover {
+    transform: translateX(5px);
+    text-decoration: underline;
+}
+
+.recent-visitors {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.visitor-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    background: rgba(248, 249, 250, 0.8);
+    border: 2px solid;
+    transition: all 0.2s;
+}
+
+.visitor-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.visitor-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.visitor-link span {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+/* Google Classroom Integration Styles */
+.btn-connect-google {
+    display: inline-flex;
+    align-items: center;
+    background: white;
+    color: #4285F4;
+    border: 2px solid #4285F4;
+    padding: 0.7rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+    margin-top: 0.5rem;
+}
+
+.btn-connect-google:hover {
+    background: #4285F4;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(66, 133, 244, 0.3);
+}
+
+.google-classroom-status {
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.connected-badge {
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-disconnect {
+    background: #f8f9fa;
+    color: #dc3545;
+    border: 1px solid #dc3545;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-disconnect:hover {
+    background: #dc3545;
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+        font-size: 2.5rem;
+    }
+
+    .profile-name {
+        font-size: 2rem;
+    }
+
+    .profile-stats {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .profile-resources-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}

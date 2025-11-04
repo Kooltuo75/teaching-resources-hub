@@ -1,204 +1,228 @@
 """
 Web routes for the Teaching Resources application.
+
+All routes now use the service layer for data access and business logic,
+following enterprise-grade separation of concerns principles.
 """
-from flask import Blueprint, render_template, current_app, jsonify
-import json
-from pathlib import Path
+from flask import Blueprint, render_template, current_app, jsonify, redirect, url_for, abort
+import logging
+
+from app.services.resource_service import ResourceService
+from app.services.stats_service import StatsService
 
 bp = Blueprint('main', __name__)
+logger = logging.getLogger(__name__)
+
 
 @bp.route('/')
 def index():
-    """Home page - Ultimate Teacher Resource Directory."""
-    # Load resources from JSON file
-    resources_file = Path(current_app.config['BASE_DIR']) / 'data' / 'resources.json'
+    """
+    Home page - Ultimate Teacher Resource Directory.
+
+    Displays hero section, statistics, featured resources, and category navigation.
+    """
+    logger.info("Homepage accessed")
 
     try:
-        with open(resources_file, 'r', encoding='utf-8') as f:
-            resources_data = json.load(f)
-    except FileNotFoundError:
-        resources_data = {'categories': []}
+        # Get all categories from service
+        categories = ResourceService.get_all_categories()
 
-    categories = resources_data.get('categories', [])
+        # Calculate homepage statistics
+        stats = StatsService.calculate_homepage_stats(categories)
 
-    # Calculate stats
-    total_resources = sum(len(category.get('resources', [])) for category in categories)
-    total_categories = len(categories)
-    free_resources = 0
+        # Get featured resources
+        featured_categories = [
+            'Educational Websites & Portals',
+            'Assessment & Testing Tools',
+            'Learning Management Systems',
+            'Mathematics Resources',
+            'Computer Science & Coding',
+            'Video & Multimedia Creation'
+        ]
+        featured_resources = ResourceService.get_featured_resources(featured_categories, count=6)
 
-    # Count free resources
-    for category in categories:
-        for resource in category.get('resources', []):
-            if 'free' in resource.get('tags', []):
-                free_resources += 1
+        # Get category summary for quick navigation
+        category_summary = StatsService.get_category_summary(categories, limit=12)
 
-    # Get featured resources (first resource from select categories)
-    featured_resources = []
-    featured_categories = ['Educational Websites & Portals', 'Assessment & Testing Tools',
-                          'Learning Management Systems', 'Mathematics Resources',
-                          'Computer Science & Coding', 'Video & Multimedia Creation']
+        return render_template('index.html',
+                             app_name=current_app.config['APP_NAME'],
+                             stats=stats,
+                             featured_resources=featured_resources,
+                             categories=category_summary)
 
-    for cat_name in featured_categories:
-        for category in categories:
-            if category['name'] == cat_name and category.get('resources'):
-                resource = category['resources'][0].copy()
-                resource['category'] = category['name']
-                resource['category_icon'] = category['icon']
-                featured_resources.append(resource)
-                break
+    except Exception as e:
+        logger.error(f"Error loading homepage: {e}", exc_info=True)
+        abort(500)
 
-    # Prepare category summary for quick navigation
-    category_summary = [
-        {
-            'name': cat['name'],
-            'icon': cat['icon'],
-            'description': cat['description'],
-            'count': len(cat.get('resources', []))
-        }
-        for cat in categories[:12]  # Show first 12 categories on homepage
-    ]
-
-    stats = {
-        'total_resources': total_resources,
-        'total_categories': total_categories,
-        'free_resources': free_resources,
-        'subjects_covered': 15  # Math, Science, ELA, Social Studies, Arts, Music, PE, Languages, CS, etc.
-    }
-
-    return render_template('index.html',
-                         app_name=current_app.config['APP_NAME'],
-                         stats=stats,
-                         featured_resources=featured_resources,
-                         categories=category_summary)
 
 @bp.route('/about')
 def about():
-    """About page with project information."""
-    return render_template('base.html',
-                         app_name=current_app.config['APP_NAME'],
-                         content='<h2>About</h2><p>Teaching Resources Hub - Supporting educators with comprehensive tools and resources.</p>')
+    """About page with project information and mission statement."""
+    logger.info("About page accessed")
+
+    return render_template('about.html',
+                         app_name=current_app.config['APP_NAME'])
+
+
+@bp.route('/api-docs')
+def api_docs():
+    """API documentation page for developers."""
+    logger.info("API documentation page accessed")
+
+    return render_template('api_docs.html',
+                         app_name=current_app.config['APP_NAME'])
+
 
 @bp.route('/resources')
 def resources():
-    """Teaching resources directory with searchable categories."""
-    # Load resources from JSON file
-    resources_file = Path(current_app.config['BASE_DIR']) / 'data' / 'resources.json'
+    """
+    Teaching resources directory with searchable categories.
+
+    Displays all 519 resources across 55 categories with advanced filtering.
+    """
+    logger.info("Resources page accessed")
 
     try:
-        with open(resources_file, 'r', encoding='utf-8') as f:
-            resources_data = json.load(f)
-    except FileNotFoundError:
-        resources_data = {'categories': []}
+        # Get all categories from service
+        categories = ResourceService.get_all_categories()
 
-    # Calculate total resources count
-    categories = resources_data.get('categories', [])
-    total_resources = sum(len(category.get('resources', [])) for category in categories)
+        # Calculate total resources
+        total_resources = sum(len(cat.get('resources', [])) for cat in categories)
 
-    return render_template('resources.html',
-                         app_name=current_app.config['APP_NAME'],
-                         categories=categories,
-                         total_resources=total_resources)
+        logger.debug(f"Loaded {total_resources} resources across {len(categories)} categories")
+
+        return render_template('resources.html',
+                             app_name=current_app.config['APP_NAME'],
+                             categories=categories,
+                             total_resources=total_resources)
+
+    except Exception as e:
+        logger.error(f"Error loading resources page: {e}", exc_info=True)
+        abort(500)
+
 
 @bp.route('/category/<category_name>')
 def category_detail(category_name):
-    """Detail page for a specific category."""
-    # Load resources from JSON file
-    resources_file = Path(current_app.config['BASE_DIR']) / 'data' / 'resources.json'
+    """
+    Detail page for a specific category.
+
+    Shows category statistics, grade distribution, all resources,
+    and related categories.
+
+    Args:
+        category_name: Name of the category to display
+
+    Returns:
+        Rendered category detail page or redirect if not found
+    """
+    logger.info(f"Category detail accessed: {category_name}")
 
     try:
-        with open(resources_file, 'r', encoding='utf-8') as f:
-            resources_data = json.load(f)
-    except FileNotFoundError:
-        resources_data = {'categories': []}
+        # Validate category name
+        if not ResourceService.validate_category_name(category_name):
+            logger.warning(f"Invalid or non-existent category: {category_name}")
+            return redirect(url_for('main.resources'))
 
-    categories = resources_data.get('categories', [])
+        # Get category and all categories
+        current_category = ResourceService.get_category_by_name(category_name)
+        all_categories = ResourceService.get_all_categories()
 
-    # Find the requested category
-    current_category = None
-    for cat in categories:
-        if cat['name'] == category_name:
-            current_category = cat
-            break
+        if not current_category:
+            logger.warning(f"Category not found after validation: {category_name}")
+            return redirect(url_for('main.resources'))
 
-    if not current_category:
-        # Category not found, redirect to resources page
-        from flask import redirect, url_for
-        return redirect(url_for('main.resources'))
+        # Calculate category statistics
+        resources = current_category.get('resources', [])
+        stats = StatsService.calculate_category_stats(resources)
 
-    # Calculate category statistics
-    resources = current_category.get('resources', [])
-    total_resources = len(resources)
+        # Find related categories
+        related_categories = StatsService.get_related_categories(
+            all_categories,
+            current_category,
+            count=4
+        )
 
-    # Count by cost
-    free_count = sum(1 for r in resources if any('free' in str(tag).lower() and 'freemium' not in str(tag).lower() for tag in r.get('tags', [])))
-    freemium_count = sum(1 for r in resources if any('freemium' in str(tag).lower() for tag in r.get('tags', [])))
-    paid_count = sum(1 for r in resources if any('paid' in str(tag).lower() or 'premium' in str(tag).lower() for tag in r.get('tags', [])))
+        logger.debug(f"Category {category_name}: {stats['total']} resources, {len(related_categories)} related")
 
-    # Count by grade level
-    grade_breakdown = {
-        'Pre-K': sum(1 for r in resources if any('pre-k' in str(tag).lower() or 'prek' in str(tag).lower() for tag in r.get('tags', []))),
-        'Elementary': sum(1 for r in resources if any('elementary' in str(tag).lower() or 'k-5' in str(tag).lower() for tag in r.get('tags', []))),
-        'Middle School': sum(1 for r in resources if any('middle' in str(tag).lower() or '6-8' in str(tag).lower() for tag in r.get('tags', []))),
-        'High School': sum(1 for r in resources if any('high school' in str(tag).lower() or '9-12' in str(tag).lower() for tag in r.get('tags', []))),
-        'College': sum(1 for r in resources if any('college' in str(tag).lower() or 'higher ed' in str(tag).lower() for tag in r.get('tags', []))),
-        'K-12': sum(1 for r in resources if any('k-12' in str(tag).lower() for tag in r.get('tags', [])))
-    }
+        return render_template('category_detail.html',
+                             app_name=current_app.config['APP_NAME'],
+                             category=current_category,
+                             stats=stats,
+                             related_categories=related_categories,
+                             total_categories=len(all_categories))
 
-    stats = {
-        'total': total_resources,
-        'free': free_count,
-        'freemium': freemium_count,
-        'paid': paid_count,
-        'grade_breakdown': grade_breakdown
-    }
+    except Exception as e:
+        logger.error(f"Error loading category {category_name}: {e}", exc_info=True)
+        abort(500)
 
-    # Find related categories (alphabetically adjacent + same subject area)
-    current_index = categories.index(current_category)
-    related_categories = []
-
-    # Get 2 categories before and after
-    for i in range(max(0, current_index - 2), min(len(categories), current_index + 3)):
-        if i != current_index and categories[i] not in related_categories:
-            related_categories.append({
-                'name': categories[i]['name'],
-                'icon': categories[i]['icon'],
-                'description': categories[i]['description'],
-                'count': len(categories[i].get('resources', []))
-            })
-
-    # Limit to 4 related categories
-    related_categories = related_categories[:4]
-
-    return render_template('category_detail.html',
-                         app_name=current_app.config['APP_NAME'],
-                         category=current_category,
-                         stats=stats,
-                         related_categories=related_categories,
-                         total_categories=len(categories))
 
 @bp.route('/api/resources')
 def api_resources():
-    """API endpoint to get all resources as JSON for autocomplete."""
-    # Load resources from JSON file
-    resources_file = Path(current_app.config['BASE_DIR']) / 'data' / 'resources.json'
+    """
+    API endpoint to get all resources as JSON for autocomplete.
+
+    Returns:
+        JSON response with flattened resources array
+    """
+    logger.debug("API resources endpoint accessed")
 
     try:
-        with open(resources_file, 'r', encoding='utf-8') as f:
-            resources_data = json.load(f)
-    except FileNotFoundError:
-        return jsonify({'categories': []})
+        # Get flattened resources from service
+        all_resources = ResourceService.get_all_resources_flat()
 
-    # Flatten resources for easier searching
-    all_resources = []
-    for category in resources_data.get('categories', []):
-        for resource in category.get('resources', []):
-            all_resources.append({
-                'name': resource.get('name'),
-                'description': resource.get('description'),
-                'category': category.get('name'),
-                'category_icon': category.get('icon'),
-                'tags': resource.get('tags', []),
-                'url': resource.get('url')
-            })
+        logger.debug(f"API returning {len(all_resources)} resources")
 
-    return jsonify({'resources': all_resources})
+        return jsonify({'resources': all_resources})
+
+    except Exception as e:
+        logger.error(f"Error in API resources endpoint: {e}", exc_info=True)
+        return jsonify({'resources': [], 'error': 'Failed to load resources'}), 500
+
+
+@bp.route('/health')
+def health_check():
+    """
+    Health check endpoint for monitoring and load balancers.
+
+    Returns:
+        JSON response with status and resource count
+    """
+    try:
+        # Check if we can load resources
+        categories = ResourceService.get_all_categories()
+        total_resources = sum(len(cat.get('resources', [])) for cat in categories)
+
+        return jsonify({
+            'status': 'healthy',
+            'app_name': current_app.config['APP_NAME'],
+            'categories': len(categories),
+            'resources': total_resources
+        }), 200
+
+    except Exception as e:
+        logger.error(f"Health check failed: {e}", exc_info=True)
+        return jsonify({
+            'status': 'unhealthy',
+            'error': str(e)
+        }), 503
+
+
+# Register authentication routes
+from app.auth_routes import register_auth_routes
+register_auth_routes(bp)
+
+# Register favorites routes
+from app.favorites_routes import register_favorites_routes
+register_favorites_routes(bp)
+
+# Register profile routes
+from app.profile_routes import register_profile_routes
+register_profile_routes(bp)
+
+# Register API routes
+from app.api_routes import register_api_routes
+register_api_routes(bp)
+
+# Register Google Classroom routes
+from app.google_classroom_routes import register_google_classroom_routes
+register_google_classroom_routes(bp)
