@@ -1,0 +1,709 @@
+{% extends "base.html" %}
+
+{% block title %}Moderate Submissions - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="moderate-page">
+    <div class="page-header">
+        <div>
+            <h1>⚖️ Moderation Panel</h1>
+            <p class="subtitle">Review and manage resource submissions</p>
+        </div>
+    </div>
+
+    <!-- Stats Dashboard -->
+    <div class="mod-stats-dashboard">
+        <div class="mod-stat-card pending-card">
+            <div class="mod-stat-icon">⏳</div>
+            <div class="mod-stat-content">
+                <div class="mod-stat-value">{{ stats.pending }}</div>
+                <div class="mod-stat-label">Awaiting Review</div>
+            </div>
+        </div>
+
+        <div class="mod-stat-card approved-card">
+            <div class="mod-stat-icon">✅</div>
+            <div class="mod-stat-content">
+                <div class="mod-stat-value">{{ stats.approved }}</div>
+                <div class="mod-stat-label">Approved Today</div>
+            </div>
+        </div>
+
+        <div class="mod-stat-card rejected-card">
+            <div class="mod-stat-icon">❌</div>
+            <div class="mod-stat-content">
+                <div class="mod-stat-value">{{ stats.rejected }}</div>
+                <div class="mod-stat-label">Rejected Today</div>
+            </div>
+        </div>
+
+        <div class="mod-stat-card total-card">
+            <div class="mod-stat-icon">📊</div>
+            <div class="mod-stat-content">
+                <div class="mod-stat-value">{{ stats.total }}</div>
+                <div class="mod-stat-label">Total Submissions</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="mod-filter-tabs">
+        <button class="mod-tab-btn active" data-filter="pending">
+            Pending ({{ stats.pending }})
+        </button>
+        <button class="mod-tab-btn" data-filter="approved">
+            Approved ({{ stats.approved_all }})
+        </button>
+        <button class="mod-tab-btn" data-filter="rejected">
+            Rejected ({{ stats.rejected_all }})
+        </button>
+        <button class="mod-tab-btn" data-filter="all">
+            All ({{ stats.total }})
+        </button>
+    </div>
+
+    <!-- Submissions List -->
+    <div class="mod-submissions-list">
+        {% if submissions %}
+            {% for submission in submissions %}
+            <div class="mod-submission-card" data-status="{{ submission.status }}" id="submission-{{ submission.id }}">
+                <div class="mod-card-header">
+                    <div class="mod-submission-info">
+                        <h3>{{ submission.name }}</h3>
+                        <div class="mod-submission-meta">
+                            <span class="mod-category">{{ submission.category }}</span>
+                            <span class="mod-date">Submitted {{ submission.created_at.strftime('%b %d, %Y at %I:%M %p') }}</span>
+                            <span class="mod-status-badge status-{{ submission.status }}">{{ submission.status|upper }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submitter Info -->
+                <div class="mod-submitter-info">
+                    <div class="submitter-avatar">
+                        {{ submission.submitter.username[0].upper() }}
+                    </div>
+                    <div class="submitter-details">
+                        <a href="{{ url_for('main.view_profile', username=submission.submitter.username) }}" class="submitter-name">
+                            {{ submission.submitter.display_name or submission.submitter.username }}
+                        </a>
+                        {% if submission.submitter.is_verified_teacher %}
+                            <span class="badge-verified">✓ Verified Teacher</span>
+                        {% endif %}
+                        <div class="submitter-stats">
+                            <span>Reputation: {{ submission.submitter.reputation_score }}</span>
+                            <span>•</span>
+                            <span>Submissions: {{ submission.submitter.total_submissions }}</span>
+                            <span>•</span>
+                            <span>Approved: {{ submission.submitter.approved_submissions }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resource Details -->
+                <div class="mod-resource-details">
+                    <div class="detail-row">
+                        <strong>URL:</strong>
+                        <a href="{{ submission.url }}" target="_blank" rel="noopener" class="resource-link">
+                            {{ submission.url }}
+                            <span class="external-link-icon">🔗</span>
+                        </a>
+                    </div>
+
+                    <div class="detail-row">
+                        <strong>Description:</strong>
+                        <p>{{ submission.description }}</p>
+                    </div>
+
+                    <div class="detail-row">
+                        <strong>Why Useful:</strong>
+                        <p>{{ submission.why_useful }}</p>
+                    </div>
+
+                    <div class="detail-row-grid">
+                        {% if submission.grade_levels %}
+                        <div>
+                            <strong>Grade Levels:</strong>
+                            <span>{{ submission.grade_levels }}</span>
+                        </div>
+                        {% endif %}
+
+                        <div>
+                            <strong>Cost:</strong>
+                            <span>{{ submission.cost }}</span>
+                        </div>
+                    </div>
+
+                    {% if submission.tags %}
+                    <div class="detail-row">
+                        <strong>Tags:</strong>
+                        <div class="mod-tags-list">
+                            {% for tag in submission.tags.split(',') %}
+                            <span class="mod-tag">{{ tag.strip() }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Moderation Actions -->
+                {% if submission.status == 'pending' %}
+                <div class="mod-actions-section">
+                    <form method="POST" action="{{ url_for('main.approve_submission', submission_id=submission.id) }}"
+                          class="mod-form"
+                          onsubmit="return confirm('Approve this submission? The submitter will earn +20 reputation.');">
+                        <button type="submit" class="btn-approve">
+                            ✅ Approve Submission
+                        </button>
+                    </form>
+
+                    <div class="rejection-form">
+                        <button type="button" class="btn-show-reject" onclick="toggleRejectForm({{ submission.id }})">
+                            ❌ Reject Submission
+                        </button>
+
+                        <div class="reject-form-wrapper" id="reject-form-{{ submission.id }}" style="display: none;">
+                            <form method="POST" action="{{ url_for('main.reject_submission', submission_id=submission.id) }}"
+                                  onsubmit="return confirm('Reject this submission? Make sure you provided a clear reason.');">
+                                <label for="rejection-reason-{{ submission.id }}">
+                                    <strong>Rejection Reason (Required):</strong>
+                                </label>
+                                <textarea id="rejection-reason-{{ submission.id }}"
+                                          name="rejection_reason"
+                                          rows="4"
+                                          placeholder="Explain why this submission is being rejected. Be specific and helpful..."
+                                          required></textarea>
+                                <div class="reject-form-actions">
+                                    <button type="submit" class="btn-confirm-reject">Confirm Rejection</button>
+                                    <button type="button" class="btn-cancel" onclick="toggleRejectForm({{ submission.id }})">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="mod-status-info">
+                    {% if submission.status == 'approved' %}
+                    <div class="status-message approved-message">
+                        ✅ <strong>Approved</strong> by {{ submission.moderator.username }} on {{ submission.approved_at.strftime('%b %d, %Y') }}
+                    </div>
+                    {% elif submission.status == 'rejected' %}
+                    <div class="status-message rejected-message">
+                        <div class="rejection-header">
+                            ❌ <strong>Rejected</strong> by {{ submission.moderator.username }} on {{ submission.rejected_at.strftime('%b %d, %Y') }}
+                        </div>
+                        <div class="rejection-reason-display">
+                            <strong>Reason:</strong> {{ submission.rejection_reason }}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-submissions-mod">
+                <div class="empty-icon">📭</div>
+                <h2>No submissions to show</h2>
+                <p>There are currently no submissions matching this filter.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+// Filter functionality
+const tabs = document.querySelectorAll('.mod-tab-btn');
+const cards = document.querySelectorAll('.mod-submission-card');
+
+tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        // Update active tab
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        // Filter cards
+        const filter = tab.dataset.filter;
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            if (filter === 'all' || card.dataset.status === filter) {
+                card.style.display = 'block';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        // Show/hide empty state
+        const emptyState = document.querySelector('.no-submissions-mod');
+        if (emptyState) {
+            emptyState.style.display = visibleCount === 0 ? 'flex' : 'none';
+        }
+    });
+});
+
+// Toggle reject form
+function toggleRejectForm(submissionId) {
+    const form = document.getElementById(`reject-form-${submissionId}`);
+    if (form.style.display === 'none') {
+        form.style.display = 'block';
+    } else {
+        form.style.display = 'none';
+    }
+}
+
+// Initialize: show only pending by default
+document.addEventListener('DOMContentLoaded', () => {
+    cards.forEach(card => {
+        if (card.dataset.status !== 'pending') {
+            card.style.display = 'none';
+        }
+    });
+});
+</script>
+
+<style>
+.moderate-page {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.page-header {
+    margin-bottom: 30px;
+}
+
+.page-header h1 {
+    font-size: 2.5em;
+    margin: 0 0 10px 0;
+    color: #1f2937;
+}
+
+.subtitle {
+    color: #6b7280;
+    font-size: 1.1em;
+    margin: 0;
+}
+
+.mod-stats-dashboard {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.mod-stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.mod-stat-card:hover {
+    transform: translateY(-3px);
+}
+
+.pending-card { border-left: 4px solid #f59e0b; }
+.approved-card { border-left: 4px solid #10b981; }
+.rejected-card { border-left: 4px solid #ef4444; }
+.total-card { border-left: 4px solid #667eea; }
+
+.mod-stat-icon {
+    font-size: 2.5em;
+}
+
+.mod-stat-value {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: #1f2937;
+}
+
+.mod-stat-label {
+    color: #6b7280;
+    font-size: 0.9em;
+}
+
+.mod-filter-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.mod-tab-btn {
+    background: none;
+    border: none;
+    padding: 12px 24px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #6b7280;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.mod-tab-btn:hover {
+    color: #667eea;
+}
+
+.mod-tab-btn.active {
+    color: #667eea;
+    border-bottom-color: #667eea;
+}
+
+.mod-submissions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.mod-submission-card {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+}
+
+.mod-card-header {
+    margin-bottom: 20px;
+}
+
+.mod-submission-info h3 {
+    font-size: 1.6em;
+    margin: 0 0 10px 0;
+    color: #1f2937;
+}
+
+.mod-submission-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    color: #6b7280;
+    font-size: 0.9em;
+}
+
+.mod-category {
+    background: #f3f4f6;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+.mod-status-badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.85em;
+}
+
+.mod-status-badge.status-pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.mod-status-badge.status-approved {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.mod-status-badge.status-rejected {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.mod-submitter-info {
+    display: flex;
+    gap: 15px;
+    padding: 20px;
+    background: #f9fafb;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.submitter-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8em;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.submitter-name {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #1f2937;
+    text-decoration: none;
+}
+
+.submitter-name:hover {
+    color: #667eea;
+}
+
+.badge-verified {
+    background: #10b981;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75em;
+    margin-left: 8px;
+}
+
+.submitter-stats {
+    display: flex;
+    gap: 8px;
+    color: #6b7280;
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+
+.mod-resource-details {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.detail-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.detail-row strong {
+    color: #374151;
+    font-size: 0.95em;
+}
+
+.detail-row p {
+    color: #4b5563;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.resource-link {
+    color: #667eea;
+    text-decoration: none;
+    word-break: break-all;
+}
+
+.resource-link:hover {
+    text-decoration: underline;
+}
+
+.external-link-icon {
+    font-size: 0.9em;
+}
+
+.detail-row-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.mod-tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.mod-tag {
+    background: #f3f4f6;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.85em;
+    color: #4b5563;
+}
+
+.mod-actions-section {
+    display: flex;
+    gap: 15px;
+    padding-top: 20px;
+    border-top: 2px solid #e5e7eb;
+}
+
+.btn-approve {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    padding: 14px 30px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-approve:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.btn-show-reject {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    padding: 14px 30px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-show-reject:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+.reject-form-wrapper {
+    margin-top: 15px;
+}
+
+.reject-form-wrapper label {
+    display: block;
+    margin-bottom: 8px;
+    color: #374151;
+}
+
+.reject-form-wrapper textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 1em;
+    resize: vertical;
+}
+
+.reject-form-wrapper textarea:focus {
+    outline: none;
+    border-color: #ef4444;
+}
+
+.reject-form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.btn-confirm-reject {
+    background: #ef4444;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-cancel {
+    background: #e5e7eb;
+    color: #4b5563;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.mod-status-info {
+    padding-top: 20px;
+    border-top: 2px solid #e5e7eb;
+}
+
+.status-message {
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.approved-message {
+    background: #f0fdf4;
+    border: 2px solid #bbf7d0;
+    color: #166534;
+}
+
+.rejected-message {
+    background: #fef2f2;
+    border: 2px solid #fecaca;
+    color: #991b1b;
+}
+
+.rejection-header {
+    margin-bottom: 10px;
+}
+
+.rejection-reason-display {
+    background: rgba(255, 255, 255, 0.5);
+    padding: 15px;
+    border-radius: 6px;
+    margin-top: 10px;
+}
+
+.no-submissions-mod {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    background: white;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.no-submissions-mod .empty-icon {
+    font-size: 5em;
+    margin-bottom: 20px;
+}
+
+.no-submissions-mod h2 {
+    color: #1f2937;
+    margin-bottom: 10px;
+}
+
+.no-submissions-mod p {
+    color: #6b7280;
+    font-size: 1.1em;
+}
+
+@media (max-width: 1024px) {
+    .mod-stats-dashboard {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .mod-stats-dashboard {
+        grid-template-columns: 1fr;
+    }
+
+    .mod-filter-tabs {
+        flex-wrap: wrap;
+    }
+
+    .mod-actions-section {
+        flex-direction: column;
+    }
+
+    .detail-row-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}

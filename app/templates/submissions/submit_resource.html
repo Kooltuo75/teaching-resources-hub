@@ -1,0 +1,434 @@
+{% extends "base.html" %}
+
+{% block title %}Submit a Resource - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="submit-resource-page">
+    <div class="page-header">
+        <h1>📤 Submit a Resource</h1>
+        <p class="subtitle">Share a great educational resource with the teaching community!</p>
+    </div>
+
+    <div class="submission-container">
+        <div class="submission-form-wrapper">
+            <form method="POST" class="submission-form">
+                <!-- Resource Name -->
+                <div class="form-group">
+                    <label for="name" class="required">Resource Name</label>
+                    <input type="text"
+                           id="name"
+                           name="name"
+                           placeholder="e.g., Khan Academy, Quizlet, Nearpod"
+                           minlength="3"
+                           maxlength="200"
+                           required>
+                </div>
+
+                <!-- Resource URL -->
+                <div class="form-group">
+                    <label for="url" class="required">Resource URL</label>
+                    <input type="url"
+                           id="url"
+                           name="url"
+                           placeholder="https://example.com"
+                           required>
+                    <p class="field-hint">Must start with http:// or https://</p>
+                </div>
+
+                <!-- Description -->
+                <div class="form-group">
+                    <label for="description" class="required">Description</label>
+                    <textarea id="description"
+                              name="description"
+                              rows="4"
+                              placeholder="Briefly describe what this resource does and its main features"
+                              minlength="20"
+                              maxlength="1000"
+                              required></textarea>
+                    <p class="char-count"><span id="descCharCount">0</span> / 1000 characters (minimum 20)</p>
+                </div>
+
+                <!-- Category -->
+                <div class="form-group">
+                    <label for="category" class="required">Category</label>
+                    <select id="category" name="category" required>
+                        <option value="">Select a category...</option>
+                        <option value="Lesson Planning Tools">Lesson Planning Tools</option>
+                        <option value="Mathematics Resources">Mathematics Resources</option>
+                        <option value="Science Resources">Science Resources</option>
+                        <option value="Language Arts & Reading">Language Arts & Reading</option>
+                        <option value="Social Studies & History">Social Studies & History</option>
+                        <option value="Assessment & Testing Tools">Assessment & Testing Tools</option>
+                        <option value="Learning Management Systems">Learning Management Systems</option>
+                        <option value="Classroom Management">Classroom Management</option>
+                        <option value="Educational Games & Interactive Tools">Educational Games & Interactive Tools</option>
+                        <option value="Special Education Resources">Special Education Resources</option>
+                        <option value="Computer Science & Coding">Computer Science & Coding</option>
+                        <option value="Art & Music Education">Art & Music Education</option>
+                        <option value="Physical Education & Health">Physical Education & Health</option>
+                        <option value="Foreign Languages">Foreign Languages</option>
+                        <option value="STEM & Maker Education">STEM & Maker Education</option>
+                        <option value="Social-Emotional Learning">Social-Emotional Learning</option>
+                        <option value="Professional Development">Professional Development</option>
+                        <option value="Educational Technology">Educational Technology</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <!-- Grade Levels -->
+                <div class="form-group">
+                    <label for="grade_levels">Suggested Grade Levels</label>
+                    <input type="text"
+                           id="grade_levels"
+                           name="grade_levels"
+                           placeholder="e.g., K-5, 6-8, 9-12, or All"
+                           maxlength="200">
+                    <p class="field-hint">Separate multiple levels with commas</p>
+                </div>
+
+                <!-- Tags -->
+                <div class="form-group">
+                    <label for="tags">Tags</label>
+                    <input type="text"
+                           id="tags"
+                           name="tags"
+                           placeholder="e.g., interactive, free, mobile-friendly"
+                           maxlength="500">
+                    <p class="field-hint">Separate tags with commas</p>
+                </div>
+
+                <!-- Cost -->
+                <div class="form-group">
+                    <label for="cost" class="required">Cost</label>
+                    <select id="cost" name="cost" required>
+                        <option value="Free">Free</option>
+                        <option value="Freemium">Freemium (Free with paid upgrades)</option>
+                        <option value="Paid">Paid</option>
+                        <option value="Subscription">Subscription</option>
+                        <option value="Trial Available">Trial Available</option>
+                    </select>
+                </div>
+
+                <!-- Why Useful -->
+                <div class="form-group">
+                    <label for="why_useful" class="required">Why Is This Resource Useful?</label>
+                    <textarea id="why_useful"
+                              name="why_useful"
+                              rows="4"
+                              placeholder="Explain why you think this resource would benefit other teachers. Share your personal experience or why you find it valuable."
+                              minlength="10"
+                              maxlength="1000"
+                              required></textarea>
+                    <p class="char-count"><span id="whyCharCount">0</span> / 1000 characters (minimum 10)</p>
+                </div>
+
+                <!-- Guidelines Box -->
+                <div class="guidelines-box">
+                    <h3>📋 Submission Guidelines</h3>
+                    <ul>
+                        <li>Submit only legitimate educational resources</li>
+                        <li>Ensure the URL is active and accessible</li>
+                        <li>Provide accurate and helpful descriptions</li>
+                        <li>Don't submit duplicate resources</li>
+                        <li>All submissions will be reviewed by moderators</li>
+                        <li>Approved submissions earn +20 reputation points</li>
+                    </ul>
+                </div>
+
+                <!-- Submit Buttons -->
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        📤 Submit Resource
+                    </button>
+                    <a href="{{ url_for('main.my_submissions') }}" class="btn btn-secondary">
+                        View My Submissions
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Sidebar Info -->
+        <aside class="submission-sidebar">
+            <div class="info-card">
+                <h3>✨ Why Submit Resources?</h3>
+                <ul>
+                    <li>Help fellow teachers discover great tools</li>
+                    <li>Build your reputation in the community</li>
+                    <li>Earn points: +5 for submission, +20 when approved!</li>
+                    <li>Contribute to the largest teacher resource directory</li>
+                </ul>
+            </div>
+
+            <div class="info-card">
+                <h3>⏱️ Review Process</h3>
+                <p>After you submit, moderators will review your resource within 48 hours. You'll be notified once it's approved or if any changes are needed.</p>
+            </div>
+
+            <div class="info-card stats-card">
+                <h3>📊 Your Stats</h3>
+                <div class="stat">
+                    <span class="stat-value">{{ current_user.total_submissions }}</span>
+                    <span class="stat-label">Total Submissions</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value">{{ current_user.reputation_score }}</span>
+                    <span class="stat-label">Reputation Points</span>
+                </div>
+            </div>
+        </aside>
+    </div>
+</div>
+
+<script>
+// Character counters
+document.getElementById('description').addEventListener('input', function() {
+    document.getElementById('descCharCount').textContent = this.value.length;
+});
+
+document.getElementById('why_useful').addEventListener('input', function() {
+    document.getElementById('whyCharCount').textContent = this.value.length;
+});
+</script>
+
+<style>
+.submit-resource-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.page-header h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    color: #1f2937;
+}
+
+.subtitle {
+    color: #6b7280;
+    font-size: 1.1em;
+}
+
+.submission-container {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 30px;
+}
+
+.submission-form-wrapper {
+    background: white;
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 8px;
+    font-size: 1em;
+}
+
+.form-group label.required::after {
+    content: " *";
+    color: #ef4444;
+}
+
+.form-group input[type="text"],
+.form-group input[type="url"],
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 1em;
+    font-family: inherit;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+.field-hint {
+    color: #6b7280;
+    font-size: 0.85em;
+    margin-top: 5px;
+}
+
+.char-count {
+    text-align: right;
+    color: #6b7280;
+    font-size: 0.85em;
+    margin-top: 5px;
+}
+
+.guidelines-box {
+    background: #f0f9ff;
+    border: 2px solid #bfdbfe;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 30px 0;
+}
+
+.guidelines-box h3 {
+    color: #1e40af;
+    margin-top: 0;
+}
+
+.guidelines-box ul {
+    margin: 10px 0 0 20px;
+    color: #1e3a8a;
+}
+
+.guidelines-box li {
+    margin-bottom: 8px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.btn {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+    background: #e5e7eb;
+    color: #4b5563;
+}
+
+.btn-secondary:hover {
+    background: #d1d5db;
+}
+
+/* Sidebar */
+.submission-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.info-card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.info-card h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #1f2937;
+}
+
+.info-card ul {
+    margin: 0;
+    padding-left: 20px;
+    color: #4b5563;
+}
+
+.info-card li {
+    margin-bottom: 10px;
+}
+
+.info-card p {
+    color: #4b5563;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.stats-card {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+.stats-card h3 {
+    color: white;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.stat:last-child {
+    margin-bottom: 0;
+}
+
+.stat-value {
+    font-size: 2em;
+    font-weight: bold;
+}
+
+.stat-label {
+    font-size: 0.9em;
+    opacity: 0.9;
+}
+
+@media (max-width: 968px) {
+    .submission-container {
+        grid-template-columns: 1fr;
+    }
+
+    .submission-sidebar {
+        order: -1;
+    }
+
+    .submission-form-wrapper {
+        padding: 25px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+    }
+}
+</style>
+{% endblock %}

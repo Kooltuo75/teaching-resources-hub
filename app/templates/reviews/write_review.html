@@ -1,0 +1,343 @@
+{% extends "base.html" %}
+
+{% block title %}Write Review - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="write-review-page">
+    <div class="review-header">
+        <h1>✍️ Write a Review</h1>
+        <p class="subtitle">Share your experience with {{ resource_name }}</p>
+    </div>
+
+    <form method="POST" class="review-form">
+        <input type="hidden" name="resource_url" value="{{ resource_url }}">
+        <input type="hidden" name="resource_category" value="{{ resource_category }}">
+
+        <!-- Rating -->
+        <div class="form-group">
+            <label class="required">Rating</label>
+            <div class="star-rating" id="starRating">
+                <input type="radio" name="rating" value="5" id="star5">
+                <label for="star5" title="5 stars">★</label>
+
+                <input type="radio" name="rating" value="4" id="star4">
+                <label for="star4" title="4 stars">★</label>
+
+                <input type="radio" name="rating" value="3" id="star3">
+                <label for="star3" title="3 stars">★</label>
+
+                <input type="radio" name="rating" value="2" id="star2">
+                <label for="star2" title="2 stars">★</label>
+
+                <input type="radio" name="rating" value="1" id="star1">
+                <label for="star1" title="1 star">★</label>
+            </div>
+            <p class="rating-description">Click the stars to rate this resource</p>
+        </div>
+
+        <!-- Review Title -->
+        <div class="form-group">
+            <label for="title">Review Title (Optional)</label>
+            <input type="text"
+                   id="title"
+                   name="title"
+                   placeholder="Sum up your experience in one line"
+                   maxlength="200">
+        </div>
+
+        <!-- Review Text -->
+        <div class="form-group">
+            <label for="review_text" class="required">Your Review</label>
+            <textarea id="review_text"
+                      name="review_text"
+                      rows="8"
+                      placeholder="Share your detailed thoughts about this resource. What did you like? How did you use it? What could be improved?"
+                      minlength="20"
+                      maxlength="5000"
+                      required></textarea>
+            <p class="char-count"><span id="charCount">0</span> / 5000 characters (minimum 20)</p>
+        </div>
+
+        <!-- Context Information -->
+        <div class="form-group">
+            <label for="grade_level_used">Grade Level You Used It With</label>
+            <select id="grade_level_used" name="grade_level_used">
+                <option value="">Select grade level...</option>
+                <option value="Pre-K">Pre-K</option>
+                <option value="Kindergarten">Kindergarten</option>
+                <option value="1st Grade">1st Grade</option>
+                <option value="2nd Grade">2nd Grade</option>
+                <option value="3rd Grade">3rd Grade</option>
+                <option value="4th Grade">4th Grade</option>
+                <option value="5th Grade">5th Grade</option>
+                <option value="6th Grade">6th Grade</option>
+                <option value="7th Grade">7th Grade</option>
+                <option value="8th Grade">8th Grade</option>
+                <option value="9th Grade">9th Grade</option>
+                <option value="10th Grade">10th Grade</option>
+                <option value="11th Grade">11th Grade</option>
+                <option value="12th Grade">12th Grade</option>
+                <option value="College">College</option>
+                <option value="Multiple Grades">Multiple Grades</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="subject_used">Subject You Used It For</label>
+            <input type="text"
+                   id="subject_used"
+                   name="subject_used"
+                   placeholder="e.g., Mathematics, Science, Language Arts"
+                   maxlength="100">
+        </div>
+
+        <div class="form-group">
+            <label for="time_used">How Long Have You Used It?</label>
+            <select id="time_used" name="time_used">
+                <option value="">Select duration...</option>
+                <option value="Less than 1 month">Less than 1 month</option>
+                <option value="1-6 months">1-6 months</option>
+                <option value="6 months - 1 year">6 months - 1 year</option>
+                <option value="1-2 years">1-2 years</option>
+                <option value="2+ years">2+ years</option>
+            </select>
+        </div>
+
+        <!-- Guidelines -->
+        <div class="review-guidelines">
+            <h3>📋 Review Guidelines</h3>
+            <ul>
+                <li>Be honest and constructive</li>
+                <li>Focus on your personal experience</li>
+                <li>Include specific examples when possible</li>
+                <li>Be respectful and professional</li>
+                <li>Avoid promotional language</li>
+            </ul>
+        </div>
+
+        <!-- Submit Buttons -->
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                📝 Submit Review
+            </button>
+            <a href="{{ url_for('main.resources') }}" class="btn btn-secondary">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+// Character counter
+document.getElementById('review_text').addEventListener('input', function() {
+    const count = this.value.length;
+    document.getElementById('charCount').textContent = count;
+});
+
+// Star rating interaction
+const starRating = document.getElementById('starRating');
+const labels = starRating.querySelectorAll('label');
+
+labels.forEach((label, index) => {
+    label.addEventListener('click', function() {
+        // Update visual feedback
+        labels.forEach((l, i) => {
+            if (i >= labels.length - index - 1) {
+                l.classList.add('selected');
+            } else {
+                l.classList.remove('selected');
+            }
+        });
+    });
+});
+</script>
+
+<style>
+.write-review-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.review-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.review-header h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    color: #1f2937;
+}
+
+.subtitle {
+    color: #6b7280;
+    font-size: 1.1em;
+}
+
+.review-form {
+    background: white;
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 8px;
+    font-size: 1em;
+}
+
+.form-group label.required::after {
+    content: " *";
+    color: #ef4444;
+}
+
+.form-group input[type="text"],
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 1em;
+    font-family: inherit;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input[type="text"]:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 150px;
+}
+
+/* Star Rating */
+.star-rating {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    gap: 5px;
+    font-size: 3em;
+}
+
+.star-rating input {
+    display: none;
+}
+
+.star-rating label {
+    cursor: pointer;
+    color: #d1d5db;
+    transition: color 0.2s ease;
+}
+
+.star-rating label:hover,
+.star-rating label:hover ~ label,
+.star-rating input:checked ~ label,
+.star-rating label.selected {
+    color: #fbbf24;
+}
+
+.rating-description {
+    color: #6b7280;
+    font-size: 0.9em;
+    margin-top: 10px;
+}
+
+.char-count {
+    text-align: right;
+    color: #6b7280;
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+
+.review-guidelines {
+    background: #f9fafb;
+    border-left: 4px solid #667eea;
+    padding: 20px;
+    margin: 30px 0;
+    border-radius: 8px;
+}
+
+.review-guidelines h3 {
+    margin-top: 0;
+    color: #1f2937;
+}
+
+.review-guidelines ul {
+    margin: 10px 0 0 20px;
+    color: #4b5563;
+}
+
+.review-guidelines li {
+    margin-bottom: 8px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.btn {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+    background: #e5e7eb;
+    color: #4b5563;
+}
+
+.btn-secondary:hover {
+    background: #d1d5db;
+}
+
+@media (max-width: 768px) {
+    .review-form {
+        padding: 25px;
+    }
+
+    .star-rating {
+        font-size: 2.5em;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+        text-align: center;
+    }
+}
+</style>
+{% endblock %}

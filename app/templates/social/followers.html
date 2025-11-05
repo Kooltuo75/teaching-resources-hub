@@ -1,0 +1,622 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if view_type == 'followers' %}
+        Followers of {{ profile_user.display_name or profile_user.username }}
+    {% else %}
+        Following - {{ profile_user.display_name or profile_user.username }}
+    {% endif %}
+    - {{ app_name }}
+{% endblock %}
+
+{% block content %}
+<div class="followers-page">
+    <div class="page-header">
+        <div class="header-content">
+            <a href="{{ url_for('main.view_profile', username=profile_user.username) }}" class="back-link">
+                ← Back to Profile
+            </a>
+            <h1>
+                {% if view_type == 'followers' %}
+                    👥 Followers
+                {% else %}
+                    🔗 Following
+                {% endif %}
+            </h1>
+            <p class="subtitle">
+                {% if view_type == 'followers' %}
+                    {{ users|length }} teacher{{ 's' if users|length != 1 else '' }} following
+                    {{ profile_user.display_name or profile_user.username }}
+                {% else %}
+                    {{ users|length }} teacher{{ 's' if users|length != 1 else '' }}
+                    {{ profile_user.display_name or profile_user.username }} is following
+                {% endif %}
+            </p>
+        </div>
+
+        <!-- View Toggle -->
+        <div class="view-toggle">
+            <a href="{{ url_for('main.view_followers', username=profile_user.username) }}"
+               class="toggle-btn {% if view_type == 'followers' %}active{% endif %}">
+                Followers ({{ profile_user.followers_count }})
+            </a>
+            <a href="{{ url_for('main.view_following', username=profile_user.username) }}"
+               class="toggle-btn {% if view_type == 'following' %}active{% endif %}">
+                Following ({{ profile_user.following_count }})
+            </a>
+        </div>
+    </div>
+
+    <!-- Users List -->
+    {% if users %}
+        <div class="users-list">
+            {% for user in users %}
+            <div class="user-card" data-user-id="{{ user.id }}">
+                <div class="user-card-left">
+                    <a href="{{ url_for('main.view_profile', username=user.username) }}" class="user-avatar-link">
+                        <div class="user-avatar">
+                            {{ user.username[0].upper() }}
+                        </div>
+                    </a>
+
+                    <div class="user-info">
+                        <a href="{{ url_for('main.view_profile', username=user.username) }}" class="user-name">
+                            {{ user.display_name or user.username }}
+                            {% if user.is_verified_teacher %}
+                                <span class="verified-badge">✓</span>
+                            {% endif %}
+                        </a>
+
+                        <div class="user-username">@{{ user.username }}</div>
+
+                        {% if user.bio %}
+                        <div class="user-bio">
+                            {{ user.bio[:150] }}{% if user.bio|length > 150 %}...{% endif %}
+                        </div>
+                        {% endif %}
+
+                        <div class="user-meta">
+                            {% if user.grade_level %}
+                                <span class="meta-tag">📚 {{ user.grade_level }}</span>
+                            {% endif %}
+                            {% if user.subject %}
+                                <span class="meta-tag">📖 {{ user.subject }}</span>
+                            {% endif %}
+                            {% if user.location %}
+                                <span class="meta-tag">📍 {{ user.location }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="user-card-right">
+                    <div class="user-stats">
+                        <div class="stat">
+                            <span class="stat-value">{{ user.reputation_score }}</span>
+                            <span class="stat-label">Rep</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">{{ user.total_reviews }}</span>
+                            <span class="stat-label">Reviews</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-value">{{ user.followers_count }}</span>
+                            <span class="stat-label">Followers</span>
+                        </div>
+                    </div>
+
+                    {% if current_user.is_authenticated and current_user.id != user.id %}
+                        <button class="btn-follow {% if user.is_following %}following{% endif %}"
+                                data-user-id="{{ user.id }}"
+                                onclick="toggleFollow({{ user.id }})">
+                            <span class="follow-text">
+                                {% if user.is_following %}Following{% else %}Follow{% endif %}
+                            </span>
+                        </button>
+                    {% elif current_user.id == user.id %}
+                        <div class="you-badge">That's You!</div>
+                    {% else %}
+                        <a href="{{ url_for('main.login') }}" class="btn-follow">
+                            Follow
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if total_pages > 1 %}
+        <div class="pagination">
+            {% if page > 1 %}
+                <a href="{{ url_for(request.endpoint, username=profile_user.username, page=page-1) }}"
+                   class="pagination-btn">
+                    ← Previous
+                </a>
+            {% endif %}
+
+            <div class="pagination-numbers">
+                {% for p in range(1, total_pages + 1) %}
+                    {% if p == page %}
+                        <span class="pagination-number active">{{ p }}</span>
+                    {% elif p == 1 or p == total_pages or (p >= page - 2 and p <= page + 2) %}
+                        <a href="{{ url_for(request.endpoint, username=profile_user.username, page=p) }}"
+                           class="pagination-number">{{ p }}</a>
+                    {% elif p == page - 3 or p == page + 3 %}
+                        <span class="pagination-dots">...</span>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            {% if page < total_pages %}
+                <a href="{{ url_for(request.endpoint, username=profile_user.username, page=page+1) }}"
+                   class="pagination-btn">
+                    Next →
+                </a>
+            {% endif %}
+        </div>
+        {% endif %}
+
+    {% else %}
+        <div class="no-users">
+            <div class="empty-icon">
+                {% if view_type == 'followers' %}
+                    👥
+                {% else %}
+                    🔗
+                {% endif %}
+            </div>
+            <h2>
+                {% if view_type == 'followers' %}
+                    No followers yet
+                {% else %}
+                    Not following anyone yet
+                {% endif %}
+            </h2>
+            <p>
+                {% if view_type == 'followers' %}
+                    {% if current_user.id == profile_user.id %}
+                        Share your profile and contribute to build your following!
+                    {% else %}
+                        {{ profile_user.display_name or profile_user.username }} doesn't have any followers yet.
+                    {% endif %}
+                {% else %}
+                    {% if current_user.id == profile_user.id %}
+                        Discover teachers to connect with and see their activity in your feed.
+                    {% else %}
+                        {{ profile_user.display_name or profile_user.username }} isn't following anyone yet.
+                    {% endif %}
+                {% endif %}
+            </p>
+            {% if current_user.id == profile_user.id and view_type == 'following' %}
+            <a href="{{ url_for('main.discover_teachers') }}" class="btn btn-primary">
+                Discover Teachers
+            </a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+
+<script>
+function toggleFollow(userId) {
+    {% if current_user.is_authenticated %}
+    const button = document.querySelector(`button[data-user-id="${userId}"]`);
+    const originalText = button.querySelector('.follow-text').textContent;
+
+    fetch(`/user/${userId}/follow`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const textSpan = button.querySelector('.follow-text');
+            if (data.action === 'followed') {
+                textSpan.textContent = 'Following';
+                button.classList.add('following');
+            } else {
+                textSpan.textContent = 'Follow';
+                button.classList.remove('following');
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        button.querySelector('.follow-text').textContent = originalText;
+    });
+    {% else %}
+    window.location.href = '{{ url_for("main.login") }}';
+    {% endif %}
+}
+</script>
+
+<style>
+.followers-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.page-header {
+    margin-bottom: 40px;
+}
+
+.header-content {
+    margin-bottom: 20px;
+}
+
+.back-link {
+    display: inline-block;
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+    margin-bottom: 15px;
+    transition: color 0.3s ease;
+}
+
+.back-link:hover {
+    color: #764ba2;
+}
+
+.page-header h1 {
+    font-size: 2.5em;
+    margin: 0 0 10px 0;
+    color: #1f2937;
+}
+
+.subtitle {
+    color: #6b7280;
+    font-size: 1.1em;
+    margin: 0;
+}
+
+.view-toggle {
+    display: flex;
+    gap: 10px;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.toggle-btn {
+    padding: 12px 24px;
+    background: none;
+    border: none;
+    color: #6b7280;
+    text-decoration: none;
+    font-weight: 600;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.toggle-btn:hover {
+    color: #667eea;
+}
+
+.toggle-btn.active {
+    color: #667eea;
+    border-bottom-color: #667eea;
+}
+
+.users-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.user-card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    transition: all 0.3s ease;
+}
+
+.user-card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+}
+
+.user-card-left {
+    display: flex;
+    gap: 20px;
+    flex: 1;
+    min-width: 0;
+}
+
+.user-avatar-link {
+    text-decoration: none;
+}
+
+.user-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2em;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.user-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.user-name {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.3em;
+    font-weight: 600;
+    color: #1f2937;
+    text-decoration: none;
+    margin-bottom: 5px;
+}
+
+.user-name:hover {
+    color: #667eea;
+}
+
+.verified-badge {
+    background: #10b981;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 8px;
+    font-size: 0.6em;
+}
+
+.user-username {
+    color: #6b7280;
+    font-size: 0.95em;
+    margin-bottom: 8px;
+}
+
+.user-bio {
+    color: #4b5563;
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+.user-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.meta-tag {
+    background: #f3f4f6;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.85em;
+    color: #4b5563;
+}
+
+.user-card-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    flex-shrink: 0;
+}
+
+.user-stats {
+    display: flex;
+    gap: 20px;
+    padding: 15px;
+    background: #f9fafb;
+    border-radius: 8px;
+}
+
+.stat {
+    text-align: center;
+}
+
+.stat-value {
+    display: block;
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #667eea;
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.75em;
+    color: #6b7280;
+}
+
+.btn-follow {
+    padding: 10px 30px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.btn-follow:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-follow.following {
+    background: #e5e7eb;
+    color: #4b5563;
+}
+
+.btn-follow.following:hover {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.you-badge {
+    padding: 10px 20px;
+    background: #fef3c7;
+    color: #92400e;
+    border-radius: 8px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 40px;
+}
+
+.pagination-btn {
+    padding: 10px 20px;
+    background: white;
+    color: #667eea;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.pagination-btn:hover {
+    background: #667eea;
+    color: white;
+}
+
+.pagination-numbers {
+    display: flex;
+    gap: 5px;
+}
+
+.pagination-number {
+    padding: 10px 15px;
+    background: white;
+    color: #4b5563;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.pagination-number:hover {
+    background: #f3f4f6;
+}
+
+.pagination-number.active {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    font-weight: 600;
+}
+
+.pagination-dots {
+    padding: 10px 5px;
+    color: #9ca3af;
+}
+
+.no-users {
+    text-align: center;
+    padding: 80px 20px;
+    background: white;
+    border-radius: 12px;
+}
+
+.empty-icon {
+    font-size: 5em;
+    margin-bottom: 20px;
+}
+
+.no-users h2 {
+    color: #1f2937;
+    margin-bottom: 15px;
+}
+
+.no-users p {
+    color: #6b7280;
+    font-size: 1.1em;
+    line-height: 1.6;
+    margin-bottom: 30px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.btn {
+    display: inline-block;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+@media (max-width: 768px) {
+    .user-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .user-card-left {
+        width: 100%;
+    }
+
+    .user-card-right {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .user-stats {
+        flex: 1;
+    }
+
+    .view-toggle {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 640px) {
+    .user-card-left {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .user-meta {
+        justify-content: center;
+    }
+
+    .user-stats {
+        width: 100%;
+        justify-content: space-around;
+    }
+
+    .pagination {
+        flex-wrap: wrap;
+    }
+}
+</style>
+{% endblock %}

@@ -1,0 +1,705 @@
+{% extends "base.html" %}
+
+{% block title %}Leaderboard - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="leaderboard-page">
+    <div class="page-header">
+        <h1>🏆 Leaderboard</h1>
+        <p class="subtitle">Top contributors in the Teaching Resources Hub community</p>
+    </div>
+
+    <!-- Leaderboard Tabs -->
+    <div class="leaderboard-tabs">
+        <button class="tab-btn {% if tab == 'reputation' %}active{% endif %}"
+                onclick="window.location.href='{{ url_for('main.leaderboard', tab='reputation') }}'">
+            🌟 Reputation
+        </button>
+        <button class="tab-btn {% if tab == 'reviews' %}active{% endif %}"
+                onclick="window.location.href='{{ url_for('main.leaderboard', tab='reviews') }}'">
+            📝 Reviews
+        </button>
+        <button class="tab-btn {% if tab == 'submissions' %}active{% endif %}"
+                onclick="window.location.href='{{ url_for('main.leaderboard', tab='submissions') }}'">
+            📤 Submissions
+        </button>
+    </div>
+
+    <!-- Tab Description -->
+    <div class="tab-description">
+        {% if tab == 'reputation' %}
+            <p>Top teachers ranked by their total reputation score earned through reviews, submissions, and helpful votes.</p>
+        {% elif tab == 'reviews' %}
+            <p>Most active reviewers helping the community discover great educational resources.</p>
+        {% elif tab == 'submissions' %}
+            <p>Teachers who have contributed the most approved resources to the platform.</p>
+        {% endif %}
+    </div>
+
+    <!-- Top 3 Podium -->
+    {% if leaders[:3] %}
+    <div class="podium-section">
+        {% if leaders|length >= 2 %}
+        <!-- 2nd Place -->
+        <div class="podium-card second-place">
+            <div class="medal">🥈</div>
+            <a href="{{ url_for('main.view_profile', username=leaders[1].username) }}" class="podium-avatar">
+                {{ leaders[1].username[0].upper() }}
+            </a>
+            <div class="podium-rank">#2</div>
+            <a href="{{ url_for('main.view_profile', username=leaders[1].username) }}" class="podium-name">
+                {{ leaders[1].display_name or leaders[1].username }}
+                {% if leaders[1].is_verified_teacher %}
+                    <span class="verified-mini">✓</span>
+                {% endif %}
+            </a>
+            <div class="podium-score">
+                {% if tab == 'reputation' %}
+                    {{ leaders[1].reputation_score }} points
+                {% elif tab == 'reviews' %}
+                    {{ leaders[1].total_reviews }} reviews
+                {% elif tab == 'submissions' %}
+                    {{ leaders[1].approved_submissions }} submissions
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if leaders|length >= 1 %}
+        <!-- 1st Place -->
+        <div class="podium-card first-place">
+            <div class="medal">🥇</div>
+            <a href="{{ url_for('main.view_profile', username=leaders[0].username) }}" class="podium-avatar champion">
+                {{ leaders[0].username[0].upper() }}
+            </a>
+            <div class="podium-rank">#1</div>
+            <a href="{{ url_for('main.view_profile', username=leaders[0].username) }}" class="podium-name">
+                {{ leaders[0].display_name or leaders[0].username }}
+                {% if leaders[0].is_verified_teacher %}
+                    <span class="verified-mini">✓</span>
+                {% endif %}
+            </a>
+            <div class="podium-score">
+                {% if tab == 'reputation' %}
+                    {{ leaders[0].reputation_score }} points
+                {% elif tab == 'reviews' %}
+                    {{ leaders[0].total_reviews }} reviews
+                {% elif tab == 'submissions' %}
+                    {{ leaders[0].approved_submissions }} submissions
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if leaders|length >= 3 %}
+        <!-- 3rd Place -->
+        <div class="podium-card third-place">
+            <div class="medal">🥉</div>
+            <a href="{{ url_for('main.view_profile', username=leaders[2].username) }}" class="podium-avatar">
+                {{ leaders[2].username[0].upper() }}
+            </a>
+            <div class="podium-rank">#3</div>
+            <a href="{{ url_for('main.view_profile', username=leaders[2].username) }}" class="podium-name">
+                {{ leaders[2].display_name or leaders[2].username }}
+                {% if leaders[2].is_verified_teacher %}
+                    <span class="verified-mini">✓</span>
+                {% endif %}
+            </a>
+            <div class="podium-score">
+                {% if tab == 'reputation' %}
+                    {{ leaders[2].reputation_score }} points
+                {% elif tab == 'reviews' %}
+                    {{ leaders[2].total_reviews }} reviews
+                {% elif tab == 'submissions' %}
+                    {{ leaders[2].approved_submissions }} submissions
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Current User Position (if on leaderboard) -->
+    {% if current_user.is_authenticated and current_user_position and current_user_position > 3 %}
+    <div class="your-position">
+        <div class="position-header">
+            <span class="position-icon">📍</span>
+            <strong>Your Position</strong>
+        </div>
+        <div class="position-content">
+            <span class="position-rank">#{{{ current_user_position }}}</span>
+            <span class="position-score">
+                {% if tab == 'reputation' %}
+                    {{ current_user.reputation_score }} points
+                {% elif tab == 'reviews' %}
+                    {{ current_user.total_reviews }} reviews
+                {% elif tab == 'submissions' %}
+                    {{ current_user.approved_submissions }} submissions
+                {% endif %}
+            </span>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Full Leaderboard List -->
+    <div class="leaderboard-list">
+        <h2>Full Leaderboard (Top 100)</h2>
+
+        {% if leaders[3:] %}
+            <div class="leaders-table">
+                {% for leader in leaders[3:] %}
+                <div class="leader-row {% if current_user.is_authenticated and current_user.id == leader.id %}current-user{% endif %}">
+                    <div class="leader-rank">
+                        <span class="rank-number">{{ loop.index + 3 }}</span>
+                    </div>
+
+                    <a href="{{ url_for('main.view_profile', username=leader.username) }}" class="leader-avatar">
+                        {{ leader.username[0].upper() }}
+                    </a>
+
+                    <div class="leader-info">
+                        <a href="{{ url_for('main.view_profile', username=leader.username) }}" class="leader-name">
+                            {{ leader.display_name or leader.username }}
+                            {% if leader.is_verified_teacher %}
+                                <span class="verified-badge">✓</span>
+                            {% endif %}
+                            {% if current_user.is_authenticated and current_user.id == leader.id %}
+                                <span class="you-indicator">(You)</span>
+                            {% endif %}
+                        </a>
+
+                        <div class="leader-meta">
+                            {% if leader.grade_level %}
+                                <span class="meta-item">📚 {{ leader.grade_level }}</span>
+                            {% endif %}
+                            {% if leader.subject %}
+                                <span class="meta-item">📖 {{ leader.subject }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="leader-stats">
+                        <div class="stat-primary">
+                            {% if tab == 'reputation' %}
+                                <span class="stat-value">{{ leader.reputation_score }}</span>
+                                <span class="stat-label">points</span>
+                            {% elif tab == 'reviews' %}
+                                <span class="stat-value">{{ leader.total_reviews }}</span>
+                                <span class="stat-label">reviews</span>
+                            {% elif tab == 'submissions' %}
+                                <span class="stat-value">{{ leader.approved_submissions }}</span>
+                                <span class="stat-label">submissions</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="stat-secondary">
+                            {% if tab != 'reputation' %}
+                                <span class="secondary-stat">{{ leader.reputation_score }} rep</span>
+                            {% endif %}
+                            {% if tab != 'reviews' %}
+                                <span class="secondary-stat">{{ leader.total_reviews }} reviews</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="leader-actions">
+                        {% if current_user.is_authenticated and current_user.id != leader.id %}
+                            <button class="btn-follow-small {% if leader.is_following %}following{% endif %}"
+                                    data-user-id="{{ leader.id }}"
+                                    onclick="toggleFollow({{ leader.id }})">
+                                {% if leader.is_following %}Following{% else %}Follow{% endif %}
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    {% if not leaders or leaders|length == 0 %}
+    <div class="no-leaders">
+        <div class="empty-icon">📊</div>
+        <h2>No data yet</h2>
+        <p>Be the first to contribute and earn your place on the leaderboard!</p>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+function toggleFollow(userId) {
+    {% if current_user.is_authenticated %}
+    const button = document.querySelector(`button[data-user-id="${userId}"]`);
+    const originalText = button.textContent;
+
+    fetch(`/user/${userId}/follow`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            if (data.action === 'followed') {
+                button.textContent = 'Following';
+                button.classList.add('following');
+            } else {
+                button.textContent = 'Follow';
+                button.classList.remove('following');
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        button.textContent = originalText;
+    });
+    {% else %}
+    window.location.href = '{{ url_for("main.login") }}';
+    {% endif %}
+}
+</script>
+
+<style>
+.leaderboard-page {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.page-header h1 {
+    font-size: 3em;
+    margin: 0 0 10px 0;
+    color: #1f2937;
+}
+
+.subtitle {
+    color: #6b7280;
+    font-size: 1.1em;
+    margin: 0;
+}
+
+.leaderboard-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.tab-btn {
+    padding: 12px 30px;
+    background: none;
+    border: none;
+    color: #6b7280;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.tab-btn:hover {
+    color: #667eea;
+}
+
+.tab-btn.active {
+    color: #667eea;
+    border-bottom-color: #667eea;
+}
+
+.tab-description {
+    text-align: center;
+    color: #6b7280;
+    margin-bottom: 40px;
+    font-size: 1.05em;
+}
+
+/* Podium Section */
+.podium-section {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 40px;
+    align-items: end;
+}
+
+.podium-card {
+    background: white;
+    border-radius: 12px;
+    padding: 30px 20px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    text-align: center;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.podium-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+
+.first-place {
+    order: 2;
+    transform: scale(1.1);
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    border: 3px solid #fbbf24;
+}
+
+.second-place {
+    order: 1;
+    background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+    border: 3px solid #9ca3af;
+}
+
+.third-place {
+    order: 3;
+    background: linear-gradient(135deg, #fed7aa, #fdba74);
+    border: 3px solid #f97316;
+}
+
+.medal {
+    font-size: 3em;
+    margin-bottom: 15px;
+}
+
+.podium-avatar {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5em;
+    font-weight: bold;
+    margin: 0 auto 15px;
+    border: 4px solid white;
+    text-decoration: none;
+}
+
+.podium-avatar.champion {
+    width: 110px;
+    height: 110px;
+    font-size: 3em;
+}
+
+.podium-rank {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #1f2937;
+    margin-bottom: 10px;
+}
+
+.podium-name {
+    display: block;
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 10px;
+    text-decoration: none;
+}
+
+.podium-name:hover {
+    color: #667eea;
+}
+
+.verified-mini {
+    background: #10b981;
+    color: white;
+    padding: 2px 5px;
+    border-radius: 6px;
+    font-size: 0.6em;
+    margin-left: 5px;
+}
+
+.podium-score {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #667eea;
+}
+
+/* Your Position */
+.your-position {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border-radius: 12px;
+    padding: 20px 30px;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.position-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.1em;
+}
+
+.position-icon {
+    font-size: 1.5em;
+}
+
+.position-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.position-rank {
+    font-size: 2em;
+    font-weight: bold;
+}
+
+.position-score {
+    font-size: 1.2em;
+}
+
+/* Leaderboard List */
+.leaderboard-list {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.leaderboard-list h2 {
+    margin: 0 0 25px 0;
+    color: #1f2937;
+}
+
+.leaders-table {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.leader-row {
+    display: grid;
+    grid-template-columns: 60px 60px 1fr auto auto;
+    gap: 20px;
+    align-items: center;
+    padding: 15px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.leader-row:hover {
+    background: #f9fafb;
+}
+
+.leader-row.current-user {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+    border: 2px solid #667eea;
+}
+
+.leader-rank {
+    text-align: center;
+}
+
+.rank-number {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #6b7280;
+}
+
+.leader-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.leader-info {
+    min-width: 0;
+}
+
+.leader-name {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #1f2937;
+    text-decoration: none;
+}
+
+.leader-name:hover {
+    color: #667eea;
+}
+
+.verified-badge {
+    background: #10b981;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 8px;
+    font-size: 0.7em;
+}
+
+.you-indicator {
+    color: #667eea;
+    font-weight: bold;
+}
+
+.leader-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 5px;
+}
+
+.meta-item {
+    background: #f3f4f6;
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-size: 0.8em;
+    color: #4b5563;
+}
+
+.leader-stats {
+    text-align: right;
+}
+
+.stat-primary {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.stat-value {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #667eea;
+}
+
+.stat-label {
+    font-size: 0.8em;
+    color: #6b7280;
+}
+
+.stat-secondary {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-top: 5px;
+}
+
+.secondary-stat {
+    font-size: 0.8em;
+    color: #9ca3af;
+}
+
+.leader-actions {
+    min-width: 100px;
+}
+
+.btn-follow-small {
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-follow-small:hover {
+    transform: scale(1.05);
+}
+
+.btn-follow-small.following {
+    background: #e5e7eb;
+    color: #4b5563;
+}
+
+.btn-follow-small.following:hover {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.no-leaders {
+    text-align: center;
+    padding: 80px 20px;
+    background: white;
+    border-radius: 12px;
+}
+
+.empty-icon {
+    font-size: 5em;
+    margin-bottom: 20px;
+}
+
+.no-leaders h2 {
+    color: #1f2937;
+    margin-bottom: 15px;
+}
+
+.no-leaders p {
+    color: #6b7280;
+    font-size: 1.1em;
+}
+
+@media (max-width: 968px) {
+    .podium-section {
+        grid-template-columns: 1fr;
+    }
+
+    .first-place, .second-place, .third-place {
+        order: 0;
+        transform: scale(1);
+    }
+
+    .leader-row {
+        grid-template-columns: 40px 50px 1fr;
+        grid-template-areas:
+            "rank avatar name"
+            "stats stats stats"
+            "actions actions actions";
+        gap: 10px;
+    }
+
+    .leader-rank { grid-area: rank; }
+    .leader-avatar { grid-area: avatar; width: 50px; height: 50px; }
+    .leader-info { grid-area: name; }
+    .leader-stats { grid-area: stats; text-align: left; }
+    .leader-actions { grid-area: actions; min-width: 0; }
+
+    .btn-follow-small {
+        width: 100%;
+    }
+}
+
+@media (max-width: 640px) {
+    .leaderboard-tabs {
+        flex-wrap: wrap;
+    }
+
+    .tab-btn {
+        flex: 1;
+        min-width: 150px;
+    }
+
+    .your-position {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+}
+</style>
+{% endblock %}

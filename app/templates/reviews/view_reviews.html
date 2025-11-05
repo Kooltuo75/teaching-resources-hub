@@ -1,0 +1,466 @@
+{% extends "base.html" %}
+
+{% block title %}Reviews for {{ resource_name }} - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="reviews-page">
+    <div class="reviews-header">
+        <h1>📝 Reviews for {{ resource_name }}</h1>
+
+        {% if current_user.is_authenticated %}
+        <a href="{{ url_for('main.write_review', resource_name=resource_name) }}" class="btn btn-primary">
+            ✍️ Write a Review
+        </a>
+        {% else %}
+        <a href="{{ url_for('main.login') }}" class="btn btn-primary">
+            Login to Write a Review
+        </a>
+        {% endif %}
+    </div>
+
+    <!-- Rating Summary -->
+    <div class="rating-summary">
+        <div class="rating-overview">
+            <div class="avg-rating">
+                <span class="rating-number">{{ avg_rating }}</span>
+                <div class="stars">
+                    {% for i in range(1, 6) %}
+                        {% if i <= avg_rating %}
+                            <span class="star filled">★</span>
+                        {% elif i - 0.5 <= avg_rating %}
+                            <span class="star half">★</span>
+                        {% else %}
+                            <span class="star">☆</span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <p class="review-count">{{ total_reviews }} review{{ 's' if total_reviews != 1 else '' }}</p>
+            </div>
+
+            <div class="rating-distribution">
+                {% for rating in [5, 4, 3, 2, 1] %}
+                <div class="rating-bar">
+                    <span class="rating-label">{{ rating }} ★</span>
+                    <div class="bar-container">
+                        {% set percentage = (rating_distribution[rating] / total_reviews * 100) if total_reviews > 0 else 0 %}
+                        <div class="bar-fill" style="width: {{ percentage }}%"></div>
+                    </div>
+                    <span class="rating-count">{{ rating_distribution[rating] }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Reviews List -->
+    <div class="reviews-list">
+        <h2>Community Reviews</h2>
+
+        {% if reviews %}
+            {% for review in reviews %}
+            <div class="review-card" data-review-id="{{ review.id }}">
+                <div class="review-header">
+                    <div class="reviewer-info">
+                        <div class="reviewer-avatar">
+                            {{ review.author.username[0].upper() }}
+                        </div>
+                        <div class="reviewer-details">
+                            <a href="{{ url_for('main.view_profile', username=review.author.username) }}" class="reviewer-name">
+                                {{ review.author.display_name or review.author.username }}
+                            </a>
+                            {% if review.author.is_verified_teacher %}
+                                <span class="badge verified">✓ Verified Teacher</span>
+                            {% endif %}
+                            <div class="review-meta">
+                                <span class="review-date">{{ review.created_at.strftime('%B %d, %Y') }}</span>
+                                {% if review.updated_at and review.updated_at != review.created_at %}
+                                    <span class="review-edited">(edited)</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="review-rating">
+                        {% for i in range(1, 6) %}
+                            <span class="star {% if i <= review.rating %}filled{% endif %}">★</span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                {% if review.title %}
+                <h3 class="review-title">{{ review.title }}</h3>
+                {% endif %}
+
+                <div class="review-content">
+                    <p>{{ review.review_text }}</p>
+                </div>
+
+                {% if review.grade_level_used or review.subject_used or review.time_used %}
+                <div class="review-context">
+                    {% if review.grade_level_used %}
+                        <span class="context-tag">📚 {{ review.grade_level_used }}</span>
+                    {% endif %}
+                    {% if review.subject_used %}
+                        <span class="context-tag">📖 {{ review.subject_used }}</span>
+                    {% endif %}
+                    {% if review.time_used %}
+                        <span class="context-tag">⏰ {{ review.time_used }}</span>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <div class="review-actions">
+                    <button class="btn-helpful {% if review.id in helpful_review_ids %}active{% endif %}"
+                            data-review-id="{{ review.id }}"
+                            onclick="markHelpful({{ review.id }})">
+                        <span class="helpful-icon">👍</span>
+                        <span class="helpful-text">Helpful</span>
+                        <span class="helpful-count">({{ review.helpful_votes }})</span>
+                    </button>
+
+                    {% if current_user.is_authenticated and current_user.id == review.user_id %}
+                        <a href="{{ url_for('main.edit_review', review_id=review.id) }}" class="btn-edit">
+                            ✏️ Edit
+                        </a>
+                        <form method="POST" action="{{ url_for('main.delete_review', review_id=review.id) }}"
+                              style="display: inline;"
+                              onsubmit="return confirm('Are you sure you want to delete this review?');">
+                            <button type="submit" class="btn-delete">🗑️ Delete</button>
+                        </form>
+                    {% elif current_user.is_authenticated %}
+                        <form method="POST" action="{{ url_for('main.report_review', review_id=review.id) }}"
+                              style="display: inline;"
+                              onsubmit="return confirm('Report this review for moderation?');">
+                            <button type="submit" class="btn-report">⚠️ Report</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-reviews">
+                <p>No reviews yet. Be the first to review this resource!</p>
+                {% if current_user.is_authenticated %}
+                <a href="{{ url_for('main.write_review', resource_name=resource_name) }}" class="btn btn-primary">
+                    Write the First Review
+                </a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+function markHelpful(reviewId) {
+    {% if current_user.is_authenticated %}
+    fetch(`/review/${reviewId}/helpful`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const button = document.querySelector(`button[data-review-id="${reviewId}"]`);
+            const countSpan = button.querySelector('.helpful-count');
+            countSpan.textContent = `(${data.helpful_votes})`;
+
+            if (data.action === 'added') {
+                button.classList.add('active');
+            } else {
+                button.classList.remove('active');
+            }
+        }
+    })
+    .catch(error => console.error('Error:', error));
+    {% else %}
+    window.location.href = '{{ url_for("main.login") }}';
+    {% endif %}
+}
+</script>
+
+<style>
+.reviews-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.reviews-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.reviews-header h1 {
+    font-size: 2em;
+    margin: 0;
+}
+
+.rating-summary {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.rating-overview {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 40px;
+}
+
+.avg-rating {
+    text-align: center;
+}
+
+.rating-number {
+    font-size: 4em;
+    font-weight: bold;
+    color: #667eea;
+    display: block;
+}
+
+.stars {
+    font-size: 1.5em;
+    color: #fbbf24;
+    margin: 10px 0;
+}
+
+.star.filled {
+    color: #fbbf24;
+}
+
+.star.half {
+    background: linear-gradient(90deg, #fbbf24 50%, #d1d5db 50%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.review-count {
+    color: #6b7280;
+    margin-top: 5px;
+}
+
+.rating-distribution {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.rating-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.rating-label {
+    width: 50px;
+    font-size: 0.9em;
+    color: #6b7280;
+}
+
+.bar-container {
+    flex: 1;
+    height: 20px;
+    background: #e5e7eb;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    transition: width 0.3s ease;
+}
+
+.rating-count {
+    width: 40px;
+    text-align: right;
+    color: #6b7280;
+    font-size: 0.9em;
+}
+
+.reviews-list h2 {
+    margin-bottom: 20px;
+    color: #1f2937;
+}
+
+.review-card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.reviewer-info {
+    display: flex;
+    gap: 15px;
+}
+
+.reviewer-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.reviewer-name {
+    font-weight: 600;
+    color: #1f2937;
+    text-decoration: none;
+    font-size: 1.1em;
+}
+
+.reviewer-name:hover {
+    color: #667eea;
+}
+
+.badge.verified {
+    display: inline-block;
+    background: #10b981;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75em;
+    margin-left: 8px;
+}
+
+.review-meta {
+    color: #6b7280;
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+
+.review-edited {
+    font-style: italic;
+}
+
+.review-rating {
+    font-size: 1.2em;
+}
+
+.review-rating .star.filled {
+    color: #fbbf24;
+}
+
+.review-title {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    color: #1f2937;
+}
+
+.review-content {
+    line-height: 1.6;
+    color: #374151;
+    margin-bottom: 15px;
+}
+
+.review-context {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.context-tag {
+    background: #f3f4f6;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 0.85em;
+    color: #4b5563;
+}
+
+.review-actions {
+    display: flex;
+    gap: 10px;
+    padding-top: 15px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.btn-helpful {
+    background: #f3f4f6;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.3s ease;
+}
+
+.btn-helpful:hover {
+    background: #e5e7eb;
+}
+
+.btn-helpful.active {
+    background: #667eea;
+    color: white;
+}
+
+.btn-edit, .btn-delete, .btn-report {
+    background: none;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    color: #6b7280;
+    font-size: 0.9em;
+    transition: color 0.3s ease;
+}
+
+.btn-edit:hover {
+    color: #667eea;
+}
+
+.btn-delete:hover {
+    color: #ef4444;
+}
+
+.btn-report:hover {
+    color: #f59e0b;
+}
+
+.no-reviews {
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 12px;
+}
+
+.no-reviews p {
+    color: #6b7280;
+    font-size: 1.1em;
+    margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+    .rating-overview {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    .reviews-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+}
+</style>
+{% endblock %}
