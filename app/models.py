@@ -75,7 +75,11 @@ class User(UserMixin, db.Model):
     # Relationships
     favorites = db.relationship('Favorite', backref='user', lazy='dynamic', cascade='all, delete-orphan')
     reviews = db.relationship('Review', backref='author', lazy='dynamic', cascade='all, delete-orphan')
-    submitted_resources = db.relationship('ResourceSubmission', backref='submitter', lazy='dynamic', cascade='all, delete-orphan')
+    submitted_resources = db.relationship('ResourceSubmission',
+                                         foreign_keys='ResourceSubmission.user_id',
+                                         backref='submitter',
+                                         lazy='dynamic',
+                                         cascade='all, delete-orphan')
 
     # Social relationships
     following = db.relationship(
@@ -92,7 +96,11 @@ class User(UserMixin, db.Model):
         lazy='dynamic',
         cascade='all, delete-orphan'
     )
-    activities = db.relationship('Activity', backref='user', lazy='dynamic', cascade='all, delete-orphan')
+    activities = db.relationship('Activity',
+                                 foreign_keys='Activity.user_id',
+                                 backref='user',
+                                 lazy='dynamic',
+                                 cascade='all, delete-orphan')
 
     def set_password(self, password):
         """Hash and set the user's password."""
