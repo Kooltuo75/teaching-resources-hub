@@ -226,3 +226,15 @@ register_api_routes(bp)
 # Register Google Classroom routes
 from app.google_classroom_routes import register_google_classroom_routes
 register_google_classroom_routes(bp)
+
+# Register review routes
+from app.review_routes import register_review_routes
+register_review_routes(bp)
+
+# Register resource submission routes
+from app.submission_routes import register_submission_routes
+register_submission_routes(bp)
+
+# Register social feature routes
+from app.social_routes import register_social_routes
+register_social_routes(bp)

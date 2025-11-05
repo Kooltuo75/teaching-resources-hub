@@ -207,6 +207,48 @@
             "K-12",
             "planning"
           ]
+        },
+        {
+          "name": "Educreations",
+          "description": "Interactive whiteboard app for creating video lessons and tutorials with voice-over recording",
+          "url": "https://www.educreations.com/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "video"
+          ]
+        },
+        {
+          "name": "Showbie",
+          "description": "Paperless classroom platform for assignments, feedback, and lesson organization",
+          "url": "https://www.showbie.com/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "assignments"
+          ]
+        },
+        {
+          "name": "Planbook.com",
+          "description": "Online lesson planner with standards alignment and sharing capabilities",
+          "url": "https://www.planbook.com/",
+          "tags": [
+            "premium",
+            "K-12",
+            "standards"
+          ]
+        },
+        {
+          "name": "UbD Unit Planning Template",
+          "description": "Understanding by Design framework templates for backward planning",
+          "url": "https://www.authenticeducation.org/",
+          "tags": [
+            "free",
+            "K-12",
+            "UbD"
+          ]
         }
       ]
     },
@@ -384,6 +426,57 @@
             "K-12",
             "museum",
             "primary sources"
+          ]
+        },
+        {
+          "name": "PBS LearningMedia",
+          "description": "Free educational videos, lesson plans, and interactive resources from PBS",
+          "url": "https://www.pbslearningmedia.org/",
+          "tags": [
+            "free",
+            "K-12",
+            "video",
+            "lessons"
+          ]
+        },
+        {
+          "name": "National Geographic Kids",
+          "description": "Educational games, videos, and articles about animals, science, and geography",
+          "url": "https://kids.nationalgeographic.com/",
+          "tags": [
+            "free",
+            "elementary",
+            "middle-school"
+          ]
+        },
+        {
+          "name": "Wonderopolis",
+          "description": "Daily wonders exploring interesting questions across all subject areas",
+          "url": "https://www.wonderopolis.org/",
+          "tags": [
+            "free",
+            "K-8",
+            "inquiry"
+          ]
+        },
+        {
+          "name": "Discovery Education",
+          "description": "Comprehensive digital content and professional development for K-12 educators",
+          "url": "https://www.discoveryeducation.com/",
+          "tags": [
+            "premium",
+            "K-12",
+            "comprehensive"
+          ]
+        },
+        {
+          "name": "ReadWriteThink",
+          "description": "Free literacy resources, lesson plans, and interactive tools from ILA and NCTE",
+          "url": "http://www.readwritethink.org/",
+          "tags": [
+            "free",
+            "K-12",
+            "literacy"
           ]
         }
       ]
@@ -622,6 +715,71 @@
             "K-12",
             "manipulatives"
           ]
+        },
+        {
+          "name": "GeoGebra",
+          "description": "Free interactive math tools for graphing, geometry, 3D, and more",
+          "url": "https://www.geogebra.org/",
+          "tags": [
+            "free",
+            "K-12",
+            "graphing",
+            "geometry"
+          ]
+        },
+        {
+          "name": "Mathigon",
+          "description": "Interactive mathematics courses with hands-on activities and problem solving",
+          "url": "https://mathigon.org/",
+          "tags": [
+            "free",
+            "middle-school",
+            "high-school",
+            "interactive"
+          ]
+        },
+        {
+          "name": "Prodigy Math",
+          "description": "Game-based learning platform aligned with math curricula for grades 1-8",
+          "url": "https://www.prodigygame.com/",
+          "tags": [
+            "free",
+            "premium",
+            "elementary",
+            "middle-school",
+            "game"
+          ]
+        },
+        {
+          "name": "Math Playground",
+          "description": "Math games, logic puzzles, and problem-solving activities for K-6",
+          "url": "https://www.mathplayground.com/",
+          "tags": [
+            "free",
+            "elementary",
+            "games"
+          ]
+        },
+        {
+          "name": "Coolmath Games",
+          "description": "Brain training games and logic puzzles with a focus on math concepts",
+          "url": "https://www.coolmathgames.com/",
+          "tags": [
+            "free",
+            "K-12",
+            "games"
+          ]
+        },
+        {
+          "name": "Wolfram Alpha",
+          "description": "Computational knowledge engine for advanced math, science, and statistics",
+          "url": "https://www.wolframalpha.com/",
+          "tags": [
+            "free",
+            "premium",
+            "high-school",
+            "college"
+          ]
         }
       ]
     },
@@ -849,6 +1007,59 @@
             "college",
             "biology"
           ]
+        },
+        {
+          "name": "Mystery Science",
+          "description": "Hands-on science lessons with videos and activities for K-5",
+          "url": "https://mysteryscience.com/",
+          "tags": [
+            "free",
+            "premium",
+            "elementary",
+            "hands-on"
+          ]
+        },
+        {
+          "name": "PhET Interactive Simulations",
+          "description": "Free interactive math and science simulations from University of Colorado Boulder",
+          "url": "https://phet.colorado.edu/",
+          "tags": [
+            "free",
+            "K-12",
+            "simulations",
+            "interactive"
+          ]
+        },
+        {
+          "name": "The Biology Corner",
+          "description": "Free worksheets, lessons, and resources for biology teachers",
+          "url": "https://www.biologycorner.com/",
+          "tags": [
+            "free",
+            "high-school",
+            "biology"
+          ]
+        },
+        {
+          "name": "Exploratorium",
+          "description": "Science activities, webcasts, and resources from San Francisco's museum",
+          "url": "https://www.exploratorium.edu/",
+          "tags": [
+            "free",
+            "K-12",
+            "hands-on"
+          ]
+        },
+        {
+          "name": "NASA STEM Engagement",
+          "description": "Free NASA resources, lessons, and activities for science educators",
+          "url": "https://www.nasa.gov/stem",
+          "tags": [
+            "free",
+            "K-12",
+            "STEM",
+            "space"
+          ]
         }
       ]
     },
@@ -1032,6 +1243,59 @@
             "grammar",
             "writing"
           ]
+        },
+        {
+          "name": "Epic! Books for Kids",
+          "description": "Digital library with 40,000+ books for children up to age 12",
+          "url": "https://www.getepic.com/",
+          "tags": [
+            "free",
+            "premium",
+            "elementary",
+            "reading"
+          ]
+        },
+        {
+          "name": "Storyline Online",
+          "description": "Free streaming videos of celebrated actors reading children's books aloud",
+          "url": "https://www.storylineonline.net/",
+          "tags": [
+            "free",
+            "elementary",
+            "read-aloud"
+          ]
+        },
+        {
+          "name": "Poetry Foundation",
+          "description": "Extensive poetry collection with lesson plans and teaching resources",
+          "url": "https://www.poetryfoundation.org/",
+          "tags": [
+            "free",
+            "K-12",
+            "poetry"
+          ]
+        },
+        {
+          "name": "No Red Ink",
+          "description": "Adaptive writing and grammar practice with engaging exercises",
+          "url": "https://www.noredink.com/",
+          "tags": [
+            "free",
+            "premium",
+            "middle-school",
+            "high-school",
+            "grammar"
+          ]
+        },
+        {
+          "name": "Rewordify",
+          "description": "Text simplification tool to help students understand complex reading",
+          "url": "https://rewordify.com/",
+          "tags": [
+            "free",
+            "K-12",
+            "comprehension"
+          ]
         }
       ]
     },
@@ -1179,6 +1443,59 @@
             "high school",
             "history",
             "video"
+          ]
+        },
+        {
+          "name": "iCivics",
+          "description": "Free civics and government games and lessons founded by Justice Sandra Day O'Connor",
+          "url": "https://www.icivics.org/",
+          "tags": [
+            "free",
+            "middle-school",
+            "high-school",
+            "civics"
+          ]
+        },
+        {
+          "name": "National Archives DocsTeach",
+          "description": "Primary source activities and lessons from U.S. National Archives",
+          "url": "https://www.docsteach.org/",
+          "tags": [
+            "free",
+            "K-12",
+            "primary-sources"
+          ]
+        },
+        {
+          "name": "History.com",
+          "description": "Videos, articles, and resources covering world and American history",
+          "url": "https://www.history.com/",
+          "tags": [
+            "free",
+            "K-12",
+            "history"
+          ]
+        },
+        {
+          "name": "Gilder Lehrman Institute",
+          "description": "American history resources, primary sources, and professional development",
+          "url": "https://www.gilderlehrman.org/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "American-history"
+          ]
+        },
+        {
+          "name": "Facing History and Ourselves",
+          "description": "Resources examining racism, prejudice, and antisemitism through history",
+          "url": "https://www.facinghistory.org/",
+          "tags": [
+            "free",
+            "middle-school",
+            "high-school",
+            "social-justice"
           ]
         }
       ]
@@ -1409,6 +1726,50 @@
             "K-12",
             "interactive"
           ]
+        },
+        {
+          "name": "Edulastic",
+          "description": "Technology-enhanced assessment platform with standards-aligned items",
+          "url": "https://edulastic.com/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "assessments"
+          ]
+        },
+        {
+          "name": "Gradescope",
+          "description": "AI-assisted grading for paper-based and online assessments",
+          "url": "https://www.gradescope.com/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "grading"
+          ]
+        },
+        {
+          "name": "Zipgrade",
+          "description": "Mobile scanning app for quick grading of paper assessments",
+          "url": "https://www.zipgrade.com/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "mobile"
+          ]
+        },
+        {
+          "name": "Quick Key",
+          "description": "Mobile grading app for multiple-choice assessments using your phone camera",
+          "url": "https://quickkeyapp.com/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "mobile"
+          ]
         }
       ]
     },
@@ -1539,6 +1900,36 @@
             "college",
             "LMS",
             "enterprise"
+          ]
+        },
+        {
+          "name": "Edmodo",
+          "description": "Free learning management system designed specifically for K-12 schools",
+          "url": "https://www.edmodo.com/",
+          "tags": [
+            "free",
+            "K-12",
+            "LMS"
+          ]
+        },
+        {
+          "name": "Brightspace",
+          "description": "Comprehensive LMS from D2L with personalized learning features",
+          "url": "https://www.d2l.com/",
+          "tags": [
+            "premium",
+            "K-12",
+            "LMS"
+          ]
+        },
+        {
+          "name": "Blackbaud",
+          "description": "Learning management and school management solution for K-12",
+          "url": "https://www.blackbaud.com/",
+          "tags": [
+            "premium",
+            "K-12",
+            "LMS"
           ]
         }
       ]
@@ -1682,6 +2073,50 @@
             "K-12",
             "management",
             "tools"
+          ]
+        },
+        {
+          "name": "ClassDojo",
+          "description": "Classroom management and parent communication platform with behavior tracking",
+          "url": "https://www.classdojo.com/",
+          "tags": [
+            "free",
+            "K-8",
+            "behavior",
+            "communication"
+          ]
+        },
+        {
+          "name": "Classcraft",
+          "description": "Gamified classroom management system with role-playing game elements",
+          "url": "https://www.classcraft.com/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "gamification"
+          ]
+        },
+        {
+          "name": "Class Charts",
+          "description": "Seating plans, behavior tracking, and analytics for classroom management",
+          "url": "https://www.classcharts.com/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "seating"
+          ]
+        },
+        {
+          "name": "Seesaw",
+          "description": "Student portfolio and classroom communication platform for K-12",
+          "url": "https://web.seesaw.me/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "portfolios"
           ]
         }
       ]
@@ -1843,6 +2278,60 @@
             "games",
             "review"
           ]
+        },
+        {
+          "name": "Gimkit",
+          "description": "Game-based learning platform where students compete by answering questions",
+          "url": "https://www.gimkit.com/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "game"
+          ]
+        },
+        {
+          "name": "Blooket",
+          "description": "Interactive review games with multiple game modes and question sets",
+          "url": "https://www.blooket.com/",
+          "tags": [
+            "free",
+            "K-12",
+            "game",
+            "review"
+          ]
+        },
+        {
+          "name": "99Math",
+          "description": "Multiplayer math game for practicing arithmetic skills in real-time",
+          "url": "https://99math.com/",
+          "tags": [
+            "free",
+            "elementary",
+            "middle-school",
+            "math"
+          ]
+        },
+        {
+          "name": "Legends of Learning",
+          "description": "Curriculum-aligned science games for grades 3-8",
+          "url": "https://www.legendsoflearning.com/",
+          "tags": [
+            "free",
+            "premium",
+            "middle-school",
+            "science"
+          ]
+        },
+        {
+          "name": "Breakout EDU",
+          "description": "Escape room style educational games for classroom engagement",
+          "url": "https://www.breakoutedu.com/",
+          "tags": [
+            "premium",
+            "K-12",
+            "problem-solving"
+          ]
         }
       ]
     },
@@ -1989,6 +2478,50 @@
             "accessibility",
             "ebooks"
           ]
+        },
+        {
+          "name": "Understood.org",
+          "description": "Comprehensive resources for learning and thinking differences",
+          "url": "https://www.understood.org/",
+          "tags": [
+            "free",
+            "K-12",
+            "SPED",
+            "learning-differences"
+          ]
+        },
+        {
+          "name": "Learning Ally",
+          "description": "Audiobooks for students with reading challenges like dyslexia",
+          "url": "https://learningally.org/",
+          "tags": [
+            "premium",
+            "K-12",
+            "audiobooks",
+            "dyslexia"
+          ]
+        },
+        {
+          "name": "Bookshare",
+          "description": "Accessible ebooks for students with print disabilities",
+          "url": "https://www.bookshare.org/",
+          "tags": [
+            "free",
+            "K-12",
+            "accessible",
+            "ebooks"
+          ]
+        },
+        {
+          "name": "GoNoodle",
+          "description": "Movement and mindfulness videos for brain breaks and SEL",
+          "url": "https://www.gonoodle.com/",
+          "tags": [
+            "free",
+            "elementary",
+            "movement",
+            "breaks"
+          ]
         }
       ]
     },
@@ -2132,6 +2665,48 @@
             "professional development",
             "technology",
             "standards"
+          ]
+        },
+        {
+          "name": "EdWeb",
+          "description": "Free professional learning webinars and online communities for educators",
+          "url": "https://home.edweb.net/",
+          "tags": [
+            "free",
+            "professional",
+            "webinars"
+          ]
+        },
+        {
+          "name": "Teaching Channel",
+          "description": "Video library of effective teaching practices and strategies",
+          "url": "https://www.teachingchannel.com/",
+          "tags": [
+            "free",
+            "premium",
+            "professional",
+            "video"
+          ]
+        },
+        {
+          "name": "Buck Institute PBL",
+          "description": "Project-based learning professional development and resources",
+          "url": "https://www.pblworks.org/",
+          "tags": [
+            "free",
+            "premium",
+            "professional",
+            "PBL"
+          ]
+        },
+        {
+          "name": "Learning Forward",
+          "description": "Professional learning association with standards and resources",
+          "url": "https://learningforward.org/",
+          "tags": [
+            "free",
+            "premium",
+            "professional"
           ]
         }
       ]
@@ -2290,6 +2865,46 @@
             "media",
             "open source"
           ]
+        },
+        {
+          "name": "Smithsonian Learning Lab",
+          "description": "Digital resources from Smithsonian museums and research centers",
+          "url": "https://learninglab.si.edu/",
+          "tags": [
+            "free",
+            "K-12",
+            "museum"
+          ]
+        },
+        {
+          "name": "Library of Congress Teachers",
+          "description": "Primary sources and lesson plans from the Library of Congress",
+          "url": "https://www.loc.gov/programs/teachers/",
+          "tags": [
+            "free",
+            "K-12",
+            "primary-sources"
+          ]
+        },
+        {
+          "name": "Internet Archive",
+          "description": "Digital library with millions of free books, movies, and audio files",
+          "url": "https://archive.org/",
+          "tags": [
+            "free",
+            "K-12",
+            "digital-library"
+          ]
+        },
+        {
+          "name": "Wikimedia Commons",
+          "description": "Free-use images, sounds, and other media files",
+          "url": "https://commons.wikimedia.org/",
+          "tags": [
+            "free",
+            "K-12",
+            "media"
+          ]
         }
       ]
     },
@@ -2424,6 +3039,36 @@
             "professional development",
             "curriculum",
             "K-12"
+          ]
+        },
+        {
+          "name": "What Works Clearinghouse",
+          "description": "Scientific evidence database on educational programs and practices",
+          "url": "https://ies.ed.gov/ncee/wwc/",
+          "tags": [
+            "free",
+            "research",
+            "evidence-based"
+          ]
+        },
+        {
+          "name": "EdSurge",
+          "description": "Education technology news, research, and product information",
+          "url": "https://www.edsurge.com/",
+          "tags": [
+            "free",
+            "edtech",
+            "news"
+          ]
+        },
+        {
+          "name": "Achieve the Core",
+          "description": "Free Common Core resources, lessons, and professional learning",
+          "url": "https://achievethecore.org/",
+          "tags": [
+            "free",
+            "common-core",
+            "standards"
           ]
         }
       ]
@@ -2571,6 +3216,49 @@
             "portfolio",
             "gallery"
           ]
+        },
+        {
+          "name": "Artsonia",
+          "description": "Student art museum and fundraising platform for schools",
+          "url": "https://www.artsonia.com/",
+          "tags": [
+            "free",
+            "K-12",
+            "art",
+            "portfolio"
+          ]
+        },
+        {
+          "name": "Getty Museum Education",
+          "description": "Art lessons, images, and resources from the Getty Museum",
+          "url": "https://www.getty.edu/education/",
+          "tags": [
+            "free",
+            "K-12",
+            "art",
+            "museum"
+          ]
+        },
+        {
+          "name": "Chrome Music Lab",
+          "description": "Free interactive music experiments and learning tools",
+          "url": "https://musiclab.chromeexperiments.com/",
+          "tags": [
+            "free",
+            "K-12",
+            "music",
+            "interactive"
+          ]
+        },
+        {
+          "name": "MusicTheory.net",
+          "description": "Free music theory lessons, exercises, and tools",
+          "url": "https://www.musictheory.net/",
+          "tags": [
+            "free",
+            "K-12",
+            "music-theory"
+          ]
         }
       ]
     },
@@ -2703,6 +3391,48 @@
             "free",
             "elementary",
             "middle school",
+            "health"
+          ]
+        },
+        {
+          "name": "SHAPE America",
+          "description": "Professional organization for health and physical education teachers",
+          "url": "https://www.shapeamerica.org/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "PE"
+          ]
+        },
+        {
+          "name": "PE Central",
+          "description": "Free lesson plans and activities for physical education",
+          "url": "https://www.pecentral.org/",
+          "tags": [
+            "free",
+            "K-12",
+            "PE",
+            "lessons"
+          ]
+        },
+        {
+          "name": "Move to Learn",
+          "description": "Brain-based movement activities for the classroom",
+          "url": "https://movetolearn.org/",
+          "tags": [
+            "free",
+            "K-8",
+            "movement"
+          ]
+        },
+        {
+          "name": "BAM! Body and Mind",
+          "description": "CDC health and wellness resources for kids and teens",
+          "url": "https://www.cdc.gov/healthyschools/bam/",
+          "tags": [
+            "free",
+            "middle-school",
             "health"
           ]
         }
@@ -2851,6 +3581,48 @@
             "languages",
             "music",
             "videos"
+          ]
+        },
+        {
+          "name": "Conjuguemos",
+          "description": "Free grammar practice activities for Spanish, French, German, and more",
+          "url": "https://conjuguemos.com/",
+          "tags": [
+            "free",
+            "K-12",
+            "language",
+            "grammar"
+          ]
+        },
+        {
+          "name": "Lyricstraining",
+          "description": "Learn languages through music videos with fill-in-the-blank lyrics",
+          "url": "https://lyricstraining.com/",
+          "tags": [
+            "free",
+            "middle-school",
+            "high-school",
+            "music"
+          ]
+        },
+        {
+          "name": "BBC Languages",
+          "description": "Free courses and resources for learning multiple languages",
+          "url": "https://www.bbc.co.uk/languages",
+          "tags": [
+            "free",
+            "K-12",
+            "language"
+          ]
+        },
+        {
+          "name": "SpanishDict",
+          "description": "Free Spanish-English dictionary with conjugations and pronunciation",
+          "url": "https://www.spanishdict.com/",
+          "tags": [
+            "free",
+            "K-12",
+            "Spanish"
           ]
         }
       ]
@@ -3020,6 +3792,48 @@
             "college",
             "coding"
           ]
+        },
+        {
+          "name": "Tynker",
+          "description": "Visual programming platform for K-12 with courses and activities",
+          "url": "https://www.tynker.com/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "coding"
+          ]
+        },
+        {
+          "name": "Python.org for Educators",
+          "description": "Official Python resources and curriculum for teaching programming",
+          "url": "https://www.python.org/community/sigs/current/edu-sig/",
+          "tags": [
+            "free",
+            "high-school",
+            "python"
+          ]
+        },
+        {
+          "name": "CS Unplugged",
+          "description": "Teaching computer science without computers through games and puzzles",
+          "url": "https://csunplugged.org/",
+          "tags": [
+            "free",
+            "K-12",
+            "unplugged"
+          ]
+        },
+        {
+          "name": "Replit",
+          "description": "Browser-based IDE for collaborative coding in multiple languages",
+          "url": "https://replit.com/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "IDE"
+          ]
         }
       ]
     },
@@ -3159,6 +3973,49 @@
             "career",
             "exploration"
           ]
+        },
+        {
+          "name": "Naviance",
+          "description": "College and career readiness platform for middle and high school",
+          "url": "https://www.powerschool.com/solutions/naviance/",
+          "tags": [
+            "premium",
+            "middle-school",
+            "high-school",
+            "college"
+          ]
+        },
+        {
+          "name": "College Board Big Future",
+          "description": "Free college search, planning, and scholarship tools",
+          "url": "https://bigfuture.collegeboard.org/",
+          "tags": [
+            "free",
+            "high-school",
+            "college",
+            "SAT"
+          ]
+        },
+        {
+          "name": "CareerOneStop",
+          "description": "Career exploration and job search resources from U.S. Department of Labor",
+          "url": "https://www.careeronestop.org/",
+          "tags": [
+            "free",
+            "high-school",
+            "career"
+          ]
+        },
+        {
+          "name": "My Next Move",
+          "description": "Interactive career exploration tool with skills and interests assessment",
+          "url": "https://www.mynextmove.org/",
+          "tags": [
+            "free",
+            "middle-school",
+            "high-school",
+            "career"
+          ]
         }
       ]
     },
@@ -3289,6 +4146,48 @@
             "pre-k",
             "K-2",
             "comprehensive"
+          ]
+        },
+        {
+          "name": "Starfall",
+          "description": "Phonics and reading activities for pre-K through 3rd grade",
+          "url": "https://www.starfall.com/",
+          "tags": [
+            "free",
+            "premium",
+            "pre-K",
+            "elementary",
+            "phonics"
+          ]
+        },
+        {
+          "name": "ABCmouse",
+          "description": "Comprehensive early learning curriculum for ages 2-8",
+          "url": "https://www.abcmouse.com/",
+          "tags": [
+            "premium",
+            "pre-K",
+            "elementary"
+          ]
+        },
+        {
+          "name": "Scholastic Learn at Home",
+          "description": "Free daily projects for pre-K through grade 9",
+          "url": "https://classroommagazines.scholastic.com/support/learnathome.html",
+          "tags": [
+            "free",
+            "pre-K",
+            "elementary"
+          ]
+        },
+        {
+          "name": "PBS Kids",
+          "description": "Educational games and videos for preschool and elementary students",
+          "url": "https://pbskids.org/",
+          "tags": [
+            "free",
+            "pre-K",
+            "elementary"
           ]
         }
       ]
@@ -3429,6 +4328,50 @@
             "K-12",
             "productivity",
             "collaboration"
+          ]
+        },
+        {
+          "name": "Calendly",
+          "description": "Meeting scheduling tool for parent conferences and consultations",
+          "url": "https://calendly.com/",
+          "tags": [
+            "free",
+            "premium",
+            "professional",
+            "scheduling"
+          ]
+        },
+        {
+          "name": "Loom",
+          "description": "Screen recording tool for creating video tutorials and feedback",
+          "url": "https://www.loom.com/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "video"
+          ]
+        },
+        {
+          "name": "Otter.ai",
+          "description": "AI-powered transcription service for meetings and lectures",
+          "url": "https://otter.ai/",
+          "tags": [
+            "free",
+            "premium",
+            "professional",
+            "transcription"
+          ]
+        },
+        {
+          "name": "Trello",
+          "description": "Project management and organization tool with boards and cards",
+          "url": "https://trello.com/",
+          "tags": [
+            "free",
+            "premium",
+            "professional",
+            "organization"
           ]
         }
       ]
@@ -3588,6 +4531,50 @@
             "design",
             "video"
           ]
+        },
+        {
+          "name": "WeVideo",
+          "description": "Cloud-based video editing platform for students and teachers",
+          "url": "https://www.wevideo.com/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "video-editing"
+          ]
+        },
+        {
+          "name": "Adobe Spark",
+          "description": "Create graphics, web pages, and video stories quickly and easily",
+          "url": "https://www.adobe.com/express/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "design"
+          ]
+        },
+        {
+          "name": "Animoto",
+          "description": "Drag-and-drop video maker for creating professional videos",
+          "url": "https://animoto.com/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "video"
+          ]
+        },
+        {
+          "name": "Powtoon",
+          "description": "Animated video and presentation creation tool",
+          "url": "https://www.powtoon.com/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "animation"
+          ]
         }
       ]
     },
@@ -3735,6 +4722,50 @@
             "infographics",
             "design"
           ]
+        },
+        {
+          "name": "Prezi",
+          "description": "Dynamic presentation tool with zooming user interface",
+          "url": "https://prezi.com/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "presentations"
+          ]
+        },
+        {
+          "name": "Beautiful.ai",
+          "description": "AI-powered presentation software with smart templates",
+          "url": "https://www.beautiful.ai/",
+          "tags": [
+            "free",
+            "premium",
+            "professional",
+            "presentations"
+          ]
+        },
+        {
+          "name": "Piktochart",
+          "description": "Infographic and visual content creation tool",
+          "url": "https://piktochart.com/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "infographics"
+          ]
+        },
+        {
+          "name": "Visme",
+          "description": "Design tool for presentations, infographics, and visual content",
+          "url": "https://www.visme.co/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "design"
+          ]
         }
       ]
     },
@@ -3866,6 +4897,37 @@
             "K-12",
             "communication",
             "parents"
+          ]
+        },
+        {
+          "name": "Bloomz",
+          "description": "Parent communication and engagement platform with messaging and updates",
+          "url": "https://www.bloomz.com/",
+          "tags": [
+            "free",
+            "K-12",
+            "communication"
+          ]
+        },
+        {
+          "name": "TalkingPoints",
+          "description": "Multilingual parent communication platform with translation",
+          "url": "https://talkingpts.org/",
+          "tags": [
+            "free",
+            "K-12",
+            "multilingual",
+            "communication"
+          ]
+        },
+        {
+          "name": "ParentSquare",
+          "description": "Unified school-home communication platform with translation",
+          "url": "https://www.parentsquare.com/",
+          "tags": [
+            "premium",
+            "K-12",
+            "communication"
           ]
         }
       ]
@@ -4015,6 +5077,47 @@
             "research",
             "databases"
           ]
+        },
+        {
+          "name": "EBSCO Student Research Center",
+          "description": "Age-appropriate research database for K-12 students",
+          "url": "https://www.ebsco.com/products/research-databases/student-research-center",
+          "tags": [
+            "premium",
+            "K-12",
+            "research"
+          ]
+        },
+        {
+          "name": "Destiny Discover",
+          "description": "Library management system with integrated digital resources",
+          "url": "https://www.follett.com/",
+          "tags": [
+            "premium",
+            "K-12",
+            "library"
+          ]
+        },
+        {
+          "name": "NoodleTools",
+          "description": "Research management platform with citation generation and note-taking",
+          "url": "https://www.noodletools.com/",
+          "tags": [
+            "premium",
+            "middle-school",
+            "high-school",
+            "research"
+          ]
+        },
+        {
+          "name": "Sweet Search",
+          "description": "Search engine for students with vetted, credible websites",
+          "url": "https://sweetsearch.com/",
+          "tags": [
+            "free",
+            "K-12",
+            "search"
+          ]
         }
       ]
     },
@@ -4148,6 +5251,48 @@
             "premium",
             "text-to-speech",
             "accessibility"
+          ]
+        },
+        {
+          "name": "Microsoft Translator",
+          "description": "Real-time text and speech translation in multiple languages",
+          "url": "https://www.microsoft.com/translator/",
+          "tags": [
+            "free",
+            "K-12",
+            "translation"
+          ]
+        },
+        {
+          "name": "Immersive Reader",
+          "description": "Microsoft tool that improves reading comprehension with text-to-speech",
+          "url": "https://www.microsoft.com/en-us/education/products/learning-tools",
+          "tags": [
+            "free",
+            "K-12",
+            "accessibility",
+            "reading"
+          ]
+        },
+        {
+          "name": "NVDA Screen Reader",
+          "description": "Free screen reader for Windows to support blind and vision-impaired students",
+          "url": "https://www.nvaccess.org/",
+          "tags": [
+            "free",
+            "K-12",
+            "accessibility"
+          ]
+        },
+        {
+          "name": "BeeLine Reader",
+          "description": "Reading tool that uses color gradients to improve reading speed and focus",
+          "url": "https://www.beelinereader.com/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "reading"
           ]
         }
       ]
@@ -4297,6 +5442,50 @@
             "STEM",
             "electronics"
           ]
+        },
+        {
+          "name": "Tinkercad",
+          "description": "Free 3D design, electronics, and coding tool from Autodesk",
+          "url": "https://www.tinkercad.com/",
+          "tags": [
+            "free",
+            "K-12",
+            "3D-design",
+            "STEM"
+          ]
+        },
+        {
+          "name": "Instructables",
+          "description": "DIY project tutorials for maker education and hands-on learning",
+          "url": "https://www.instructables.com/",
+          "tags": [
+            "free",
+            "K-12",
+            "maker",
+            "DIY"
+          ]
+        },
+        {
+          "name": "Makey Makey",
+          "description": "Invention kit that turns everyday objects into touchpads",
+          "url": "https://makeymakey.com/",
+          "tags": [
+            "premium",
+            "K-12",
+            "maker",
+            "hardware"
+          ]
+        },
+        {
+          "name": "Sphero Edu",
+          "description": "Programming robots and activities for STEAM learning",
+          "url": "https://edu.sphero.com/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "robotics"
+          ]
         }
       ]
     },
@@ -4443,6 +5632,50 @@
             "emotions",
             "wellness"
           ]
+        },
+        {
+          "name": "Second Step",
+          "description": "Research-based SEL curriculum for PreK-8th grade",
+          "url": "https://www.secondstep.org/",
+          "tags": [
+            "premium",
+            "K-8",
+            "SEL",
+            "curriculum"
+          ]
+        },
+        {
+          "name": "CASEL",
+          "description": "Collaborative for Academic, Social, and Emotional Learning resources",
+          "url": "https://casel.org/",
+          "tags": [
+            "free",
+            "K-12",
+            "SEL",
+            "framework"
+          ]
+        },
+        {
+          "name": "Panorama Education",
+          "description": "SEL assessments and analytics platform for schools",
+          "url": "https://www.panoramaed.com/",
+          "tags": [
+            "premium",
+            "K-12",
+            "SEL",
+            "assessment"
+          ]
+        },
+        {
+          "name": "Calm Classroom",
+          "description": "Mindfulness activities and lessons for students",
+          "url": "https://calmclassroom.com/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "mindfulness"
+          ]
         }
       ]
     },
@@ -4552,6 +5785,50 @@
             "blog",
             "resources",
             "teachers"
+          ]
+        },
+        {
+          "name": "Cult of Pedagogy",
+          "description": "Blog and podcast about teaching strategies and classroom management",
+          "url": "https://www.cultofpedagogy.com/",
+          "tags": [
+            "free",
+            "professional",
+            "podcast",
+            "blog"
+          ]
+        },
+        {
+          "name": "The Teacher's Ultimate Podcast",
+          "description": "Tips and strategies for classroom teachers from Angela Watson",
+          "url": "https://thecornerstoneforteachers.com/truth-for-teachers-podcast/",
+          "tags": [
+            "free",
+            "professional",
+            "podcast"
+          ]
+        },
+        {
+          "name": "Brains On!",
+          "description": "Science podcast for curious kids and adults",
+          "url": "https://www.brainson.org/",
+          "tags": [
+            "free",
+            "elementary",
+            "middle-school",
+            "science",
+            "podcast"
+          ]
+        },
+        {
+          "name": "Edutopia",
+          "description": "Blog with evidence-based teaching strategies from George Lucas Educational Foundation",
+          "url": "https://www.edutopia.org/",
+          "tags": [
+            "free",
+            "K-12",
+            "blog",
+            "strategies"
           ]
         }
       ]
@@ -4702,6 +5979,50 @@
             "K-12",
             "quizzes",
             "games"
+          ]
+        },
+        {
+          "name": "Classtime",
+          "description": "Real-time student response system with gamification elements",
+          "url": "https://www.classtime.com/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "engagement"
+          ]
+        },
+        {
+          "name": "Pear Deck",
+          "description": "Interactive presentation tool with real-time student responses",
+          "url": "https://www.peardeck.com/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "interactive"
+          ]
+        },
+        {
+          "name": "Nearpod Gold",
+          "description": "Interactive lessons with VR field trips and gamification",
+          "url": "https://nearpod.com/",
+          "tags": [
+            "premium",
+            "K-12",
+            "interactive",
+            "VR"
+          ]
+        },
+        {
+          "name": "Formative",
+          "description": "Real-time formative assessment with instant feedback",
+          "url": "https://www.formative.com/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "assessment"
           ]
         }
       ]
@@ -4948,6 +6269,39 @@
             "K-12",
             "homeschool",
             "Charlotte Mason"
+          ]
+        },
+        {
+          "name": "Easy Peasy All-in-One Homeschool",
+          "description": "Free complete curriculum for homeschooling families",
+          "url": "https://allinonehomeschool.com/",
+          "tags": [
+            "free",
+            "K-12",
+            "homeschool",
+            "curriculum"
+          ]
+        },
+        {
+          "name": "Time4Learning",
+          "description": "Online curriculum for PreK-12th grade homeschooling",
+          "url": "https://www.time4learning.com/",
+          "tags": [
+            "premium",
+            "K-12",
+            "homeschool",
+            "curriculum"
+          ]
+        },
+        {
+          "name": "Outschool",
+          "description": "Live online classes taught by independent teachers",
+          "url": "https://outschool.com/",
+          "tags": [
+            "premium",
+            "K-12",
+            "homeschool",
+            "live-classes"
           ]
         }
       ]
@@ -5206,6 +6560,40 @@
             "ESL",
             "listening"
           ]
+        },
+        {
+          "name": "WIDA",
+          "description": "Standards and assessments for English language learners",
+          "url": "https://wida.wisc.edu/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "ELL",
+            "standards"
+          ]
+        },
+        {
+          "name": "Colorin Colorado",
+          "description": "Bilingual site for educators and families of ELLs",
+          "url": "https://www.colorincolorado.org/",
+          "tags": [
+            "free",
+            "K-12",
+            "ELL",
+            "bilingual"
+          ]
+        },
+        {
+          "name": "ESL Library",
+          "description": "Ready-made lesson plans and materials for ESL teachers",
+          "url": "https://esllibrary.com/",
+          "tags": [
+            "premium",
+            "K-12",
+            "ESL",
+            "lessons"
+          ]
         }
       ]
     },
@@ -5427,6 +6815,37 @@
             "K-12",
             "PBL",
             "STEM"
+          ]
+        },
+        {
+          "name": "High Tech High GSE",
+          "description": "Project-based learning resources and professional development",
+          "url": "https://www.hightechhigh.org/",
+          "tags": [
+            "free",
+            "K-12",
+            "PBL",
+            "professional"
+          ]
+        },
+        {
+          "name": "New Tech Network",
+          "description": "Project-based learning model and school transformation support",
+          "url": "https://newtechnetwork.org/",
+          "tags": [
+            "premium",
+            "K-12",
+            "PBL"
+          ]
+        },
+        {
+          "name": "Edutopia PBL Resources",
+          "description": "Collection of project-based learning articles and videos",
+          "url": "https://www.edutopia.org/project-based-learning",
+          "tags": [
+            "free",
+            "K-12",
+            "PBL"
           ]
         }
       ]
@@ -5674,6 +7093,36 @@
             "free",
             "9-12",
             "AP"
+          ]
+        },
+        {
+          "name": "Union Test Prep",
+          "description": "Free study guides and practice tests for standardized exams",
+          "url": "https://uniontestprep.com/",
+          "tags": [
+            "free",
+            "high-school",
+            "test-prep"
+          ]
+        },
+        {
+          "name": "MajorTests",
+          "description": "Free practice tests and study resources for standardized tests",
+          "url": "https://www.majortests.com/",
+          "tags": [
+            "free",
+            "K-12",
+            "test-prep"
+          ]
+        },
+        {
+          "name": "Test Prep Review",
+          "description": "Free practice tests and study guides for various exams",
+          "url": "https://www.testprepreview.com/",
+          "tags": [
+            "free",
+            "high-school",
+            "test-prep"
           ]
         }
       ]
@@ -5928,6 +7377,38 @@
             "admin",
             "professional"
           ]
+        },
+        {
+          "name": "ASCD",
+          "description": "Professional learning resources for school leaders and educators",
+          "url": "https://www.ascd.org/",
+          "tags": [
+            "free",
+            "premium",
+            "professional",
+            "leadership"
+          ]
+        },
+        {
+          "name": "National Association of Elementary School Principals",
+          "description": "Resources and support for elementary school principals",
+          "url": "https://www.naesp.org/",
+          "tags": [
+            "premium",
+            "professional",
+            "leadership"
+          ]
+        },
+        {
+          "name": "EdWeek Leadership",
+          "description": "News and resources for school administrators",
+          "url": "https://www.edweek.org/leadership",
+          "tags": [
+            "free",
+            "premium",
+            "professional",
+            "leadership"
+          ]
         }
       ]
     },
@@ -6115,6 +7596,26 @@
           "url": "https://www.aesoponline.com/",
           "tags": [
             "premium",
+            "K-12",
+            "substitute"
+          ]
+        },
+        {
+          "name": "Substitute Teacher Resources by Education World",
+          "description": "Emergency lesson plans and activities for substitute teachers",
+          "url": "https://www.educationworld.com/a_curr/archives/substitute.shtml",
+          "tags": [
+            "free",
+            "K-12",
+            "substitute"
+          ]
+        },
+        {
+          "name": "SubHub",
+          "description": "Platform connecting substitute teachers with schools",
+          "url": "https://www.subhub.org/",
+          "tags": [
+            "free",
             "K-12",
             "substitute"
           ]
@@ -6340,6 +7841,39 @@
             "college",
             "gifted",
             "STEM"
+          ]
+        },
+        {
+          "name": "Davidson Institute",
+          "description": "Resources and support for profoundly gifted students",
+          "url": "https://www.davidsongifted.org/",
+          "tags": [
+            "free",
+            "K-12",
+            "gifted"
+          ]
+        },
+        {
+          "name": "National Association for Gifted Children",
+          "description": "Professional organization supporting gifted education",
+          "url": "https://www.nagc.org/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "gifted"
+          ]
+        },
+        {
+          "name": "SENG (Supporting Emotional Needs of Gifted)",
+          "description": "Resources for social-emotional needs of gifted students",
+          "url": "https://www.sengifted.org/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "gifted",
+            "SEL"
           ]
         }
       ]
@@ -6587,6 +8121,39 @@
             "K-12",
             "outdoor"
           ]
+        },
+        {
+          "name": "Project Wild",
+          "description": "Environmental education curriculum for K-12 teachers",
+          "url": "https://projectwild.org/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "environment"
+          ]
+        },
+        {
+          "name": "National Wildlife Federation Education",
+          "description": "Environmental education resources and programs",
+          "url": "https://www.nwf.org/Educational-Resources",
+          "tags": [
+            "free",
+            "K-12",
+            "wildlife",
+            "environment"
+          ]
+        },
+        {
+          "name": "Leave No Trace",
+          "description": "Outdoor ethics education for responsible recreation",
+          "url": "https://lnt.org/",
+          "tags": [
+            "free",
+            "K-12",
+            "outdoor",
+            "ethics"
+          ]
         }
       ]
     },
@@ -6824,6 +8391,36 @@
             "financial literacy",
             "video"
           ]
+        },
+        {
+          "name": "EverFi Financial Literacy",
+          "description": "Free digital financial literacy courses for K-12",
+          "url": "https://everfi.com/",
+          "tags": [
+            "free",
+            "K-12",
+            "financial-literacy"
+          ]
+        },
+        {
+          "name": "Council for Economic Education",
+          "description": "Economics and financial literacy resources for teachers",
+          "url": "https://www.councilforeconed.org/",
+          "tags": [
+            "free",
+            "K-12",
+            "economics"
+          ]
+        },
+        {
+          "name": "Biz Kid$",
+          "description": "Financial literacy TV show and curriculum for kids",
+          "url": "https://bizkids.com/",
+          "tags": [
+            "free",
+            "middle-school",
+            "financial-literacy"
+          ]
         }
       ]
     },
@@ -7059,6 +8656,38 @@
             "media literacy",
             "professional"
           ]
+        },
+        {
+          "name": "News Literacy Project",
+          "description": "Resources for teaching news literacy and fact-checking",
+          "url": "https://newslit.org/",
+          "tags": [
+            "free",
+            "middle-school",
+            "high-school",
+            "media-literacy"
+          ]
+        },
+        {
+          "name": "MediaSmarts",
+          "description": "Canadian digital and media literacy resources",
+          "url": "https://mediasmarts.ca/",
+          "tags": [
+            "free",
+            "K-12",
+            "media-literacy"
+          ]
+        },
+        {
+          "name": "Be Internet Awesome",
+          "description": "Google's digital citizenship and safety curriculum",
+          "url": "https://beinternetawesome.withgoogle.com/",
+          "tags": [
+            "free",
+            "elementary",
+            "middle-school",
+            "digital-citizenship"
+          ]
         }
       ]
     },
@@ -7176,6 +8805,47 @@
             "premium",
             "writing",
             "collaboration"
+          ]
+        },
+        {
+          "name": "Grammarly for Education",
+          "description": "AI-powered writing assistant for grammar and style",
+          "url": "https://www.grammarly.com/edu",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "writing"
+          ]
+        },
+        {
+          "name": "Hemingway Editor",
+          "description": "Tool to make writing bold and clear by highlighting complex sentences",
+          "url": "https://hemingwayapp.com/",
+          "tags": [
+            "free",
+            "high-school",
+            "writing"
+          ]
+        },
+        {
+          "name": "Scrivener",
+          "description": "Long-form writing tool for novels, research papers, and scripts",
+          "url": "https://www.literatureandlatte.com/scrivener/overview",
+          "tags": [
+            "premium",
+            "high-school",
+            "writing"
+          ]
+        },
+        {
+          "name": "750 Words",
+          "description": "Daily writing practice platform with tracking and analytics",
+          "url": "https://750words.com/",
+          "tags": [
+            "free",
+            "K-12",
+            "writing"
           ]
         }
       ]
@@ -7298,6 +8968,49 @@
             "high school",
             "college"
           ]
+        },
+        {
+          "name": "CODAP",
+          "description": "Common Online Data Analysis Platform for exploring data",
+          "url": "https://codap.concord.org/",
+          "tags": [
+            "free",
+            "middle-school",
+            "high-school",
+            "data"
+          ]
+        },
+        {
+          "name": "Gapminder",
+          "description": "Interactive data visualization tools for understanding world statistics",
+          "url": "https://www.gapminder.org/",
+          "tags": [
+            "free",
+            "middle-school",
+            "high-school",
+            "data"
+          ]
+        },
+        {
+          "name": "Census Bureau Statistics in Schools",
+          "description": "Educational resources using real census data",
+          "url": "https://www.census.gov/schools",
+          "tags": [
+            "free",
+            "K-12",
+            "data",
+            "statistics"
+          ]
+        },
+        {
+          "name": "Data USA",
+          "description": "Comprehensive visualization of U.S. public data",
+          "url": "https://datausa.io/",
+          "tags": [
+            "free",
+            "high-school",
+            "data"
+          ]
         }
       ]
     },
@@ -7415,6 +9128,48 @@
             "geography",
             "maps",
             "K-12"
+          ]
+        },
+        {
+          "name": "Seterra Geography",
+          "description": "Free geography quiz games and map learning",
+          "url": "https://www.seterra.com/",
+          "tags": [
+            "free",
+            "K-12",
+            "geography",
+            "games"
+          ]
+        },
+        {
+          "name": "Lizard Point Geography Quizzes",
+          "description": "Interactive geography quizzes for learning world locations",
+          "url": "https://lizardpoint.com/geography/",
+          "tags": [
+            "free",
+            "K-12",
+            "geography"
+          ]
+        },
+        {
+          "name": "ArcGIS Online for Schools",
+          "description": "Mapping and spatial analysis tools for education",
+          "url": "https://www.esri.com/en-us/industries/education",
+          "tags": [
+            "free",
+            "K-12",
+            "GIS",
+            "mapping"
+          ]
+        },
+        {
+          "name": "National Geographic MapMaker",
+          "description": "Interactive map tool for exploring geography and cultures",
+          "url": "https://www.nationalgeographic.org/mapmaker/",
+          "tags": [
+            "free",
+            "K-12",
+            "mapping"
           ]
         }
       ]
@@ -7536,6 +9291,48 @@
             "elementary",
             "middle school",
             "interactive"
+          ]
+        },
+        {
+          "name": "BandLab for Education",
+          "description": "Free music creation platform with classroom management",
+          "url": "https://www.bandlab.com/education",
+          "tags": [
+            "free",
+            "K-12",
+            "music-creation"
+          ]
+        },
+        {
+          "name": "Soundtrap for Education",
+          "description": "Online music and podcast recording studio",
+          "url": "https://www.soundtrap.com/edu/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "music-creation"
+          ]
+        },
+        {
+          "name": "Flat for Education",
+          "description": "Music notation software with collaboration features",
+          "url": "https://flat.io/edu",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "notation"
+          ]
+        },
+        {
+          "name": "MuseScore",
+          "description": "Free open-source music notation software",
+          "url": "https://musescore.org/",
+          "tags": [
+            "free",
+            "K-12",
+            "notation"
           ]
         }
       ]
@@ -7664,6 +9461,50 @@
             "virtual tours",
             "K-12"
           ]
+        },
+        {
+          "name": "Google Expeditions",
+          "description": "VR field trips and AR explorations for classrooms",
+          "url": "https://artsandculture.google.com/project/expeditions",
+          "tags": [
+            "free",
+            "K-12",
+            "VR",
+            "AR"
+          ]
+        },
+        {
+          "name": "CoSpaces Edu",
+          "description": "Create and explore VR and AR environments",
+          "url": "https://www.cospaces.io/edu/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "VR",
+            "AR"
+          ]
+        },
+        {
+          "name": "Merge EDU",
+          "description": "AR/VR science and STEM curriculum with handheld cube",
+          "url": "https://mergeedu.com/",
+          "tags": [
+            "premium",
+            "K-12",
+            "AR",
+            "science"
+          ]
+        },
+        {
+          "name": "Metaverse",
+          "description": "Platform for creating AR educational experiences",
+          "url": "https://studio.gometa.io/",
+          "tags": [
+            "free",
+            "K-12",
+            "AR"
+          ]
         }
       ]
     },
@@ -7782,6 +9623,51 @@
             "public speaking",
             "practice",
             "high school"
+          ]
+        },
+        {
+          "name": "National Speech & Debate Association",
+          "description": "Resources and competitions for speech and debate",
+          "url": "https://www.speechanddebate.org/",
+          "tags": [
+            "free",
+            "premium",
+            "middle-school",
+            "high-school",
+            "debate"
+          ]
+        },
+        {
+          "name": "Toastmasters Youth Leadership",
+          "description": "Public speaking and leadership program for students",
+          "url": "https://www.toastmasters.org/education/youth-leadership",
+          "tags": [
+            "premium",
+            "middle-school",
+            "high-school",
+            "speaking"
+          ]
+        },
+        {
+          "name": "Debate.org",
+          "description": "Online platform for practicing debate skills",
+          "url": "https://www.debate.org/",
+          "tags": [
+            "free",
+            "middle-school",
+            "high-school",
+            "debate"
+          ]
+        },
+        {
+          "name": "SpeechWire",
+          "description": "Tournament management and resources for speech and debate",
+          "url": "https://www.speechwire.com/",
+          "tags": [
+            "premium",
+            "middle-school",
+            "high-school",
+            "speech"
           ]
         }
       ]
@@ -7904,6 +9790,51 @@
             "K-12",
             "college"
           ]
+        },
+        {
+          "name": "myHomework Student Planner",
+          "description": "Digital planner for tracking assignments and due dates",
+          "url": "https://myhomeworkapp.com/",
+          "tags": [
+            "free",
+            "premium",
+            "middle-school",
+            "high-school",
+            "organization"
+          ]
+        },
+        {
+          "name": "Forest App",
+          "description": "Focus timer app that grows virtual trees while you study",
+          "url": "https://www.forestapp.cc/",
+          "tags": [
+            "premium",
+            "middle-school",
+            "high-school",
+            "focus"
+          ]
+        },
+        {
+          "name": "Evernote for Students",
+          "description": "Note-taking and organization app with free premium for students",
+          "url": "https://evernote.com/students",
+          "tags": [
+            "free",
+            "middle-school",
+            "high-school",
+            "notes"
+          ]
+        },
+        {
+          "name": "Quizlet",
+          "description": "Flashcards and study tools for any subject",
+          "url": "https://quizlet.com/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "study"
+          ]
         }
       ]
     },
@@ -8024,6 +9955,50 @@
             "coding",
             "K-12",
             "STEAM"
+          ]
+        },
+        {
+          "name": "VEX Robotics",
+          "description": "Educational robotics competitions and curriculum",
+          "url": "https://www.vexrobotics.com/",
+          "tags": [
+            "premium",
+            "K-12",
+            "robotics",
+            "competition"
+          ]
+        },
+        {
+          "name": "FIRST Robotics",
+          "description": "Robotics competitions for different age groups",
+          "url": "https://www.firstinspires.org/",
+          "tags": [
+            "premium",
+            "K-12",
+            "robotics",
+            "competition"
+          ]
+        },
+        {
+          "name": "Ozobot Classroom",
+          "description": "Small programmable robots for teaching coding",
+          "url": "https://ozobot.com/",
+          "tags": [
+            "premium",
+            "K-12",
+            "robotics",
+            "coding"
+          ]
+        },
+        {
+          "name": "Lego Education",
+          "description": "STEM learning solutions with Lego robotics",
+          "url": "https://education.lego.com/",
+          "tags": [
+            "premium",
+            "K-12",
+            "robotics",
+            "STEM"
           ]
         }
       ]
@@ -8146,6 +10121,48 @@
             "college",
             "activism"
           ]
+        },
+        {
+          "name": "Climate Kids NASA",
+          "description": "NASA resources about climate and Earth science for kids",
+          "url": "https://climatekids.nasa.gov/",
+          "tags": [
+            "free",
+            "elementary",
+            "middle-school",
+            "climate"
+          ]
+        },
+        {
+          "name": "Alliance for Climate Education",
+          "description": "Free climate science curriculum for high school",
+          "url": "https://acespace.org/",
+          "tags": [
+            "free",
+            "high-school",
+            "climate"
+          ]
+        },
+        {
+          "name": "Project Learning Tree",
+          "description": "Environmental education curriculum and professional development",
+          "url": "https://www.plt.org/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "environment"
+          ]
+        },
+        {
+          "name": "Earth Day Network Education",
+          "description": "Environmental and climate education resources",
+          "url": "https://www.earthday.org/education/",
+          "tags": [
+            "free",
+            "K-12",
+            "environment"
+          ]
         }
       ]
     },
@@ -8267,6 +10284,49 @@
             "teaching",
             "diversity"
           ]
+        },
+        {
+          "name": "Teaching Tolerance",
+          "description": "Free resources for anti-bias education from Southern Poverty Law Center",
+          "url": "https://www.learningforjustice.org/",
+          "tags": [
+            "free",
+            "K-12",
+            "equity",
+            "social-justice"
+          ]
+        },
+        {
+          "name": "Culturally Responsive Teaching Resources",
+          "description": "Resources from NEA for culturally responsive pedagogy",
+          "url": "https://www.nea.org/professional-excellence/student-engagement/tools-tips/culturally-responsive-teaching",
+          "tags": [
+            "free",
+            "K-12",
+            "equity"
+          ]
+        },
+        {
+          "name": "Diverse BookFinder",
+          "description": "Database of multicultural children's literature",
+          "url": "https://diversebookfinder.org/",
+          "tags": [
+            "free",
+            "K-12",
+            "diversity",
+            "books"
+          ]
+        },
+        {
+          "name": "We Need Diverse Books",
+          "description": "Organization promoting diversity in children's literature",
+          "url": "https://diversebooks.org/",
+          "tags": [
+            "free",
+            "K-12",
+            "diversity",
+            "books"
+          ]
         }
       ]
     },
@@ -8387,6 +10447,49 @@
             "K-12",
             "resources",
             "evidence-based"
+          ]
+        },
+        {
+          "name": "Headspace for Educators",
+          "description": "Free meditation and mindfulness app for K-12 educators",
+          "url": "https://www.headspace.com/educators",
+          "tags": [
+            "free",
+            "professional",
+            "wellness",
+            "mindfulness"
+          ]
+        },
+        {
+          "name": "Sanvello",
+          "description": "Mental health app with mood tracking and coping tools",
+          "url": "https://www.sanvello.com/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "mental-health"
+          ]
+        },
+        {
+          "name": "MindUP",
+          "description": "Social-emotional learning and mindfulness curriculum",
+          "url": "https://mindup.org/",
+          "tags": [
+            "premium",
+            "K-8",
+            "mindfulness",
+            "SEL"
+          ]
+        },
+        {
+          "name": "The Jed Foundation",
+          "description": "Teen and young adult mental health resources",
+          "url": "https://jedfoundation.org/",
+          "tags": [
+            "free",
+            "high-school",
+            "mental-health"
           ]
         }
       ]
@@ -8510,6 +10613,47 @@
             "training",
             "intervention"
           ]
+        },
+        {
+          "name": "FEMA Youth Preparedness",
+          "description": "Emergency preparedness education resources for K-12",
+          "url": "https://www.fema.gov/emergency-managers/individuals-communities/preparedness-activities-youth",
+          "tags": [
+            "free",
+            "K-12",
+            "safety",
+            "preparedness"
+          ]
+        },
+        {
+          "name": "Safe Schools",
+          "description": "Training and resources for school safety and compliance",
+          "url": "https://www.safeschools.com/",
+          "tags": [
+            "premium",
+            "professional",
+            "safety"
+          ]
+        },
+        {
+          "name": "School Safety.gov",
+          "description": "Federal school safety resources and clearinghouse",
+          "url": "https://www.schoolsafety.gov/",
+          "tags": [
+            "free",
+            "professional",
+            "safety"
+          ]
+        },
+        {
+          "name": "Navigate360",
+          "description": "Comprehensive school safety and wellness solutions",
+          "url": "https://navigate360.com/",
+          "tags": [
+            "premium",
+            "professional",
+            "safety"
+          ]
         }
       ]
     },
@@ -8630,6 +10774,47 @@
             "K-12",
             "public schools",
             "educators"
+          ]
+        },
+        {
+          "name": "Donors Choose",
+          "description": "Crowdfunding platform for classroom projects and materials",
+          "url": "https://www.donorschoose.org/",
+          "tags": [
+            "free",
+            "K-12",
+            "funding",
+            "crowdfunding"
+          ]
+        },
+        {
+          "name": "Adopt a Classroom",
+          "description": "Platform connecting teachers with donors for supplies",
+          "url": "https://www.adoptaclassroom.org/",
+          "tags": [
+            "free",
+            "K-12",
+            "funding"
+          ]
+        },
+        {
+          "name": "GrantWatch K-12 Education",
+          "description": "Database of grants for K-12 schools and teachers",
+          "url": "https://www.grantwatch.com/cat/36/k-12-education-grants.html",
+          "tags": [
+            "premium",
+            "professional",
+            "grants"
+          ]
+        },
+        {
+          "name": "Education Grants Alert",
+          "description": "Free newsletter about education grant opportunities",
+          "url": "https://www.educationgrantsalert.com/",
+          "tags": [
+            "free",
+            "professional",
+            "grants"
           ]
         }
       ]
@@ -8752,6 +10937,47 @@
             "evidence-based",
             "K-12"
           ]
+        },
+        {
+          "name": "National Center for Education Statistics",
+          "description": "Federal education data and statistics",
+          "url": "https://nces.ed.gov/",
+          "tags": [
+            "free",
+            "professional",
+            "research",
+            "data"
+          ]
+        },
+        {
+          "name": "Institute of Education Sciences",
+          "description": "Independent research arm of U.S. Department of Education",
+          "url": "https://ies.ed.gov/",
+          "tags": [
+            "free",
+            "professional",
+            "research"
+          ]
+        },
+        {
+          "name": "Education Research Complete (EBSCO)",
+          "description": "Comprehensive research database for education",
+          "url": "https://www.ebsco.com/products/research-databases/education-research-complete",
+          "tags": [
+            "premium",
+            "professional",
+            "research"
+          ]
+        },
+        {
+          "name": "RAND Education and Labor",
+          "description": "Research and analysis on education policy",
+          "url": "https://www.rand.org/education-and-labor.html",
+          "tags": [
+            "free",
+            "professional",
+            "research"
+          ]
         }
       ]
     },
@@ -8872,6 +11098,49 @@
             "K-12",
             "formative",
             "technology"
+          ]
+        },
+        {
+          "name": "Seesaw for Schools",
+          "description": "Digital portfolio and assessment platform",
+          "url": "https://web.seesaw.me/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "portfolio",
+            "assessment"
+          ]
+        },
+        {
+          "name": "FreshGrade",
+          "description": "Portfolio-based assessment and parent communication",
+          "url": "https://www.freshgrade.com/",
+          "tags": [
+            "free",
+            "premium",
+            "K-12",
+            "portfolio"
+          ]
+        },
+        {
+          "name": "Chalk & Wire",
+          "description": "Assessment and accreditation management platform",
+          "url": "https://www.chalkandwire.com/",
+          "tags": [
+            "premium",
+            "K-12",
+            "assessment"
+          ]
+        },
+        {
+          "name": "Learning Tapestry",
+          "description": "Competency-based learning and assessment tools",
+          "url": "https://www.learningtapestry.com/",
+          "tags": [
+            "premium",
+            "K-12",
+            "competency-based"
           ]
         }
       ]

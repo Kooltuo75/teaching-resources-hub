@@ -62,8 +62,37 @@ class User(UserMixin, db.Model):
     google_token_expiry = db.Column(db.DateTime, nullable=True)  # Token expiration time
     google_connected = db.Column(db.Boolean, default=False)  # Is Google Classroom connected?
 
+    # Reputation & Gamification
+    reputation_score = db.Column(db.Integer, default=0)  # Points earned from contributions
+    total_reviews = db.Column(db.Integer, default=0)  # Number of reviews written
+    total_submissions = db.Column(db.Integer, default=0)  # Number of resources submitted
+    helpful_votes_received = db.Column(db.Integer, default=0)  # Helpful votes on their reviews
+
+    # Moderation
+    is_moderator = db.Column(db.Boolean, default=False)
+    is_verified_teacher = db.Column(db.Boolean, default=False)
+
     # Relationships
     favorites = db.relationship('Favorite', backref='user', lazy='dynamic', cascade='all, delete-orphan')
+    reviews = db.relationship('Review', backref='author', lazy='dynamic', cascade='all, delete-orphan')
+    submitted_resources = db.relationship('ResourceSubmission', backref='submitter', lazy='dynamic', cascade='all, delete-orphan')
+
+    # Social relationships
+    following = db.relationship(
+        'Follow',
+        foreign_keys='Follow.follower_id',
+        backref='follower',
+        lazy='dynamic',
+        cascade='all, delete-orphan'
+    )
+    followers = db.relationship(
+        'Follow',
+        foreign_keys='Follow.followed_id',
+        backref='followed',
+        lazy='dynamic',
+        cascade='all, delete-orphan'
+    )
+    activities = db.relationship('Activity', backref='user', lazy='dynamic', cascade='all, delete-orphan')
 
     def set_password(self, password):
         """Hash and set the user's password."""
@@ -76,6 +105,33 @@ class User(UserMixin, db.Model):
     def get_profile_url(self):
         """Get the URL to this user's profile."""
         return f'/profile/{self.username}'
+
+    def follow(self, user):
+        """Follow another user."""
+        if not self.is_following(user):
+            follow = Follow(follower_id=self.id, followed_id=user.id)
+            db.session.add(follow)
+            return follow
+
+    def unfollow(self, user):
+        """Unfollow a user."""
+        follow = self.following.filter_by(followed_id=user.id).first()
+        if follow:
+            db.session.delete(follow)
+            return True
+        return False
+
+    def is_following(self, user):
+        """Check if this user is following another user."""
+        return self.following.filter_by(followed_id=user.id).first() is not None
+
+    def get_follower_count(self):
+        """Get the number of followers."""
+        return self.followers.count()
+
+    def get_following_count(self):
+        """Get the number of users this user is following."""
+        return self.following.count()
 
     def __repr__(self):
         return f'<User {self.username}>'
@@ -127,6 +183,137 @@ class ProfileVisit(db.Model):
 
     def __repr__(self):
         return f'<ProfileVisit profile={self.profile_user_id} at {self.visited_at}>'
+
+
+class Review(db.Model):
+    """Resource reviews and ratings by teachers."""
+
+    __tablename__ = 'reviews'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+
+    # Resource Information (denormalized for performance)
+    resource_name = db.Column(db.String(200), nullable=False, index=True)
+    resource_category = db.Column(db.String(100), nullable=False)
+    resource_url = db.Column(db.String(500), nullable=False)
+
+    # Review Content
+    rating = db.Column(db.Integer, nullable=False)  # 1-5 stars
+    title = db.Column(db.String(200))  # Optional review title
+    review_text = db.Column(db.Text, nullable=False)  # The actual review
+
+    # Context about usage
+    grade_level_used = db.Column(db.String(50))  # What grade level they used it with
+    subject_used = db.Column(db.String(100))  # What subject
+    time_used = db.Column(db.String(50))  # "Less than 1 month", "1-6 months", etc.
+
+    # Engagement
+    helpful_votes = db.Column(db.Integer, default=0)  # Number of "helpful" votes
+    reported = db.Column(db.Boolean, default=False)  # Flagged for moderation
+    verified_purchase = db.Column(db.Boolean, default=False)  # If applicable
+
+    # Timestamps
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<Review of {self.resource_name} by User {self.user_id}>'
+
+
+class ReviewHelpful(db.Model):
+    """Track which users found which reviews helpful."""
+
+    __tablename__ = 'review_helpful'
+
+    id = db.Column(db.Integer, primary_key=True)
+    review_id = db.Column(db.Integer, db.ForeignKey('reviews.id'), nullable=False, index=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Ensure a user can only vote once per review
+    __table_args__ = (db.UniqueConstraint('review_id', 'user_id', name='unique_review_helpful'),)
+
+    def __repr__(self):
+        return f'<ReviewHelpful review={self.review_id} user={self.user_id}>'
+
+
+class ResourceSubmission(db.Model):
+    """User-submitted resources pending approval."""
+
+    __tablename__ = 'resource_submissions'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+
+    # Resource Details
+    name = db.Column(db.String(200), nullable=False)
+    url = db.Column(db.String(500), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    category = db.Column(db.String(100), nullable=False)
+
+    # Additional metadata
+    suggested_grade_levels = db.Column(db.String(200))  # Comma-separated
+    tags = db.Column(db.String(500))  # Comma-separated tags
+    cost = db.Column(db.String(50))  # "Free", "Freemium", "Paid", etc.
+    why_useful = db.Column(db.Text)  # Why the submitter thinks it's useful
+
+    # Approval Workflow
+    status = db.Column(db.String(20), default='pending')  # pending, approved, rejected
+    reviewed_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    reviewed_at = db.Column(db.DateTime)
+    rejection_reason = db.Column(db.Text)  # If rejected, why?
+
+    # Timestamps
+    submitted_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<ResourceSubmission {self.name} by User {self.user_id} - {self.status}>'
+
+
+class Follow(db.Model):
+    """User following relationships."""
+
+    __tablename__ = 'follows'
+
+    id = db.Column(db.Integer, primary_key=True)
+    follower_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    followed_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+
+    # Ensure a user can't follow the same person twice
+    __table_args__ = (db.UniqueConstraint('follower_id', 'followed_id', name='unique_follow'),)
+
+    def __repr__(self):
+        return f'<Follow {self.follower_id} -> {self.followed_id}>'
+
+
+class Activity(db.Model):
+    """Activity feed for social features."""
+
+    __tablename__ = 'activities'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+
+    # Activity Details
+    activity_type = db.Column(db.String(50), nullable=False)  # review, favorite, submission, follow
+    activity_data = db.Column(db.Text)  # JSON data about the activity
+
+    # Related Objects (polymorphic)
+    related_user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)  # For follows
+    related_resource_name = db.Column(db.String(200))  # For reviews, favorites
+    related_resource_url = db.Column(db.String(500))
+
+    # Visibility
+    is_public = db.Column(db.Boolean, default=True)
+
+    # Timestamp
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+
+    def __repr__(self):
+        return f'<Activity {self.activity_type} by User {self.user_id} at {self.created_at}>'
 
 
 def init_db(app):
