@@ -218,9 +218,14 @@
 
         <div class="resources-grid-enhanced">
             {% for resource in category.resources %}
-            <div class="resource-card-enhanced" data-tags="{{ resource.tags|join(',') }}" data-name="{{ resource.name|lower }}" data-description="{{ resource.description|lower }}">
+            <div class="resource-card-enhanced" data-tags="{{ resource.tags|join(',') }}" data-name="{{ resource.name|lower }}" data-description="{{ resource.description|lower }}" data-resource-id="{{ resource.id }}">
                 <div class="resource-card-header">
                     <span class="resource-category-icon">{{ category.icon }}</span>
+                    {% if current_user.is_authenticated %}
+                    <button class="favorite-btn" data-resource-id="{{ resource.id }}" onclick="toggleFavorite(event, '{{ resource.id }}', '{{ resource.name|replace("'", "\\'") }}')" title="Add to favorites">
+                        ⭐
+                    </button>
+                    {% endif %}
                 </div>
 
                 <div class="resource-card-body">
@@ -275,6 +280,109 @@
         <polyline points="18 15 12 9 6 15"></polyline>
     </svg>
 </button>
+
+<!-- Settings Button -->
+<button id="settingsToggle" class="settings-toggle" aria-label="Toggle settings">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M12 1v6m0 6v6m0-12a3 3 0 0 1 0 6m0 0a3 3 0 0 1 0 6m0-12h9.5m-19 0H12m0 0v6m0 0v6"></path>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+    </svg>
+</button>
+
+<!-- Settings Panel -->
+<div id="settingsPanel" class="settings-panel" style="display: none;">
+    <div class="settings-panel-header">
+        <h3 class="settings-panel-title">Display Settings</h3>
+        <button id="closeSettings" class="close-settings-btn" aria-label="Close settings">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+    </div>
+
+    <div class="settings-panel-body">
+        <div class="settings-section">
+            <h4 class="settings-section-title">Page Elements</h4>
+
+            <label class="settings-toggle-option">
+                <input type="checkbox" id="toggleStatsBar">
+                <span class="toggle-label">Show Stats Bar</span>
+            </label>
+
+            <label class="settings-toggle-option">
+                <input type="checkbox" id="toggleCategoryJump">
+                <span class="toggle-label">Show Category Jump Navigation</span>
+            </label>
+
+            <label class="settings-toggle-option">
+                <input type="checkbox" id="toggleFilterSort">
+                <span class="toggle-label">Show Sort & Filter Controls</span>
+            </label>
+
+            <label class="settings-toggle-option">
+                <input type="checkbox" id="toggleResourcesFooter">
+                <span class="toggle-label">Show Resources Footer</span>
+            </label>
+        </div>
+
+        <div class="settings-section">
+            <h4 class="settings-section-title">Category Details</h4>
+
+            <label class="settings-toggle-option">
+                <input type="checkbox" id="toggleCategoryDescriptions">
+                <span class="toggle-label">Show Category Descriptions</span>
+            </label>
+
+            <label class="settings-toggle-option">
+                <input type="checkbox" id="toggleCategoryBadges">
+                <span class="toggle-label">Show Resource Count Badges</span>
+            </label>
+        </div>
+
+        <div class="settings-section">
+            <h4 class="settings-section-title">Resource Cards</h4>
+
+            <label class="settings-toggle-option">
+                <input type="checkbox" id="toggleResourceDescriptions">
+                <span class="toggle-label">Show Resource Descriptions</span>
+            </label>
+
+            <label class="settings-toggle-option">
+                <input type="checkbox" id="toggleResourceTags">
+                <span class="toggle-label">Show Resource Tags</span>
+            </label>
+        </div>
+
+        <div class="settings-section">
+            <h4 class="settings-section-title">Card Spacing</h4>
+
+            <div class="spacing-options">
+                <label class="spacing-option">
+                    <input type="radio" name="cardSpacing" value="compact">
+                    <span>Compact</span>
+                </label>
+                <label class="spacing-option">
+                    <input type="radio" name="cardSpacing" value="normal" checked>
+                    <span>Normal</span>
+                </label>
+                <label class="spacing-option">
+                    <input type="radio" name="cardSpacing" value="spacious">
+                    <span>Spacious</span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="settings-panel-footer">
+        <button id="resetSettings" class="settings-btn secondary">Reset to Default</button>
+        <button id="saveSettings" class="settings-btn primary">Apply Settings</button>
+    </div>
+</div>
+
+<!-- Settings Overlay -->
+<div id="settingsOverlay" class="settings-overlay" style="display: none;"></div>
 
 <!-- Resources Footer -->
 <div class="resources-footer-enhanced">

@@ -15,6 +15,15 @@
                     <li><a href="/">Home</a></li>
                     <li><a href="/resources">Resources</a></li>
                     <li><a href="/about">About</a></li>
+                    <li><a href="/api-docs">API</a></li>
+                    {% if current_user.is_authenticated %}
+                        <li><a href="/profile/{{ current_user.username }}">My Room</a></li>
+                        <li><a href="/favorites">My Favorites</a></li>
+                        <li><a href="/logout">Logout</a></li>
+                    {% else %}
+                        <li><a href="/login">Login</a></li>
+                        <li><a href="/signup">Sign Up</a></li>
+                    {% endif %}
                 </ul>
             </nav>
         </div>

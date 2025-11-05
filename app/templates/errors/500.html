@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Server Error - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="error-page">
+    <div class="error-container">
+        <div class="error-icon">⚠️</div>
+        <h1 class="error-title">500 - Internal Server Error</h1>
+        <p class="error-message">
+            Something went wrong on our end.
+        </p>
+        <p class="error-submessage">
+            We're sorry for the inconvenience. Our team has been notified and is working to fix the issue.
+        </p>
+
+        <div class="error-actions">
+            <a href="/" class="error-btn primary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                Go to Homepage
+            </a>
+            <a href="#" onclick="location.reload(); return false;" class="error-btn secondary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="23 4 23 10 17 10"></polyline>
+                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                </svg>
+                Try Again
+            </a>
+        </div>
+
+        <div class="error-help">
+            <p class="error-help-title">What you can do:</p>
+            <ul class="error-help-list">
+                <li>Refresh the page and try again</li>
+                <li>Go back to the homepage and start over</li>
+                <li>Browse our resources directory</li>
+                <li>Try again in a few minutes</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

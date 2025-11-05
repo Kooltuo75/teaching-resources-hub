@@ -1,0 +1,602 @@
+{% extends "base.html" %}
+
+{% block title %}My Favorites - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="favorites-page">
+    <div class="page-header">
+        <h1>My Favorite Resources</h1>
+        <p class="subtitle">Your personally curated collection of teaching tools</p>
+        <div class="favorites-count">
+            <span class="count-badge">{{ total_count }}</span> saved resources
+        </div>
+    </div>
+
+    {% if total_count == 0 %}
+        <div class="empty-state">
+            <div class="empty-icon">⭐</div>
+            <h2>No favorites yet!</h2>
+            <p>Start building your personal collection by adding resources from the <a href="{{ url_for('main.resources') }}">resources page</a>.</p>
+            <a href="{{ url_for('main.resources') }}" class="btn-primary">Browse Resources</a>
+        </div>
+    {% else %}
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Favorites grouped by category -->
+        <div class="favorites-content">
+            {% for category_name, resources in by_category.items() %}
+                <div class="favorites-category-section">
+                    <h2 class="category-title">{{ category_name }} ({{ resources|length }})</h2>
+
+                    <div class="resource-grid">
+                        {% for resource in resources %}
+                            <div class="resource-card favorite-card" data-resource-id="{{ resource.id }}">
+                                <div class="card-header">
+                                    <h3>{{ resource.name }}</h3>
+                                    <button class="btn-remove-favorite"
+                                            onclick="removeFavorite('{{ resource.id }}', '{{ resource.name }}')"
+                                            title="Remove from favorites">
+                                        ❌
+                                    </button>
+                                </div>
+
+                                <p class="description">{{ resource.description }}</p>
+
+                                <div class="resource-meta">
+                                    {% if resource.grades %}
+                                        <span class="badge grade-badge">{{ resource.grades }}</span>
+                                    {% endif %}
+
+                                    {% if resource.subject %}
+                                        <span class="badge subject-badge">{{ resource.subject }}</span>
+                                    {% endif %}
+
+                                    {% if resource.cost %}
+                                        <span class="badge cost-badge cost-{{ resource.cost.lower().replace(' ', '-') }}">
+                                            {{ resource.cost }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+
+                                {% if resource.tags %}
+                                    <div class="tags">
+                                        {% for tag in resource.tags %}
+                                            <span class="tag">{{ tag }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+
+                                {% if resource.user_note %}
+                                    <div class="user-note">
+                                        <strong>My Note:</strong>
+                                        <p>{{ resource.user_note }}</p>
+                                    </div>
+                                {% endif %}
+
+                                <div class="card-footer">
+                                    <a href="{{ resource.url }}" target="_blank" rel="noopener noreferrer" class="btn-visit">
+                                        Visit Resource →
+                                    </a>
+                                    <button class="btn-edit-note" onclick="editNote('{{ resource.id }}', '{{ resource.user_note or '' }}')">
+                                        Edit Note
+                                    </button>
+                                </div>
+
+                                <div class="favorited-date">
+                                    Saved: {{ resource.favorited_at.strftime('%B %d, %Y') if resource.favorited_at else 'Unknown' }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+<!-- Note Edit Modal -->
+<div id="noteModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Edit Note</h3>
+            <button class="modal-close" onclick="closeNoteModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <textarea id="noteText" placeholder="Add your personal notes about this resource..." rows="4"></textarea>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" onclick="closeNoteModal()">Cancel</button>
+            <button class="btn-primary" onclick="saveNote()">Save Note</button>
+        </div>
+    </div>
+</div>
+
+<style>
+.favorites-page {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 12px;
+}
+
+.page-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    margin-bottom: 1rem;
+}
+
+.favorites-count {
+    font-size: 1.1rem;
+    margin-top: 1rem;
+}
+
+.count-badge {
+    background: rgba(255,255,255,0.3);
+    padding: 0.3rem 1rem;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 1.3rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: #f8f9fa;
+    border-radius: 12px;
+    margin: 2rem auto;
+    max-width: 600px;
+}
+
+.empty-icon {
+    font-size: 5rem;
+    margin-bottom: 1rem;
+}
+
+.empty-state h2 {
+    color: #2c3e50;
+    margin-bottom: 1rem;
+}
+
+.empty-state p {
+    color: #7f8c8d;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+}
+
+.favorites-category-section {
+    margin-bottom: 3rem;
+}
+
+.category-title {
+    color: #2c3e50;
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 3px solid #667eea;
+}
+
+.resource-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+}
+
+.favorite-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.favorite-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.2);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.card-header h3 {
+    color: #2c3e50;
+    font-size: 1.3rem;
+    margin: 0;
+    flex: 1;
+}
+
+.btn-remove-favorite {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.2rem;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.btn-remove-favorite:hover {
+    opacity: 1;
+}
+
+.description {
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.resource-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.grade-badge {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.subject-badge {
+    background: #f3e5f5;
+    color: #7b1fa2;
+}
+
+.cost-badge {
+    font-weight: bold;
+}
+
+.cost-free {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.cost-freemium {
+    background: #fff3e0;
+    color: #e65100;
+}
+
+.cost-paid {
+    background: #fce4ec;
+    color: #c2185b;
+}
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+}
+
+.tag {
+    background: #f1f3f4;
+    color: #5f6368;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+.user-note {
+    background: #fffbf0;
+    border-left: 3px solid #ffc107;
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 4px;
+}
+
+.user-note strong {
+    color: #f57c00;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.user-note p {
+    margin: 0;
+    color: #555;
+}
+
+.card-footer {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.btn-visit {
+    flex: 1;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    text-decoration: none;
+    padding: 0.7rem 1rem;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 600;
+    transition: transform 0.2s;
+}
+
+.btn-visit:hover {
+    transform: translateY(-2px);
+}
+
+.btn-edit-note {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    color: #495057;
+    padding: 0.7rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.btn-edit-note:hover {
+    background: #e9ecef;
+}
+
+.favorited-date {
+    text-align: right;
+    color: #999;
+    font-size: 0.85rem;
+    margin-top: 1rem;
+    font-style: italic;
+}
+
+/* Modal styles */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid #e1e8ed;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #2c3e50;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #999;
+    line-height: 1;
+}
+
+.modal-close:hover {
+    color: #333;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-body textarea {
+    width: 100%;
+    padding: 0.8rem;
+    border: 2px solid #e1e8ed;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 1rem;
+    resize: vertical;
+}
+
+.modal-body textarea:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.modal-footer {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-top: 1px solid #e1e8ed;
+    justify-content: flex-end;
+}
+
+.btn-primary, .btn-secondary {
+    padding: 0.7rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.btn-secondary {
+    background: #f8f9fa;
+    color: #495057;
+    border: 1px solid #dee2e6;
+}
+
+.btn-secondary:hover {
+    background: #e9ecef;
+}
+
+.alert {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.alert-success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .resource-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .page-header h1 {
+        font-size: 2rem;
+    }
+
+    .favorites-page {
+        padding: 1rem;
+    }
+}
+</style>
+
+<script>
+let currentResourceId = null;
+
+function removeFavorite(resourceId, resourceName) {
+    if (!confirm(`Remove "${resourceName}" from your favorites?`)) {
+        return;
+    }
+
+    fetch('/api/favorite/remove', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ resource_id: resourceId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Remove card from page
+            const card = document.querySelector(`[data-resource-id="${resourceId}"]`);
+            if (card) {
+                card.style.opacity = '0';
+                setTimeout(() => {
+                    card.remove();
+                    // Reload if no more favorites
+                    const remaining = document.querySelectorAll('.favorite-card').length;
+                    if (remaining === 0) {
+                        window.location.reload();
+                    }
+                }, 300);
+            }
+        } else {
+            alert('Failed to remove favorite: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to remove favorite');
+    });
+}
+
+function editNote(resourceId, currentNote) {
+    currentResourceId = resourceId;
+    document.getElementById('noteText').value = currentNote;
+    document.getElementById('noteModal').style.display = 'flex';
+}
+
+function closeNoteModal() {
+    document.getElementById('noteModal').style.display = 'none';
+    currentResourceId = null;
+}
+
+function saveNote() {
+    const note = document.getElementById('noteText').value;
+
+    fetch('/api/favorite/update-note', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            resource_id: currentResourceId,
+            notes: note
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Reload page to show updated note
+            window.location.reload();
+        } else {
+            alert('Failed to save note: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to save note');
+    });
+}
+
+// Close modal when clicking outside
+document.getElementById('noteModal')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeNoteModal();
+    }
+});
+</script>
+{% endblock %}

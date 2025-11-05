@@ -1,0 +1,558 @@
+{% extends "base.html" %}
+
+{% block title %}API Documentation - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="api-docs-page">
+    <div class="api-docs-container">
+        <div class="api-header">
+            <h1>🔌 API Documentation</h1>
+            <p class="api-subtitle">Integrate Teaching Resources Hub into your applications</p>
+        </div>
+
+        <!-- Quick Start -->
+        <section class="api-section">
+            <h2>Quick Start</h2>
+            <p>Our REST API provides programmatic access to all teaching resources, categories, and user data. All public endpoints are free to use and don't require authentication.</p>
+
+            <div class="api-example">
+                <h3>Example Request</h3>
+                <pre><code>curl {{ request.url_root }}api/v1/resources?category=Mathematics&limit=10</code></pre>
+            </div>
+
+            <div class="api-base-url">
+                <strong>Base URL:</strong> <code>{{ request.url_root }}api/v1/</code>
+            </div>
+        </section>
+
+        <!-- Public Endpoints -->
+        <section class="api-section">
+            <h2>📖 Public Endpoints</h2>
+            <p class="section-subtitle">No authentication required</p>
+
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method get">GET</span>
+                    <span class="path">/api/v1/resources</span>
+                </div>
+                <p class="endpoint-desc">Get all resources with optional filtering</p>
+                <div class="endpoint-params">
+                    <h4>Query Parameters</h4>
+                    <ul>
+                        <li><code>category</code> - Filter by category name</li>
+                        <li><code>grade</code> - Filter by grade level</li>
+                        <li><code>subject</code> - Filter by subject</li>
+                        <li><code>cost</code> - Filter by cost (free, freemium, paid)</li>
+                        <li><code>search</code> - Search in name and description</li>
+                        <li><code>limit</code> - Limit number of results</li>
+                        <li><code>offset</code> - Skip first N results</li>
+                    </ul>
+                </div>
+                <div class="endpoint-example">
+                    <h4>Example</h4>
+                    <pre><code>GET {{ request.url_root }}api/v1/resources?category=Mathematics&cost=free&limit=5</code></pre>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method get">GET</span>
+                    <span class="path">/api/v1/categories</span>
+                </div>
+                <p class="endpoint-desc">Get all categories with resource counts</p>
+                <div class="endpoint-params">
+                    <h4>Query Parameters</h4>
+                    <ul>
+                        <li><code>include_resources</code> - Include full resource data (default: false)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method get">GET</span>
+                    <span class="path">/api/v1/categories/{category_name}</span>
+                </div>
+                <p class="endpoint-desc">Get a specific category with all its resources</p>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method get">GET</span>
+                    <span class="path">/api/v1/resources/{resource_id}</span>
+                </div>
+                <p class="endpoint-desc">Get a specific resource by ID</p>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method get">GET</span>
+                    <span class="path">/api/v1/search</span>
+                </div>
+                <p class="endpoint-desc">Search resources with advanced options</p>
+                <div class="endpoint-params">
+                    <h4>Query Parameters</h4>
+                    <ul>
+                        <li><code>q</code> - Search query (required)</li>
+                        <li><code>fields</code> - Comma-separated fields to search (name,description,tags)</li>
+                        <li><code>limit</code> - Max results (default: 50)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method get">GET</span>
+                    <span class="path">/api/v1/stats</span>
+                </div>
+                <p class="endpoint-desc">Get platform statistics (total resources, categories, users, etc.)</p>
+            </div>
+        </section>
+
+        <!-- Authenticated Endpoints -->
+        <section class="api-section">
+            <h2>🔐 Authenticated Endpoints</h2>
+            <p class="section-subtitle">Requires user login</p>
+
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method get">GET</span>
+                    <span class="path">/api/v1/user/favorites</span>
+                </div>
+                <p class="endpoint-desc">Get current user's favorited resources</p>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method get">GET</span>
+                    <span class="path">/api/v1/user/favorites/export</span>
+                </div>
+                <p class="endpoint-desc">Export user's favorites in various formats</p>
+                <div class="endpoint-params">
+                    <h4>Query Parameters</h4>
+                    <ul>
+                        <li><code>format</code> - json, csv, or txt (default: json)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method get">GET</span>
+                    <span class="path">/api/v1/user/profile</span>
+                </div>
+                <p class="endpoint-desc">Get current user's profile information</p>
+            </div>
+        </section>
+
+        <!-- RSS & Calendar Feeds -->
+        <section class="api-section">
+            <h2>📡 RSS & Calendar Feeds</h2>
+
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method get">GET</span>
+                    <span class="path">/feed/rss</span>
+                </div>
+                <p class="endpoint-desc">RSS feed for latest resources (subscribe in your RSS reader)</p>
+                <div class="feed-example">
+                    <a href="{{ url_for('main.rss_feed') }}" class="feed-link" target="_blank">
+                        📡 Subscribe to RSS Feed
+                    </a>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header">
+                    <span class="method get">GET</span>
+                    <span class="path">/feed/favorites.ics</span>
+                </div>
+                <p class="endpoint-desc">iCal/Calendar export of your favorited resources (requires login)</p>
+                {% if current_user.is_authenticated %}
+                <div class="feed-example">
+                    <a href="{{ url_for('main.ical_favorites') }}" class="feed-link">
+                        📅 Download Calendar File
+                    </a>
+                </div>
+                {% else %}
+                <p class="auth-note">Please <a href="{{ url_for('main.login') }}">log in</a> to access this feature.</p>
+                {% endif %}
+            </div>
+        </section>
+
+        <!-- Response Format -->
+        <section class="api-section">
+            <h2>📦 Response Format</h2>
+            <p>All API responses are in JSON format with the following structure:</p>
+
+            <div class="api-example">
+                <h3>Success Response</h3>
+                <pre><code>{
+  "success": true,
+  "count": 10,
+  "resources": [
+    {
+      "id": "khan-academy",
+      "name": "Khan Academy",
+      "description": "Free online courses...",
+      "url": "https://khanacademy.org",
+      "category": "Educational Websites & Portals",
+      "cost": "Free",
+      "grades": "K-12",
+      "tags": ["math", "science", "free"]
+    }
+  ]
+}</code></pre>
+            </div>
+
+            <div class="api-example">
+                <h3>Error Response</h3>
+                <pre><code>{
+  "success": false,
+  "error": "Category not found"
+}</code></pre>
+            </div>
+        </section>
+
+        <!-- Code Examples -->
+        <section class="api-section">
+            <h2>💻 Code Examples</h2>
+
+            <div class="code-example">
+                <h3>JavaScript / Fetch</h3>
+                <pre><code>fetch('{{ request.url_root }}api/v1/resources?category=Mathematics&limit=10')
+  .then(response => response.json())
+  .then(data => {
+    console.log(data.resources);
+  });</code></pre>
+            </div>
+
+            <div class="code-example">
+                <h3>Python / Requests</h3>
+                <pre><code>import requests
+
+response = requests.get(
+    '{{ request.url_root }}api/v1/resources',
+    params={'category': 'Mathematics', 'limit': 10}
+)
+
+data = response.json()
+for resource in data['resources']:
+    print(resource['name'])</code></pre>
+            </div>
+
+            <div class="code-example">
+                <h3>cURL</h3>
+                <pre><code>curl "{{ request.url_root }}api/v1/search?q=math&limit=10"</code></pre>
+            </div>
+        </section>
+
+        <!-- Rate Limiting -->
+        <section class="api-section">
+            <h2>⚡ Rate Limiting</h2>
+            <p>Currently, there are no strict rate limits on public endpoints. However, please be respectful and don't abuse the API. We reserve the right to implement rate limiting if necessary.</p>
+
+            <div class="best-practices">
+                <h3>Best Practices</h3>
+                <ul>
+                    <li>Cache responses when possible</li>
+                    <li>Use pagination (limit/offset) for large result sets</li>
+                    <li>Include a User-Agent header identifying your application</li>
+                    <li>Handle errors gracefully</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="api-section">
+            <h2>🎯 Use Cases</h2>
+            <div class="use-cases-grid">
+                <div class="use-case-card">
+                    <h3>📱 Mobile Apps</h3>
+                    <p>Build iOS/Android apps that showcase teaching resources</p>
+                </div>
+                <div class="use-case-card">
+                    <h3>🤖 Chatbots</h3>
+                    <p>Create Discord/Slack bots that recommend resources</p>
+                </div>
+                <div class="use-case-card">
+                    <h3>🔧 Browser Extensions</h3>
+                    <p>Quick-save resources while browsing the web</p>
+                </div>
+                <div class="use-case-card">
+                    <h3>📊 Analytics</h3>
+                    <p>Analyze resource trends and usage patterns</p>
+                </div>
+                <div class="use-case-card">
+                    <h3>🎨 Custom UIs</h3>
+                    <p>Build your own interface for the resource database</p>
+                </div>
+                <div class="use-case-card">
+                    <h3>📚 LMS Integration</h3>
+                    <p>Integrate resources into learning management systems</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Support -->
+        <section class="api-section">
+            <h2>💬 Support</h2>
+            <p>Have questions or need help? We're here to assist!</p>
+            <div class="support-links">
+                <p>Found a bug or have a feature request? Let us know!</p>
+            </div>
+        </section>
+    </div>
+</div>
+
+<style>
+.api-docs-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.api-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 3rem 2rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 12px;
+}
+
+.api-header h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.api-subtitle {
+    font-size: 1.3rem;
+    opacity: 0.95;
+}
+
+.api-section {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.api-section h2 {
+    color: #2c3e50;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    border-bottom: 3px solid #667eea;
+    padding-bottom: 0.5rem;
+}
+
+.section-subtitle {
+    color: #7f8c8d;
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+}
+
+.api-base-url {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+    margin-top: 1rem;
+}
+
+.api-base-url code {
+    background: white;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.endpoint {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid #667eea;
+}
+
+.endpoint-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.method {
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    font-family: monospace;
+}
+
+.method.get {
+    background: #28a745;
+    color: white;
+}
+
+.path {
+    font-family: monospace;
+    font-size: 1.1rem;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.endpoint-desc {
+    color: #555;
+    margin-bottom: 1rem;
+}
+
+.endpoint-params h4,
+.endpoint-example h4 {
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.endpoint-params ul {
+    list-style: none;
+    padding: 0;
+}
+
+.endpoint-params li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e1e8ed;
+}
+
+.endpoint-params code {
+    background: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    color: #667eea;
+    font-weight: 600;
+}
+
+.api-example,
+.code-example,
+.endpoint-example {
+    background: #2c3e50;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+}
+
+.api-example h3,
+.code-example h3 {
+    color: white;
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+.api-example pre,
+.code-example pre,
+.endpoint-example pre {
+    margin: 0;
+    overflow-x: auto;
+}
+
+.api-example code,
+.code-example code,
+.endpoint-example code {
+    color: #a8d5ff;
+    font-family: 'Courier New', monospace;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.feed-link {
+    display: inline-block;
+    background: #667eea;
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    margin-top: 0.5rem;
+    transition: all 0.2s;
+}
+
+.feed-link:hover {
+    background: #764ba2;
+    transform: translateY(-2px);
+}
+
+.auth-note {
+    color: #7f8c8d;
+    font-style: italic;
+}
+
+.auth-note a {
+    color: #667eea;
+    font-weight: 600;
+}
+
+.best-practices {
+    background: #e3f2fd;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid #1976d2;
+    margin-top: 1rem;
+}
+
+.best-practices h3 {
+    color: #1976d2;
+    margin-top: 0;
+}
+
+.best-practices ul {
+    margin-bottom: 0;
+}
+
+.use-cases-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.use-case-card {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-top: 4px solid #667eea;
+    transition: transform 0.2s;
+}
+
+.use-case-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.use-case-card h3 {
+    color: #2c3e50;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+}
+
+.use-case-card p {
+    color: #555;
+    margin-bottom: 0;
+}
+
+@media (max-width: 768px) {
+    .api-header h1 {
+        font-size: 2rem;
+    }
+
+    .endpoint-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .use-cases-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}

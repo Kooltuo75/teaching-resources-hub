@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Service Unavailable - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="error-page">
+    <div class="error-container">
+        <div class="error-icon">🔧</div>
+        <h1 class="error-title">503 - Service Unavailable</h1>
+        <p class="error-message">
+            The site is temporarily unavailable.
+        </p>
+        <p class="error-submessage">
+            We're performing scheduled maintenance or experiencing high traffic. Please check back soon.
+        </p>
+
+        <div class="error-actions">
+            <a href="/" class="error-btn primary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="23 4 23 10 17 10"></polyline>
+                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                </svg>
+                Try Again
+            </a>
+        </div>
+
+        <div class="error-help">
+            <p class="error-help-title">What's happening:</p>
+            <ul class="error-help-list">
+                <li>We may be performing scheduled maintenance</li>
+                <li>The site may be experiencing high traffic</li>
+                <li>We're working to restore full service as quickly as possible</li>
+            </ul>
+            <p class="error-help-note">Expected resolution time: A few minutes</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

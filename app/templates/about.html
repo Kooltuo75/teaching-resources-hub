@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block title %}About Us - {{ app_name }}{% endblock %}
+
+{% block content %}
+<!-- About Hero -->
+<div class="about-hero">
+    <h1 class="about-title">About Teaching Resources Hub</h1>
+    <p class="about-subtitle">Empowering educators with carefully curated digital tools</p>
+</div>
+
+<!-- Mission Statement -->
+<div class="about-section">
+    <div class="about-content">
+        <h2 class="about-section-title">Our Mission</h2>
+        <p class="about-text">
+            Teaching Resources Hub is dedicated to supporting educators by providing a comprehensive,
+            organized directory of high-quality digital teaching tools and resources. We believe that
+            teachers deserve easy access to the best educational technology available, and we're committed
+            to making that a reality.
+        </p>
+    </div>
+</div>
+
+<!-- What We Offer -->
+<div class="about-section alt">
+    <div class="about-content">
+        <h2 class="about-section-title">What We Offer</h2>
+        <div class="about-features">
+            <div class="about-feature">
+                <div class="feature-icon">📚</div>
+                <h3 class="feature-title">Comprehensive Directory</h3>
+                <p class="feature-description">
+                    Over 519 carefully curated educational resources across 55 specialized categories,
+                    from lesson planning to assessment tools.
+                </p>
+            </div>
+            <div class="about-feature">
+                <div class="feature-icon">🔍</div>
+                <h3 class="feature-title">Advanced Filtering</h3>
+                <p class="feature-description">
+                    Find exactly what you need with our multi-filter system. Search by cost, grade level,
+                    subject area, and more.
+                </p>
+            </div>
+            <div class="about-feature">
+                <div class="feature-icon">💡</div>
+                <h3 class="feature-title">Organized Categories</h3>
+                <p class="feature-description">
+                    Resources are thoughtfully organized into categories, making it easy to discover
+                    tools for your specific teaching needs.
+                </p>
+            </div>
+            <div class="about-feature">
+                <div class="feature-icon">✨</div>
+                <h3 class="feature-title">Always Free</h3>
+                <p class="feature-description">
+                    Our directory is completely free to browse and use. We're here to support educators,
+                    not profit from them.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- By The Numbers -->
+<div class="about-section">
+    <div class="about-content">
+        <h2 class="about-section-title">By the Numbers</h2>
+        <div class="about-stats">
+            <div class="about-stat">
+                <div class="stat-num">519</div>
+                <div class="stat-label">Teaching Resources</div>
+            </div>
+            <div class="about-stat">
+                <div class="stat-num">55</div>
+                <div class="stat-label">Specialized Categories</div>
+            </div>
+            <div class="about-stat">
+                <div class="stat-num">15+</div>
+                <div class="stat-label">Subject Areas</div>
+            </div>
+            <div class="about-stat">
+                <div class="stat-num">100%</div>
+                <div class="stat-label">Free to Browse</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- How to Use -->
+<div class="about-section alt">
+    <div class="about-content">
+        <h2 class="about-section-title">How to Use This Site</h2>
+        <div class="about-steps">
+            <div class="about-step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3 class="step-title">Browse or Search</h3>
+                    <p class="step-description">
+                        Use the search bar on the homepage or browse all resources by category.
+                    </p>
+                </div>
+            </div>
+            <div class="about-step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3 class="step-title">Filter Your Results</h3>
+                    <p class="step-description">
+                        Use our advanced filters to narrow down by cost, grade level, and subject area.
+                    </p>
+                </div>
+            </div>
+            <div class="about-step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3 class="step-title">Explore Categories</h3>
+                    <p class="step-description">
+                        Click on category names to see detailed pages with all resources in that category.
+                    </p>
+                </div>
+            </div>
+            <div class="about-step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3 class="step-title">Visit Resources</h3>
+                    <p class="step-description">
+                        Click "Visit Resource" to go directly to the tool's website and start using it.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Disclaimer -->
+<div class="about-section">
+    <div class="about-content">
+        <div class="about-disclaimer">
+            <h3 class="disclaimer-title">Important Disclaimer</h3>
+            <p class="disclaimer-text">
+                All resources listed in this directory are third-party tools and services. Teaching Resources Hub
+                does not own, operate, or maintain these resources. We are not responsible for the content,
+                functionality, pricing, or availability of any external resource.
+            </p>
+            <p class="disclaimer-text">
+                Before using any resource, please verify pricing (as it may change), review terms of service,
+                and ensure the tool meets your specific needs and complies with your institution's policies.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Call to Action -->
+<div class="about-cta">
+    <div class="about-content">
+        <h2 class="cta-title">Ready to Explore?</h2>
+        <p class="cta-text">Discover the perfect tools for your classroom</p>
+        <div class="cta-actions">
+            <a href="/resources" class="cta-btn primary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+                Browse All Resources
+            </a>
+            <a href="/" class="cta-btn secondary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                Back to Home
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
