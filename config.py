@@ -15,11 +15,15 @@ class Config:
 
     # Flask settings
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key-change-in-production'
-    DEBUG = True
+    DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
     # Database settings
     DATABASE_PATH = BASE_DIR / 'data' / 'teaching_resources.db'
-    SQLALCHEMY_DATABASE_URI = f'sqlite:///{BASE_DIR / "data" / "users.db"}'
+    # Use PostgreSQL if DATABASE_URL is set (production), otherwise SQLite (development)
+    database_url = os.environ.get('DATABASE_URL')
+    if database_url and database_url.startswith('postgres://'):
+        database_url = database_url.replace('postgres://', 'postgresql://', 1)
+    SQLALCHEMY_DATABASE_URI = database_url or f'sqlite:///{BASE_DIR / "data" / "users.db"}'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Claude API settings (for future use)

@@ -4,15 +4,16 @@
 Flask==3.0.0
 Werkzeug==3.0.1
 
+# Production WSGI Server
+gunicorn==21.2.0
+
 # Database
 SQLAlchemy==2.0.25
 Flask-SQLAlchemy==3.1.1
+psycopg2-binary==2.9.9
 
 # Authentication
 Flask-Login==0.6.3
 
 # Environment Variables
 python-dotenv==1.0.0
-
-# Future dependencies (uncomment when needed)
-# anthropic==0.18.1  # Claude API integration
