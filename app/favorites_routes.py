@@ -20,7 +20,7 @@ def register_favorites_routes(bp):
         """Display user's favorited resources."""
         try:
             # Get all favorites for current user
-            user_favorites = Favorite.query.filter_by(user_id=current_user.id).order_by(Favorite.added_at.desc()).all()
+            user_favorites = Favorite.query.filter_by(user_id=current_user.id).order_by(Favorite.created_at.desc()).all()
 
             # Get full resource details for each favorite
             all_resources = ResourceService.get_all_resources_flat()
@@ -33,8 +33,8 @@ def register_favorites_routes(bp):
             for fav in user_favorites:
                 if fav.resource_name in resources_dict:
                     resource = resources_dict[fav.resource_name].copy()
-                    resource['user_note'] = fav.notes
-                    resource['favorited_at'] = fav.added_at
+                    resource['user_note'] = fav.personal_note
+                    resource['favorited_at'] = fav.created_at
                     favorited_resources.append(resource)
 
             # Group by category
@@ -91,7 +91,7 @@ def register_favorites_routes(bp):
                 resource_name=resource_name,
                 resource_category=resource_category,
                 resource_url=resource_url,
-                notes=notes
+                personal_note=notes
             )
 
             db.session.add(favorite)
@@ -163,7 +163,7 @@ def register_favorites_routes(bp):
             if not favorite:
                 return jsonify({'success': False, 'message': 'Not in favorites'}), 404
 
-            favorite.notes = notes
+            favorite.personal_note = notes
             db.session.commit()
 
             return jsonify({
