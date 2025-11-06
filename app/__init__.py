@@ -60,9 +60,9 @@ def create_app(config_class=Config):
     from app.middleware.performance import configure_caching
     configure_caching(app)
 
-    # Register analytics middleware
-    from app.middleware.analytics_middleware import configure_analytics
-    configure_analytics(app)
+    # Register analytics middleware (TEMPORARILY DISABLED for debugging)
+    # from app.middleware.analytics_middleware import configure_analytics
+    # configure_analytics(app)
 
     # Register error handlers
     from app.middleware.error_handlers import register_error_handlers
@@ -72,9 +72,9 @@ def create_app(config_class=Config):
     from app import routes
     app.register_blueprint(routes.bp)
 
-    # Register analytics routes
-    from app import analytics_routes
-    app.register_blueprint(analytics_routes.bp)
+    # Register analytics routes (TEMPORARILY DISABLED for debugging)
+    # from app import analytics_routes
+    # app.register_blueprint(analytics_routes.bp)
 
     app.logger.info('Teaching Resources Hub application started')
 
