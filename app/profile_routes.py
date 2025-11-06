@@ -172,6 +172,14 @@ def register_profile_routes(bp):
             current_user.profile_public = request.form.get('profile_public') == 'on'
             current_user.show_favorites_public = request.form.get('show_favorites_public') == 'on'
 
+            # Collaboration Board (Phase 2)
+            if hasattr(current_user, 'looking_for'):
+                current_user.looking_for = request.form.get('looking_for', '').strip()
+            if hasattr(current_user, 'can_help_with'):
+                current_user.can_help_with = request.form.get('can_help_with', '').strip()
+            if hasattr(current_user, 'open_to_collaboration'):
+                current_user.open_to_collaboration = request.form.get('open_to_collaboration') == 'on'
+
             # Update customization
             current_user.background_color = request.form.get('background_color', '#ffffff')
             current_user.text_color = request.form.get('text_color', '#333333')

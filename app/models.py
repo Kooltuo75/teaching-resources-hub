@@ -56,6 +56,11 @@ class User(UserMixin, db.Model):
     profile_public = db.Column(db.Boolean, default=True)
     show_favorites_public = db.Column(db.Boolean, default=True)
 
+    # Collaboration Board (Phase 2)
+    looking_for = db.Column(db.Text)  # What help/collaboration they need
+    can_help_with = db.Column(db.Text)  # What expertise they can offer
+    open_to_collaboration = db.Column(db.Boolean, default=True)  # Toggle for collaboration requests
+
     # Google Classroom Integration
     google_id = db.Column(db.String(100), unique=True, nullable=True)  # Google account ID
     google_access_token = db.Column(db.Text, nullable=True)  # Encrypted access token

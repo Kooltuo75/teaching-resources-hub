@@ -122,6 +122,44 @@
             </div>
             {% endif %}
 
+            <!-- Collaboration Board Section -->
+            {% if (hasattr(profile_user, 'open_to_collaboration') and profile_user.open_to_collaboration) and ((hasattr(profile_user, 'looking_for') and profile_user.looking_for) or (hasattr(profile_user, 'can_help_with') and profile_user.can_help_with)) %}
+            <div class="profile-section collaboration-board" style="border-color: {{ profile_user.accent_color }};">
+                <h2 style="color: {{ profile_user.accent_color }};">🤝 Collaboration Board</h2>
+                <p class="collaboration-intro">Open to connecting with other educators!</p>
+
+                <div class="collaboration-content">
+                    {% if hasattr(profile_user, 'looking_for') and profile_user.looking_for %}
+                    <div class="collaboration-item looking-for">
+                        <div class="collaboration-header">
+                            <span class="collaboration-icon">🔍</span>
+                            <h3>Looking For</h3>
+                        </div>
+                        <p class="collaboration-text">{{ profile_user.looking_for }}</p>
+                    </div>
+                    {% endif %}
+
+                    {% if hasattr(profile_user, 'can_help_with') and profile_user.can_help_with %}
+                    <div class="collaboration-item can-help">
+                        <div class="collaboration-header">
+                            <span class="collaboration-icon">💡</span>
+                            <h3>Can Help With</h3>
+                        </div>
+                        <p class="collaboration-text">{{ profile_user.can_help_with }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                {% if not is_own_profile and current_user.is_authenticated %}
+                <div class="collaboration-action">
+                    <a href="mailto:{{ profile_user.email }}?subject=Collaboration Opportunity" class="btn-collaborate" style="background-color: {{ profile_user.accent_color }};">
+                        📧 Reach Out to Collaborate
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+
             <!-- Favorite Resources Section -->
             {% if favorites %}
             <div class="profile-section profile-favorites" style="border-color: {{ profile_user.accent_color }};">
@@ -304,6 +342,91 @@
     margin: 0.3rem 0;
     color: #555;
     font-weight: 500;
+}
+
+/* Collaboration Board */
+.collaboration-board {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+}
+
+.collaboration-intro {
+    color: #7f8c8d;
+    font-style: italic;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.collaboration-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.collaboration-item {
+    background: rgba(255,255,255,0.8);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid;
+    transition: all 0.2s;
+}
+
+.collaboration-item.looking-for {
+    border-color: #3498db;
+}
+
+.collaboration-item.can-help {
+    border-color: #2ecc71;
+}
+
+.collaboration-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.collaboration-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.collaboration-icon {
+    font-size: 1.5rem;
+}
+
+.collaboration-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #2c3e50;
+}
+
+.collaboration-text {
+    color: #555;
+    line-height: 1.6;
+    margin: 0;
+    white-space: pre-wrap;
+}
+
+.collaboration-action {
+    text-align: center;
+    padding-top: 1rem;
+    border-top: 2px dashed rgba(0,0,0,0.1);
+}
+
+.btn-collaborate {
+    display: inline-block;
+    color: white;
+    text-decoration: none;
+    padding: 0.8rem 2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-collaborate:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
 }
 
 .profile-header {
@@ -595,6 +718,10 @@
     }
 
     .profile-resources-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .collaboration-content {
         grid-template-columns: 1fr;
     }
 
