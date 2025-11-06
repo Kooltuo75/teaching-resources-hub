@@ -12,7 +12,17 @@
       "Bash(start \"http://127.0.0.1:5000/category/Lesson Planning Tools\")",
       "Bash(start:*)",
       "Bash(git init:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(del add_resources.py)",
+      "Bash(echo \"\n\n# Register authentication routes\nfrom app.auth_routes import register_auth_routes\nregister_auth_routes(bp)\")",
+      "Bash(app/routes.py)",
+      "Bash(git reset:*)",
+      "Bash(del \"C:\\Users\\brent\\OneDrive\\Documents\\ClaudeCode\\Project 10 - Teach\\add_resources.py\")",
+      "Bash(del \"data\\users.db\")",
+      "Bash(timeout:*)",
+      "Bash(git remote add:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []
