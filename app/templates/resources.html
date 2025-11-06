@@ -218,11 +218,11 @@
 
         <div class="resources-grid-enhanced">
             {% for resource in category.resources %}
-            <div class="resource-card-enhanced" data-tags="{{ resource.tags|join(',') }}" data-name="{{ resource.name|lower }}" data-description="{{ resource.description|lower }}" data-resource-id="{{ resource.id }}">
+            <div class="resource-card-enhanced" data-tags="{{ resource.tags|join(',') }}" data-name="{{ resource.name|lower }}" data-description="{{ resource.description|lower }}" data-resource-name="{{ resource.name }}" data-resource-category="{{ category.name }}" data-resource-url="{{ resource.url }}">
                 <div class="resource-card-header">
                     <span class="resource-category-icon">{{ category.icon }}</span>
                     {% if current_user.is_authenticated %}
-                    <button class="favorite-btn" data-resource-id="{{ resource.id }}" onclick="toggleFavorite(event, '{{ resource.id }}', '{{ resource.name|replace("'", "\\'") }}')" title="Add to favorites">
+                    <button class="favorite-btn" data-resource-name="{{ resource.name }}" data-resource-category="{{ category.name }}" data-resource-url="{{ resource.url }}" onclick="toggleFavorite(event, this)" title="Add to favorites">
                         ⭐
                     </button>
                     {% endif %}

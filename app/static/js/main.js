@@ -997,12 +997,12 @@ function initFavorites() {
 }
 
 function loadUserFavorites() {
-    // Get all resource IDs on the page
-    const resourceIds = Array.from(document.querySelectorAll('.resource-card-enhanced')).map(card =>
-        card.getAttribute('data-resource-id')
-    );
+    // Get all resource names on the page
+    const resourceNames = Array.from(document.querySelectorAll('.resource-card-enhanced')).map(card =>
+        card.getAttribute('data-resource-name')
+    ).filter(name => name); // Filter out any null values
 
-    if (resourceIds.length === 0) {
+    if (resourceNames.length === 0) {
         return;
     }
 
@@ -1012,7 +1012,7 @@ function loadUserFavorites() {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ resource_ids: resourceIds })
+        body: JSON.stringify({ resource_names: resourceNames })
     })
     .then(response => response.json())
     .then(data => {
@@ -1026,8 +1026,8 @@ function loadUserFavorites() {
 
 function updateFavoriteButtons() {
     document.querySelectorAll('.favorite-btn').forEach(btn => {
-        const resourceId = btn.getAttribute('data-resource-id');
-        if (userFavorites.has(resourceId)) {
+        const resourceName = btn.getAttribute('data-resource-name');
+        if (userFavorites.has(resourceName)) {
             btn.classList.add('favorited');
             btn.textContent = '⭐';
             btn.title = 'Remove from favorites';
@@ -1039,12 +1039,16 @@ function updateFavoriteButtons() {
     });
 }
 
-function toggleFavorite(event, resourceId, resourceName) {
+function toggleFavorite(event, btnElement) {
     event.preventDefault();
     event.stopPropagation();
 
-    const btn = event.target;
-    const isFavorited = userFavorites.has(resourceId);
+    const btn = btnElement;
+    const resourceName = btn.getAttribute('data-resource-name');
+    const resourceCategory = btn.getAttribute('data-resource-category');
+    const resourceUrl = btn.getAttribute('data-resource-url');
+
+    const isFavorited = userFavorites.has(resourceName);
 
     // Optimistically update UI
     btn.disabled = true;
@@ -1056,12 +1060,12 @@ function toggleFavorite(event, resourceId, resourceName) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ resource_id: resourceId })
+            body: JSON.stringify({ resource_name: resourceName })
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                userFavorites.delete(resourceId);
+                userFavorites.delete(resourceName);
                 updateFavoriteButtons();
                 showFavoriteNotification(`Removed "${resourceName}" from favorites`);
             } else {
@@ -1082,12 +1086,16 @@ function toggleFavorite(event, resourceId, resourceName) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ resource_id: resourceId })
+            body: JSON.stringify({
+                resource_name: resourceName,
+                resource_category: resourceCategory,
+                resource_url: resourceUrl
+            })
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                userFavorites.add(resourceId);
+                userFavorites.add(resourceName);
                 updateFavoriteButtons();
                 showFavoriteNotification(`Added "${resourceName}" to favorites!`);
             } else {
