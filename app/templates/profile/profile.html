@@ -144,7 +144,7 @@
             {% endif %}
 
             <!-- Contact/Links Section -->
-            {% if profile_user.website or profile_user.twitter_handle %}
+            {% if profile_user.website or (profile_user.twitter_handle if hasattr(profile_user, 'twitter_handle') else False) %}
             <div class="profile-section" style="border-color: {{ profile_user.accent_color }};">
                 <h2 style="color: {{ profile_user.accent_color }};">Connect</h2>
                 <div class="profile-links">
@@ -153,7 +153,7 @@
                         🌐 Website
                     </a>
                     {% endif %}
-                    {% if profile_user.twitter_handle %}
+                    {% if hasattr(profile_user, 'twitter_handle') and profile_user.twitter_handle %}
                     <a href="https://twitter.com/{{ profile_user.twitter_handle }}" target="_blank" rel="noopener noreferrer" class="profile-link" style="color: {{ profile_user.accent_color }};">
                         🐦 @{{ profile_user.twitter_handle }}
                     </a>

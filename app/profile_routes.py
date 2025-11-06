@@ -180,16 +180,21 @@ def register_profile_routes(bp):
 
             # Update URLs
             current_user.website = request.form.get('website_url', '').strip()  # Note: model uses 'website'
+
+            # Handle twitter_handle (backward compatible)
             twitter_handle = request.form.get('twitter_handle', '').strip()
-            # Remove @ if user added it
-            if twitter_handle.startswith('@'):
-                twitter_handle = twitter_handle[1:]
-            # Store in a new field we'll add
-            if not hasattr(current_user, 'twitter_handle'):
-                # For now, store in website if twitter not available
-                pass
-            else:
-                current_user.twitter_handle = twitter_handle
+            if twitter_handle:
+                # Remove @ if user added it
+                if twitter_handle.startswith('@'):
+                    twitter_handle = twitter_handle[1:]
+                # Only set if column exists
+                if hasattr(current_user, 'twitter_handle'):
+                    current_user.twitter_handle = twitter_handle
+                else:
+                    logger.warning("twitter_handle column not yet migrated")
+            elif hasattr(current_user, 'twitter_handle'):
+                # Clear twitter handle if empty
+                current_user.twitter_handle = None
 
             db.session.commit()
 

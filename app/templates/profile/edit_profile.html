@@ -225,7 +225,7 @@
 
                 <div class="form-group">
                     <label for="twitter_handle">Twitter Handle</label>
-                    <input type="text" id="twitter_handle" name="twitter_handle" value="{{ current_user.twitter_handle or '' }}" placeholder="username (without @)">
+                    <input type="text" id="twitter_handle" name="twitter_handle" value="{{ current_user.twitter_handle if hasattr(current_user, 'twitter_handle') else '' }}" placeholder="username (without @)">
                 </div>
             </div>
 
