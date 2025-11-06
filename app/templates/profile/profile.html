@@ -49,6 +49,7 @@
                         ✏️ Customize My Room
                     </a>
 
+                    {# Google Classroom integration - currently disabled (needs OAuth setup)
                     {% if profile_user.google_connected %}
                     <div class="google-classroom-status">
                         <span class="connected-badge">✓ Google Classroom Connected</span>
@@ -69,6 +70,7 @@
                         Connect Google Classroom
                     </a>
                     {% endif %}
+                    #}
                 </div>
                 {% endif %}
             </div>
