@@ -31,7 +31,7 @@
                 <div class="feature-icon">📚</div>
                 <h3 class="feature-title">Comprehensive Directory</h3>
                 <p class="feature-description">
-                    Over 519 carefully curated educational resources across 55 specialized categories,
+                    Over {{ stats.total_resources }} carefully curated educational resources across {{ total_categories }} specialized categories,
                     from lesson planning to assessment tools.
                 </p>
             </div>
@@ -69,15 +69,15 @@
         <h2 class="about-section-title">By the Numbers</h2>
         <div class="about-stats">
             <div class="about-stat">
-                <div class="stat-num">519</div>
+                <div class="stat-num">{{ stats.total_resources }}</div>
                 <div class="stat-label">Teaching Resources</div>
             </div>
             <div class="about-stat">
-                <div class="stat-num">55</div>
+                <div class="stat-num">{{ total_categories }}</div>
                 <div class="stat-label">Specialized Categories</div>
             </div>
             <div class="about-stat">
-                <div class="stat-num">15+</div>
+                <div class="stat-num">{{ stats.subjects_covered }}+</div>
                 <div class="stat-label">Subject Areas</div>
             </div>
             <div class="about-stat">

@@ -86,7 +86,7 @@
 - **Total Categories:** 55 (verified)
 - **Free Resources:** 752 (75.5%)
 - **JSON Loading:** Working with caching
-- **API Response:** Returning all 996 resources
+- **API Response:** Returning all 512 resources
 
 ### 4. Health Check API ✅
 ```json
@@ -207,7 +207,7 @@ python run.py
 ### Scenario 1: New Teacher Joins
 1. Sign up as new user
 2. Complete profile
-3. Browse 996 resources
+3. Browse 512 resources
 4. Add favorites
 5. Write first review
 6. Earn reputation points
@@ -347,7 +347,7 @@ python run.py
 ### What's Working:
 ✅ All core features operational
 ✅ Database properly structured
-✅ 996 resources loading correctly
+✅ 512 resources loading correctly
 ✅ User authentication functional
 ✅ Test users created successfully
 ✅ All pages rendering correctly
@@ -407,7 +407,7 @@ Keep these credentials for testing:
 All backend features are working correctly. All UI templates are created and beautiful. The database is properly configured. Test users are ready. The server is running perfectly.
 
 **You can now:**
-1. ✅ Browse 996 educational resources
+1. ✅ Browse 512 educational resources
 2. ✅ Sign up/login with test accounts
 3. ✅ Write and read reviews (once logged in)
 4. ✅ Submit new resources

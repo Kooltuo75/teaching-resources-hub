@@ -60,8 +60,14 @@ def about():
     """About page with project information and mission statement."""
     logger.info("About page accessed")
 
+    # Get statistics for dynamic resource counts
+    categories = ResourceService.get_all_categories()
+    stats = StatsService.calculate_homepage_stats(categories)
+
     return render_template('about.html',
-                         app_name=current_app.config['APP_NAME'])
+                         app_name=current_app.config['APP_NAME'],
+                         stats=stats,
+                         total_categories=len(categories))
 
 
 @bp.route('/api-docs')

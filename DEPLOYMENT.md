@@ -230,7 +230,7 @@ Your app will be at: `https://YOUR_USERNAME.pythonanywhere.com`
 - [ ] DEBUG is set to False
 - [ ] App is accessible via URL
 - [ ] Login/signup works
-- [ ] Resources page loads (996 resources)
+- [ ] Resources page loads (512 resources)
 
 ### ✅ Recommended
 - [ ] Set up custom domain

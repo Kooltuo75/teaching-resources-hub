@@ -2,18 +2,30 @@
 
 > **The Ultimate Educational Resource Directory for Teachers Worldwide**
 
-A comprehensive, community-driven platform connecting educators with 996+ curated educational resources across 55 categories. Features social networking, resource reviews, user submissions, and gamification to build the largest teacher resource community.
+A comprehensive, community-driven platform connecting educators with 512+ curated educational resources across 55 categories. Features social networking, resource reviews, user submissions, and gamification to build the largest teacher resource community.
 
 [![Flask](https://img.shields.io/badge/Flask-3.0.0-blue.svg)](https://flask.palletsprojects.com/)
 [![Python](https://img.shields.io/badge/Python-3.11-green.svg)](https://www.python.org/)
 [![Status](https://img.shields.io/badge/Status-Production%20Ready-success.svg)](https://github.com)
+
+## 🆕 Latest Updates
+
+**November 2025**
+- ✨ **Modern UI Redesign** - Complete color scheme overhaul with improved readability and professional sky blue accent colors
+- 🔧 **Duplicate Resources Removed** - Cleaned database from 996 to 512 high-quality, unique resources
+- ⭐ **Favorites System Fixed** - Fully functional resource bookmarking and favorites management
+- 📊 **Dynamic Resource Counts** - All resource statistics now update automatically as content changes
+- 🎨 **Enhanced User Experience** - Improved navigation, better contrast, and modern card-based layouts
+- 🔐 **Enterprise-Grade Security** - Comprehensive authentication, input validation, and security headers
+- 👥 **Social Features** - User profiles, customizable rooms, favorites, and visit tracking
+- 📱 **Responsive Design** - Fully mobile-friendly interface with smooth animations
 
 ---
 
 ## 🌟 Features
 
 ### 📖 Resource Directory
-- **996 Curated Educational Resources** across 55 categories
+- **512 Curated Educational Resources** across 55 categories
 - Advanced search and filtering
 - Categories include Math, Science, ELA, STEM, SEL, and more
 - Grade-level specific resources (Pre-K through 12th grade)
@@ -89,7 +101,7 @@ See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions to Rende
 
 ## 📈 Statistics
 
-- **996 Educational Resources**
+- **512 Educational Resources**
 - **55 Categories**
 - **75% Free Resources**
 - **10 Database Models**

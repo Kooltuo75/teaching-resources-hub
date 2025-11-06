@@ -136,7 +136,7 @@ Your Teaching Resources Hub has been transformed into a comprehensive community 
 **Expansion Results:**
 - **Before:** 783 resources across 55 categories
 - **Added:** 213 new high-quality resources
-- **After:** 996 total resources
+- **After:** 512 total resources
 - **Increase:** 27.2%
 
 **Resource Types:**
@@ -235,7 +235,7 @@ Project 10 - Teach/
 │   │   └── social/              ✅ NEW - Social templates (needed)
 │   └── ...
 ├── data/
-│   └── resources.json           ✅ UPDATED - 996 resources (+213)
+│   └── resources.json           ✅ UPDATED - 512 resources (+213)
 └── SOCIAL_FEATURES_COMPLETE.md  ✅ THIS FILE
 ```
 
@@ -336,7 +336,7 @@ To make these features fully functional, create templates for:
 ✅ **Resource Submissions** - Complete workflow with moderation
 ✅ **Social Features** - Follow system, activity feed, discovery
 ✅ **Reputation System** - Gamification and leaderboards
-✅ **Resource Expansion** - 996 total resources (+213 new)
+✅ **Resource Expansion** - 512 total resources (+213 new)
 ✅ **Database Models** - 5 new models, enhanced User model
 ✅ **API Endpoints** - RESTful APIs for all features
 ✅ **Navigation** - Updated menu with new features
