@@ -2,7 +2,7 @@
 Performance middleware for static file caching and optimization.
 """
 
-from flask import make_response
+from flask import make_response, request
 from functools import wraps
 
 
@@ -18,16 +18,16 @@ def configure_caching(app):
     def add_cache_headers(response):
         """Add caching headers to static files."""
         # Only cache GET requests
-        if response.request.method != 'GET':
+        if request.method != 'GET':
             return response
 
         # Cache static files for 1 year
-        if '/static/' in response.request.path:
+        if '/static/' in request.path:
             response.cache_control.max_age = 31536000  # 1 year
             response.cache_control.public = True
 
         # Cache CSS and JS files
-        elif response.request.path.endswith(('.css', '.js', '.png', '.jpg', '.jpeg', '.gif', '.ico', '.svg', '.woff', '.woff2', '.ttf', '.eot')):
+        elif request.path.endswith(('.css', '.js', '.png', '.jpg', '.jpeg', '.gif', '.ico', '.svg', '.woff', '.woff2', '.ttf', '.eot')):
             response.cache_control.max_age = 31536000  # 1 year
             response.cache_control.public = True
 
