@@ -15,5 +15,11 @@ psycopg2-binary==2.9.9
 # Authentication
 Flask-Login==0.6.3
 
+# Google OAuth & APIs
+google-auth==2.23.0
+google-auth-oauthlib==1.1.0
+google-auth-httplib2==0.1.1
+google-api-python-client==2.100.0
+
 # Environment Variables
 python-dotenv==1.0.0
