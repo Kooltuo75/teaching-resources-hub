@@ -56,9 +56,9 @@ def create_app(config_class=Config):
     from app.middleware.security import configure_security
     configure_security(app)
 
-    # Register performance middleware (caching) - TEMPORARILY DISABLED for debugging
-    # from app.middleware.performance import configure_caching
-    # configure_caching(app)
+    # Register performance middleware (caching)
+    from app.middleware.performance import configure_caching
+    configure_caching(app)
 
     # Register analytics middleware (TEMPORARILY DISABLED for debugging)
     # from app.middleware.analytics_middleware import configure_analytics
