@@ -27,21 +27,29 @@ def register_profile_routes(bp):
             return redirect(url_for('main.index'))
 
         # Record profile visit if not viewing own profile
-        if current_user.is_authenticated and current_user.id != user.id:
-            visit = ProfileVisit(
-                profile_id=user.id,
-                visitor_id=current_user.id
-            )
-            db.session.add(visit)
-            db.session.commit()
-        elif not current_user.is_authenticated:
-            # Record anonymous visit
-            visit = ProfileVisit(profile_id=user.id)
-            db.session.add(visit)
-            db.session.commit()
+        try:
+            if current_user.is_authenticated and current_user.id != user.id:
+                visit = ProfileVisit(
+                    profile_id=user.id,
+                    visitor_id=current_user.id
+                )
+                db.session.add(visit)
+                db.session.commit()
+            elif not current_user.is_authenticated:
+                # Record anonymous visit
+                visit = ProfileVisit(profile_id=user.id)
+                db.session.add(visit)
+                db.session.commit()
+        except Exception as e:
+            logger.debug(f"Could not record profile visit: {e}")
+            db.session.rollback()
 
         # Get user's favorites
-        user_favorites = Favorite.query.filter_by(user_id=user.id).order_by(Favorite.added_at.desc()).limit(12).all()
+        try:
+            user_favorites = Favorite.query.filter_by(user_id=user.id).order_by(Favorite.added_at.desc()).limit(12).all()
+        except Exception as e:
+            logger.debug(f"Could not load favorites: {e}")
+            user_favorites = []
 
         # Get full resource details for favorites
         all_resources = ResourceService.get_all_resources_flat()
@@ -54,21 +62,30 @@ def register_profile_routes(bp):
                 favorited_resources.append(resource)
 
         # Get profile statistics
-        total_favorites = Favorite.query.filter_by(user_id=user.id).count()
-        total_visits = ProfileVisit.query.filter_by(profile_id=user.id).count()
+        try:
+            total_favorites = Favorite.query.filter_by(user_id=user.id).count()
+            total_visits = ProfileVisit.query.filter_by(profile_id=user.id).count()
+        except Exception as e:
+            logger.debug(f"Could not load profile stats: {e}")
+            total_favorites = 0
+            total_visits = 0
 
         # Get recent visitors (excluding owner)
-        recent_visitors = ProfileVisit.query.filter(
-            ProfileVisit.profile_id == user.id,
-            ProfileVisit.visitor_id.isnot(None),
-            ProfileVisit.visitor_id != user.id
-        ).order_by(ProfileVisit.visited_at.desc()).limit(5).all()
+        try:
+            recent_visitors = ProfileVisit.query.filter(
+                ProfileVisit.profile_id == user.id,
+                ProfileVisit.visitor_id.isnot(None),
+                ProfileVisit.visitor_id != user.id
+            ).order_by(ProfileVisit.visited_at.desc()).limit(5).all()
 
-        visitor_users = []
-        for visit in recent_visitors:
-            visitor = User.query.get(visit.visitor_id)
-            if visitor:
-                visitor_users.append(visitor)
+            visitor_users = []
+            for visit in recent_visitors:
+                visitor = User.query.get(visit.visitor_id)
+                if visitor:
+                    visitor_users.append(visitor)
+        except Exception as e:
+            logger.debug(f"Could not load recent visitors: {e}")
+            visitor_users = []
 
         is_own_profile = current_user.is_authenticated and current_user.id == user.id
 
