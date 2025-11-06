@@ -22,7 +22,11 @@
       "Bash(del \"data\\users.db\")",
       "Bash(timeout:*)",
       "Bash(git remote add:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(render:*)",
+      "Bash(scoop:*)",
+      "Bash(npm --version:*)",
+      "Bash(npm install:*)"
     ],
     "deny": [],
     "ask": []

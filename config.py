@@ -26,6 +26,14 @@ class Config:
     SQLALCHEMY_DATABASE_URI = database_url or f'sqlite:///{BASE_DIR / "data" / "users.db"}'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+    # Database connection pooling (for production performance)
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'pool_size': 10,           # Number of connections to maintain
+        'pool_recycle': 3600,      # Recycle connections after 1 hour
+        'pool_pre_ping': True,     # Verify connections before using
+        'max_overflow': 20,        # Allow up to 20 overflow connections
+    }
+
     # Claude API settings (for future use)
     CLAUDE_API_KEY = os.environ.get('CLAUDE_API_KEY')
 
@@ -45,6 +53,20 @@ class Config:
         'https://www.googleapis.com/auth/classroom.announcements'
     ]
 
+    # Performance settings
+    COMPRESS_MIMETYPES = [
+        'text/html',
+        'text/css',
+        'text/plain',
+        'text/xml',
+        'application/json',
+        'application/javascript',
+        'application/x-javascript',
+        'text/javascript',
+    ]
+    COMPRESS_LEVEL = 6  # Compression level (1-9, 6 is good balance)
+    COMPRESS_MIN_SIZE = 500  # Only compress responses larger than 500 bytes
+
     # Application settings
     APP_NAME = "Teaching Resources Hub"
-    APP_VERSION = "1.0.0"
+    APP_VERSION = "1.1.0"

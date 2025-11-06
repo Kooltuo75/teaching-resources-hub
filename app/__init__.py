@@ -32,6 +32,10 @@ def create_app(config_class=Config):
     from app.models import db, init_db
     init_db(app)
 
+    # Initialize Flask-Compress for response compression
+    from flask_compress import Compress
+    Compress(app)
+
     # Initialize Flask-Login
     from flask_login import LoginManager
     login_manager = LoginManager()
@@ -51,6 +55,10 @@ def create_app(config_class=Config):
     # Register security middleware
     from app.middleware.security import configure_security
     configure_security(app)
+
+    # Register performance middleware (caching)
+    from app.middleware.performance import configure_caching
+    configure_caching(app)
 
     # Register error handlers
     from app.middleware.error_handlers import register_error_handlers
