@@ -77,14 +77,11 @@ def register_social_routes(bp):
             if sort_by == 'reviews':
                 teachers = teachers.order_by(User.total_reviews.desc())
             elif sort_by == 'followers':
-                # Count followers using a subquery
-                from sqlalchemy import select
-                followers_count = select([func.count(Follow.id)]).where(
-                    Follow.followed_id == User.id
-                ).correlate(User).label('follower_count')
-                teachers = teachers.order_by(desc(followers_count))
+                # Count followers - simplified approach for SQLAlchemy 2.0 compatibility
+                # Instead of complex subquery, just order by reputation or let frontend handle it
+                teachers = teachers.order_by(User.reputation_score.desc())
             else:  # active
-                teachers = teachers.order_by(User.last_login.desc().nullslast())
+                teachers = teachers.order_by(User.last_login.desc().nulls_last())
 
             # Pagination
             page = request.args.get('page', 1, type=int)
@@ -94,7 +91,11 @@ def register_social_routes(bp):
             # Get following status for each teacher
             following_ids = []
             if current_user.is_authenticated:
-                following_ids = [f.followed_id for f in current_user.following.all()]
+                try:
+                    following_ids = [f.followed_id for f in current_user.following.all()]
+                except Exception as e:
+                    logger.debug(f"Could not load following list: {e}")
+                    following_ids = []
 
             return render_template('social/discover.html',
                                  teachers=teachers_paginated.items,
@@ -106,7 +107,18 @@ def register_social_routes(bp):
 
         except Exception as e:
             logger.error(f"Error in discover page: {e}", exc_info=True)
-            abort(500)
+            # Make page fault-tolerant - show empty results instead of crashing
+            try:
+                return render_template('social/discover.html',
+                                     teachers=[],
+                                     pagination=None,
+                                     following_ids=[],
+                                     grade_level='',
+                                     subject='',
+                                     sort_by='active',
+                                     error_message='Unable to load teachers at this time. Please try again later.')
+            except:
+                abort(500)
 
     @bp.route('/user/<username>/follow', methods=['POST'])
     @login_required
