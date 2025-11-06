@@ -44,14 +44,13 @@ def register_profile_routes(bp):
         user_favorites = Favorite.query.filter_by(user_id=user.id).order_by(Favorite.added_at.desc()).limit(12).all()
 
         # Get full resource details for favorites
-        resource_service = ResourceService()
-        all_resources = resource_service.get_all_resources()
-        resources_dict = {r['id']: r for r in all_resources}
+        all_resources = ResourceService.get_all_resources_flat()
+        resources_dict = {r['name']: r for r in all_resources}
 
         favorited_resources = []
         for fav in user_favorites:
-            if fav.resource_id in resources_dict:
-                resource = resources_dict[fav.resource_id].copy()
+            if fav.resource_name in resources_dict:
+                resource = resources_dict[fav.resource_name].copy()
                 favorited_resources.append(resource)
 
         # Get profile statistics
