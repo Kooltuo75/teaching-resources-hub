@@ -11,32 +11,60 @@
 ">
     <div class="profile-container">
         <!-- Profile Header -->
+        <!-- Favorite Quote Banner -->
+        {% if profile_user.favorite_quote %}
+        <div class="quote-banner" style="border-color: {{ profile_user.accent_color }};">
+            <span class="quote-mark left">"</span>
+            <p class="quote-text">{{ profile_user.favorite_quote }}</p>
+            <span class="quote-mark right">"</span>
+        </div>
+        {% endif %}
+
         <div class="profile-header" style="border-color: {{ profile_user.accent_color }};">
             <div class="profile-avatar">
+                {% if profile_user.profile_picture %}
+                <img src="{{ profile_user.profile_picture }}" alt="{{ profile_user.display_name or profile_user.username }}" class="avatar-image">
+                {% else %}
                 {{ profile_user.username[0].upper() }}
+                {% endif %}
             </div>
             <div class="profile-info">
                 <h1 class="profile-name">{{ profile_user.display_name or profile_user.username }}</h1>
                 <p class="profile-username">@{{ profile_user.username }}</p>
 
+                {% if profile_user.location %}
+                <p class="profile-location">📍 {{ profile_user.location }}</p>
+                {% endif %}
+
+                <!-- Years Teaching Badge -->
+                {% if profile_user.years_teaching %}
+                <div class="experience-badge {% if profile_user.years_teaching >= 20 %}master{% elif profile_user.years_teaching >= 11 %}veteran{% elif profile_user.years_teaching >= 4 %}experienced{% else %}new-teacher{% endif %}">
+                    <span class="badge-icon">
+                        {% if profile_user.years_teaching >= 20 %}🏆{% elif profile_user.years_teaching >= 11 %}🎖️{% elif profile_user.years_teaching >= 4 %}📘{% else %}🌱{% endif %}
+                    </span>
+                    <span class="badge-text">{{ profile_user.years_teaching }} Year{% if profile_user.years_teaching != 1 %}s{% endif %} Teaching</span>
+                </div>
+                {% endif %}
+
                 {% if profile_user.school %}
                 <p class="profile-school">🏫 {{ profile_user.school }}</p>
                 {% endif %}
 
-                {% if profile_user.grade_levels %}
-                <p class="profile-grades">📚 {{ profile_user.grade_levels }}</p>
+                {% if profile_user.grade_level %}
+                <p class="profile-grades">📚 {{ profile_user.grade_level }}</p>
                 {% endif %}
 
-                {% if profile_user.subjects %}
-                <p class="profile-subjects">📖 {{ profile_user.subjects }}</p>
+                {% if profile_user.subjects_taught %}
+                <p class="profile-subjects">📖 {{ profile_user.subjects_taught }}</p>
                 {% endif %}
 
                 <div class="profile-stats">
                     <span class="stat-item" style="color: {{ profile_user.accent_color }};">
                         <strong>{{ total_favorites }}</strong> Favorites
                     </span>
-                    <span class="stat-item" style="color: {{ profile_user.accent_color }};">
-                        <strong>{{ total_visits }}</strong> Visits
+                    <span class="stat-item visitor-counter-stat" style="color: {{ profile_user.accent_color }};">
+                        <span class="counter-icon">👀</span>
+                        <strong>{{ total_visits }}</strong> Profile Views
                     </span>
                     <span class="stat-item" style="color: {{ profile_user.accent_color }};">
                         Member since <strong>{{ profile_user.created_at.strftime('%B %Y') }}</strong>
@@ -116,12 +144,12 @@
             {% endif %}
 
             <!-- Contact/Links Section -->
-            {% if profile_user.website_url or profile_user.twitter_handle %}
+            {% if profile_user.website or profile_user.twitter_handle %}
             <div class="profile-section" style="border-color: {{ profile_user.accent_color }};">
                 <h2 style="color: {{ profile_user.accent_color }};">Connect</h2>
                 <div class="profile-links">
-                    {% if profile_user.website_url %}
-                    <a href="{{ profile_user.website_url }}" target="_blank" rel="noopener noreferrer" class="profile-link" style="color: {{ profile_user.accent_color }};">
+                    {% if profile_user.website %}
+                    <a href="{{ profile_user.website }}" target="_blank" rel="noopener noreferrer" class="profile-link" style="color: {{ profile_user.accent_color }};">
                         🌐 Website
                     </a>
                     {% endif %}
@@ -160,6 +188,122 @@
 .profile-container {
     max-width: 1200px;
     margin: 0 auto;
+}
+
+/* Favorite Quote Banner */
+.quote-banner {
+    background: rgba(255,255,255,0.95);
+    border-radius: 12px;
+    padding: 2rem 3rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    border-left: 5px solid;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    position: relative;
+}
+
+.quote-mark {
+    font-size: 4rem;
+    opacity: 0.2;
+    font-family: Georgia, serif;
+    line-height: 1;
+}
+
+.quote-mark.left {
+    position: absolute;
+    left: 1rem;
+    top: 0.5rem;
+}
+
+.quote-mark.right {
+    position: absolute;
+    right: 1rem;
+    bottom: 0.5rem;
+}
+
+.quote-text {
+    font-size: 1.5rem;
+    font-style: italic;
+    color: #2c3e50;
+    margin: 0;
+    font-weight: 500;
+    line-height: 1.6;
+}
+
+/* Profile Avatar with Image Support */
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    font-weight: bold;
+    flex-shrink: 0;
+    overflow: hidden;
+    border: 4px solid rgba(255,255,255,0.9);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.avatar-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Experience Badge */
+.experience-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 20px;
+    font-weight: 600;
+    margin: 0.5rem 0;
+    border: 2px solid;
+    transition: all 0.2s;
+}
+
+.experience-badge.new-teacher {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border-color: #66bb6a;
+}
+
+.experience-badge.experienced {
+    background: #e3f2fd;
+    color: #1565c0;
+    border-color: #42a5f5;
+}
+
+.experience-badge.veteran {
+    background: #f3e5f5;
+    color: #6a1b9a;
+    border-color: #ab47bc;
+}
+
+.experience-badge.master {
+    background: #fff8e1;
+    color: #f57f17;
+    border-color: #ffd54f;
+}
+
+.badge-icon {
+    font-size: 1.4rem;
+}
+
+.badge-text {
+    font-size: 1rem;
+}
+
+/* Location Display */
+.profile-location {
+    margin: 0.3rem 0;
+    color: #555;
+    font-weight: 500;
 }
 
 .profile-header {
@@ -452,6 +596,22 @@
 
     .profile-resources-grid {
         grid-template-columns: 1fr;
+    }
+
+    .quote-banner {
+        padding: 1.5rem 2rem;
+    }
+
+    .quote-text {
+        font-size: 1.2rem;
+    }
+
+    .quote-mark {
+        font-size: 3rem;
+    }
+
+    .experience-badge {
+        justify-content: center;
     }
 }
 </style>

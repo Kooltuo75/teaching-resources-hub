@@ -27,7 +27,10 @@
       "Bash(scoop:*)",
       "Bash(npm --version:*)",
       "Bash(npm install:*)",
-      "Bash(ssh:*)"
+      "Bash(ssh:*)",
+      "Bash(del find_duplicates.py remove_duplicates.py)",
+      "Bash(echo:*)",
+      "Bash(.gitignore)"
     ],
     "deny": [],
     "ask": []

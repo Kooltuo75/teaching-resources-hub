@@ -36,6 +36,14 @@ def register_profile_routes(bp):
             flash(f'User {username} not found.', 'error')
             return redirect(url_for('main.index'))
 
+        # Check privacy settings
+        if not user.profile_public and not current_user.is_authenticated:
+            flash('This profile is private. Please log in to view it.', 'error')
+            return redirect(url_for('main.index'))
+
+        # Check if viewing own profile
+        is_own_profile = current_user.is_authenticated and current_user.id == user.id
+
         # Record profile visit if not viewing own profile
         try:
             if current_user.is_authenticated and current_user.id != user.id:
@@ -54,22 +62,25 @@ def register_profile_routes(bp):
             logger.debug(f"Could not record profile visit: {e}")
             db.session.rollback()
 
-        # Get user's favorites
-        try:
-            user_favorites = Favorite.query.filter_by(user_id=user.id).order_by(Favorite.added_at.desc()).limit(12).all()
-        except Exception as e:
-            logger.debug(f"Could not load favorites: {e}")
-            user_favorites = []
-
-        # Get full resource details for favorites
-        all_resources = ResourceService.get_all_resources_flat()
-        resources_dict = {r['name']: r for r in all_resources}
-
+        # Get user's favorites (ALL of them, not just 12!)
         favorited_resources = []
-        for fav in user_favorites:
-            if fav.resource_name in resources_dict:
-                resource = resources_dict[fav.resource_name].copy()
-                favorited_resources.append(resource)
+        if user.show_favorites_public or is_own_profile:
+            try:
+                user_favorites = Favorite.query.filter_by(user_id=user.id).order_by(Favorite.created_at.desc()).all()
+            except Exception as e:
+                logger.debug(f"Could not load favorites: {e}")
+                user_favorites = []
+
+            # Get full resource details for favorites
+            all_resources = ResourceService.get_all_resources_flat()
+            resources_dict = {r['name']: r for r in all_resources}
+
+            for fav in user_favorites:
+                if fav.resource_name in resources_dict:
+                    resource = resources_dict[fav.resource_name].copy()
+                    resource['personal_note'] = fav.personal_note  # Add user's note
+                    resource['favorited_at'] = fav.created_at
+                    favorited_resources.append(resource)
 
         # Get profile statistics
         try:
@@ -96,8 +107,6 @@ def register_profile_routes(bp):
         except Exception as e:
             logger.debug(f"Could not load recent visitors: {e}")
             visitor_users = []
-
-        is_own_profile = current_user.is_authenticated and current_user.id == user.id
 
         return render_template(
             'profile/profile.html',
