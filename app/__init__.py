@@ -32,9 +32,9 @@ def create_app(config_class=Config):
     from app.models import db, init_db
     init_db(app)
 
-    # Initialize Flask-Compress for response compression - TEMPORARILY DISABLED for debugging
-    # from flask_compress import Compress
-    # Compress(app)
+    # Initialize Flask-Compress for response compression
+    from flask_compress import Compress
+    Compress(app)
 
     # Initialize Flask-Login
     from flask_login import LoginManager
