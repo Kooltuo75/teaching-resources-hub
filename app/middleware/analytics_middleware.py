@@ -41,8 +41,9 @@ def configure_analytics(app):
                         response_time=response_time
                     )
                 except Exception as e:
-                    # Don't break the request if analytics fails
-                    logger.error(f"Analytics tracking error: {e}")
+                    # Don't break the request if analytics fails (e.g., tables don't exist yet)
+                    # This is expected on first deploy before running setup_analytics.py
+                    logger.debug(f"Analytics tracking skipped: {e}")
 
         return response
 
