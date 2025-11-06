@@ -324,6 +324,105 @@ class Activity(db.Model):
         return f'<Activity {self.activity_type} by User {self.user_id} at {self.created_at}>'
 
 
+class ResourceView(db.Model):
+    """Track resource views for analytics."""
+
+    __tablename__ = 'resource_views'
+
+    id = db.Column(db.Integer, primary_key=True)
+    resource_name = db.Column(db.String(200), nullable=False, index=True)
+    resource_category = db.Column(db.String(100), index=True)
+    resource_url = db.Column(db.String(500))
+
+    # User information
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True, index=True)
+    ip_address = db.Column(db.String(45))  # IPv4 or IPv6
+    user_agent = db.Column(db.String(500))
+
+    # Session tracking
+    session_id = db.Column(db.String(100), index=True)
+    referrer = db.Column(db.String(500))
+
+    # Timestamp
+    viewed_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+
+    def __repr__(self):
+        return f'<ResourceView {self.resource_name} at {self.viewed_at}>'
+
+
+class SearchQuery(db.Model):
+    """Track search queries for analytics and improvement."""
+
+    __tablename__ = 'search_queries'
+
+    id = db.Column(db.Integer, primary_key=True)
+    query = db.Column(db.String(500), nullable=False, index=True)
+    results_count = db.Column(db.Integer)
+
+    # User information
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True, index=True)
+    ip_address = db.Column(db.String(45))
+    session_id = db.Column(db.String(100), index=True)
+
+    # Search context
+    category_filter = db.Column(db.String(100))  # If user filtered by category
+    had_results = db.Column(db.Boolean, default=True)
+
+    # Timestamp
+    searched_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+
+    def __repr__(self):
+        return f'<SearchQuery "{self.query}" at {self.searched_at}>'
+
+
+class CategoryView(db.Model):
+    """Track category views for popularity analytics."""
+
+    __tablename__ = 'category_views'
+
+    id = db.Column(db.Integer, primary_key=True)
+    category_name = db.Column(db.String(100), nullable=False, index=True)
+
+    # User information
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True, index=True)
+    ip_address = db.Column(db.String(45))
+    session_id = db.Column(db.String(100), index=True)
+
+    # Timestamp
+    viewed_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+
+    def __repr__(self):
+        return f'<CategoryView {self.category_name} at {self.viewed_at}>'
+
+
+class PageView(db.Model):
+    """Track page views for general analytics."""
+
+    __tablename__ = 'page_views'
+
+    id = db.Column(db.Integer, primary_key=True)
+    path = db.Column(db.String(500), nullable=False, index=True)
+    method = db.Column(db.String(10))  # GET, POST, etc.
+    status_code = db.Column(db.Integer)
+    response_time = db.Column(db.Float)  # Response time in seconds
+
+    # User information
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True, index=True)
+    ip_address = db.Column(db.String(45))
+    user_agent = db.Column(db.String(500))
+    session_id = db.Column(db.String(100), index=True)
+
+    # Referrer and location
+    referrer = db.Column(db.String(500))
+    country = db.Column(db.String(2))  # ISO country code
+
+    # Timestamp
+    viewed_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+
+    def __repr__(self):
+        return f'<PageView {self.path} at {self.viewed_at}>'
+
+
 def init_db(app):
     """Initialize the database with the Flask app."""
     db.init_app(app)

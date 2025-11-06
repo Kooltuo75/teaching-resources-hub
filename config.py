@@ -67,6 +67,9 @@ class Config:
     COMPRESS_LEVEL = 6  # Compression level (1-9, 6 is good balance)
     COMPRESS_MIN_SIZE = 500  # Only compress responses larger than 500 bytes
 
+    # Analytics settings
+    GOOGLE_ANALYTICS_ID = os.environ.get('GOOGLE_ANALYTICS_ID', '')  # e.g., G-XXXXXXXXXX
+
     # Application settings
     APP_NAME = "Teaching Resources Hub"
-    APP_VERSION = "1.1.0"
+    APP_VERSION = "1.2.0"

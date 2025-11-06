@@ -1,0 +1,292 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics Dashboard - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="analytics-dashboard">
+    <div class="dashboard-header">
+        <h1>📊 Analytics Dashboard</h1>
+        <div class="time-filter">
+            <a href="?days=1" class="{% if days == 1 %}active{% endif %}">24 Hours</a>
+            <a href="?days=7" class="{% if days == 7 %}active{% endif %}">7 Days</a>
+            <a href="?days=30" class="{% if days == 30 %}active{% endif %}">30 Days</a>
+            <a href="?days=90" class="{% if days == 90 %}active{% endif %}">90 Days</a>
+        </div>
+    </div>
+
+    <!-- Key Metrics -->
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <div class="metric-icon">📄</div>
+            <div class="metric-value">{{ "{:,}".format(stats.total_page_views) }}</div>
+            <div class="metric-label">Page Views</div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-icon">👥</div>
+            <div class="metric-value">{{ "{:,}".format(stats.unique_sessions) }}</div>
+            <div class="metric-label">Unique Sessions</div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-icon">🔍</div>
+            <div class="metric-value">{{ "{:,}".format(stats.total_searches) }}</div>
+            <div class="metric-label">Searches</div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-icon">📚</div>
+            <div class="metric-value">{{ "{:,}".format(stats.total_resource_views) }}</div>
+            <div class="metric-label">Resource Views</div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-icon">⭐</div>
+            <div class="metric-value">{{ "{:,}".format(stats.new_reviews) }}</div>
+            <div class="metric-label">New Reviews</div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-icon">➕</div>
+            <div class="metric-value">{{ "{:,}".format(stats.new_users) }}</div>
+            <div class="metric-label">New Users</div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-icon">📝</div>
+            <div class="metric-value">{{ "{:,}".format(stats.new_submissions) }}</div>
+            <div class="metric-label">New Submissions</div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-icon">⚡</div>
+            <div class="metric-value">{{ "%.3f"|format(stats.avg_response_time) }}s</div>
+            <div class="metric-label">Avg Response Time</div>
+        </div>
+    </div>
+
+    <!-- Charts and Lists -->
+    <div class="analytics-grid">
+        <!-- Top Resources -->
+        <div class="analytics-card">
+            <h2>🔝 Top Resources</h2>
+            <div class="top-list">
+                {% for resource in top_resources %}
+                <div class="top-item">
+                    <div class="item-rank">{{ loop.index }}</div>
+                    <div class="item-info">
+                        <div class="item-name">{{ resource.name }}</div>
+                        <div class="item-meta">{{ resource.category }}</div>
+                    </div>
+                    <div class="item-stat">{{ resource.views }} views</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Top Categories -->
+        <div class="analytics-card">
+            <h2>📁 Top Categories</h2>
+            <div class="top-list">
+                {% for category in top_categories %}
+                <div class="top-item">
+                    <div class="item-rank">{{ loop.index }}</div>
+                    <div class="item-info">
+                        <div class="item-name">{{ category.name }}</div>
+                    </div>
+                    <div class="item-stat">{{ category.views }} views</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Top Searches -->
+        <div class="analytics-card full-width">
+            <h2>🔍 Top Searches</h2>
+            <div class="top-list">
+                {% for search in top_searches %}
+                <div class="top-item">
+                    <div class="item-rank">{{ loop.index }}</div>
+                    <div class="item-info">
+                        <div class="item-name">"{{ search.query }}"</div>
+                        <div class="item-meta">Avg {{ search.avg_results }} results</div>
+                    </div>
+                    <div class="item-stat">{{ search.count }} searches</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Daily Activity Chart -->
+        <div class="analytics-card full-width">
+            <h2>📈 Daily Activity</h2>
+            <canvas id="activityChart" width="400" height="100"></canvas>
+        </div>
+    </div>
+</div>
+
+<style>
+.analytics-dashboard {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.time-filter a {
+    padding: 8px 16px;
+    margin-left: 10px;
+    background: #f0f0f0;
+    border-radius: 5px;
+    text-decoration: none;
+    color: #333;
+}
+
+.time-filter a.active {
+    background: #667eea;
+    color: white;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.metric-card {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.metric-icon {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.metric-value {
+    font-size: 28px;
+    font-weight: bold;
+    color: #667eea;
+    margin-bottom: 5px;
+}
+
+.metric-label {
+    color: #666;
+    font-size: 14px;
+}
+
+.analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 20px;
+}
+
+.analytics-card {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.analytics-card.full-width {
+    grid-column: 1 / -1;
+}
+
+.analytics-card h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 18px;
+}
+
+.top-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.top-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background: #f9f9f9;
+    border-radius: 5px;
+}
+
+.item-rank {
+    width: 30px;
+    height: 30px;
+    background: #667eea;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-right: 15px;
+}
+
+.item-info {
+    flex: 1;
+}
+
+.item-name {
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+
+.item-meta {
+    font-size: 12px;
+    color: #666;
+}
+
+.item-stat {
+    font-weight: bold;
+    color: #667eea;
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script>
+// Daily Activity Chart
+const activityData = {{ daily_activity | tojson }};
+const ctx = document.getElementById('activityChart').getContext('2d');
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: activityData.map(d => d.date),
+        datasets: [{
+            label: 'Page Views',
+            data: activityData.map(d => d.views),
+            borderColor: '#667eea',
+            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+            tension: 0.4,
+            fill: true
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

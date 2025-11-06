@@ -26,7 +26,8 @@
       "Bash(render:*)",
       "Bash(scoop:*)",
       "Bash(npm --version:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(ssh:*)"
     ],
     "deny": [],
     "ask": []
