@@ -31,6 +31,7 @@ class User(UserMixin, db.Model):
     years_teaching = db.Column(db.Integer)
     location = db.Column(db.String(100))  # City, State
     website = db.Column(db.String(200))
+    twitter_handle = db.Column(db.String(50))  # Twitter username (without @)
 
     # MySpace-Style Customization
     profile_picture = db.Column(db.String(500))  # URL or path

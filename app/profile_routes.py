@@ -3,14 +3,24 @@ Profile routes for user profile pages and customization.
 MySpace-style customizable teacher "Room" feature.
 """
 
-from flask import render_template, redirect, url_for, flash, request
+from flask import render_template, redirect, url_for, flash, request, current_app
 from flask_login import login_required, current_user
 from app.models import db, User, Favorite, ProfileVisit
 from app.services.resource_service import ResourceService
 from datetime import datetime
+from werkzeug.utils import secure_filename
+import os
 import logging
 
 logger = logging.getLogger(__name__)
+
+# File upload configuration
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
+
+def allowed_file(filename):
+    """Check if file extension is allowed."""
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 def register_profile_routes(bp):
@@ -104,13 +114,54 @@ def register_profile_routes(bp):
     def edit_profile():
         """Edit user's profile customization."""
         if request.method == 'POST':
+            # Handle profile picture upload
+            if 'profile_picture' in request.files:
+                file = request.files['profile_picture']
+                if file and file.filename and allowed_file(file.filename):
+                    # Check file size
+                    file.seek(0, os.SEEK_END)
+                    file_length = file.tell()
+                    if file_length > MAX_FILE_SIZE:
+                        flash('File is too large. Maximum size is 5MB.', 'error')
+                        file.seek(0)
+                    else:
+                        file.seek(0)
+                        # Generate unique filename
+                        filename = secure_filename(file.filename)
+                        unique_filename = f"{current_user.id}_{datetime.now().strftime('%Y%m%d%H%M%S')}_{filename}"
+
+                        # Save file
+                        upload_folder = os.path.join(current_app.root_path, 'static', 'uploads', 'profiles')
+                        os.makedirs(upload_folder, exist_ok=True)
+                        file_path = os.path.join(upload_folder, unique_filename)
+                        file.save(file_path)
+
+                        # Update database
+                        current_user.profile_picture = f'/static/uploads/profiles/{unique_filename}'
+                        logger.info(f'User {current_user.username} uploaded profile picture')
+
             # Update basic info
             current_user.display_name = request.form.get('display_name', '').strip() or current_user.username
             current_user.bio = request.form.get('bio', '').strip()
             current_user.teaching_philosophy = request.form.get('teaching_philosophy', '').strip()
             current_user.school = request.form.get('school', '').strip()
-            current_user.grade_levels = request.form.get('grade_levels', '').strip()
-            current_user.subjects = request.form.get('subjects', '').strip()
+            current_user.grade_level = request.form.get('grade_levels', '').strip()  # Note: form uses grade_levels
+            current_user.subjects_taught = request.form.get('subjects', '').strip()  # Note: form uses subjects
+
+            # Phase 1 New Fields
+            current_user.favorite_quote = request.form.get('favorite_quote', '').strip()
+            current_user.location = request.form.get('location', '').strip()
+
+            # Years teaching (convert to int)
+            years_str = request.form.get('years_teaching', '').strip()
+            if years_str and years_str.isdigit():
+                current_user.years_teaching = int(years_str)
+            elif years_str == '':
+                current_user.years_teaching = None
+
+            # Privacy settings
+            current_user.profile_public = request.form.get('profile_public') == 'on'
+            current_user.show_favorites_public = request.form.get('show_favorites_public') == 'on'
 
             # Update customization
             current_user.background_color = request.form.get('background_color', '#ffffff')
@@ -119,8 +170,17 @@ def register_profile_routes(bp):
             current_user.profile_theme = request.form.get('profile_theme', 'light')
 
             # Update URLs
-            current_user.website_url = request.form.get('website_url', '').strip()
-            current_user.twitter_handle = request.form.get('twitter_handle', '').strip()
+            current_user.website = request.form.get('website_url', '').strip()  # Note: model uses 'website'
+            twitter_handle = request.form.get('twitter_handle', '').strip()
+            # Remove @ if user added it
+            if twitter_handle.startswith('@'):
+                twitter_handle = twitter_handle[1:]
+            # Store in a new field we'll add
+            if not hasattr(current_user, 'twitter_handle'):
+                # For now, store in website if twitter not available
+                pass
+            else:
+                current_user.twitter_handle = twitter_handle
 
             db.session.commit()
 
