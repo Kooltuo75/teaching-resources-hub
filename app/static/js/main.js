@@ -765,16 +765,16 @@ function initSettingsPanel() {
 
     if (!settingsToggle) return; // Only on resources page
 
-    // Default settings (all off for clean view)
+    // Default settings (all on for full information display)
     const defaultSettings = {
-        statsBar: false,
-        categoryJump: false,
-        filterSort: false,
-        resourcesFooter: false,
-        categoryDescriptions: false,
-        categoryBadges: false,
-        resourceDescriptions: false,
-        resourceTags: false,
+        statsBar: true,
+        categoryJump: true,
+        filterSort: true,
+        resourcesFooter: true,
+        categoryDescriptions: true,
+        categoryBadges: true,
+        resourceDescriptions: true,
+        resourceTags: true,
         cardSpacing: 'normal'
     };
 
