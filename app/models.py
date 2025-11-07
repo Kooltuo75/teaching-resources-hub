@@ -510,6 +510,136 @@ class FavoriteLesson(db.Model):
         return f'<FavoriteLesson {self.title} by user {self.user_id}>'
 
 
+class UploadedResource(db.Model):
+    """Teacher-uploaded resources (PDFs, docs, worksheets, etc.)."""
+
+    __tablename__ = 'uploaded_resources'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+
+    # Resource Details
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text)
+    file_path = db.Column(db.String(500), nullable=False)  # Path to uploaded file
+    file_type = db.Column(db.String(50))  # pdf, docx, pptx, jpg, png, etc.
+    file_size = db.Column(db.Integer)  # Size in bytes
+
+    # Metadata
+    category = db.Column(db.String(100))  # Subject area
+    grade_level = db.Column(db.String(100))
+    tags = db.Column(db.String(500))  # Comma-separated
+    standards = db.Column(db.String(500))  # Educational standards (e.g., Common Core)
+    duration = db.Column(db.String(100))  # How long it takes to use
+    difficulty = db.Column(db.String(50))  # Easy, Medium, Hard
+
+    # Visibility
+    is_public = db.Column(db.Boolean, default=True)
+    is_featured = db.Column(db.Boolean, default=False)  # Promoted resources
+
+    # Stats
+    download_count = db.Column(db.Integer, default=0)
+    view_count = db.Column(db.Integer, default=0)
+    rating_sum = db.Column(db.Integer, default=0)
+    rating_count = db.Column(db.Integer, default=0)
+
+    # Timestamps
+    uploaded_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<UploadedResource {self.title} by user {self.user_id}>'
+
+    @property
+    def average_rating(self):
+        """Calculate average rating."""
+        if self.rating_count == 0:
+            return 0
+        return round(self.rating_sum / self.rating_count, 1)
+
+
+class ResourceDownload(db.Model):
+    """Track downloads of uploaded resources for analytics."""
+
+    __tablename__ = 'resource_downloads'
+
+    id = db.Column(db.Integer, primary_key=True)
+    resource_id = db.Column(db.Integer, db.ForeignKey('uploaded_resources.id'), nullable=False, index=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True, index=True)
+
+    # Analytics
+    ip_address = db.Column(db.String(45))
+    user_agent = db.Column(db.String(500))
+    referrer = db.Column(db.String(500))
+
+    # Timestamp
+    downloaded_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+
+    def __repr__(self):
+        return f'<ResourceDownload resource={self.resource_id} at {self.downloaded_at}>'
+
+
+class ResourceCollection(db.Model):
+    """Teacher-created collections/playlists of resources."""
+
+    __tablename__ = 'resource_collections'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+
+    # Collection Details
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text)
+    cover_image = db.Column(db.String(500))  # Optional cover image
+
+    # Metadata
+    category = db.Column(db.String(100))
+    grade_level = db.Column(db.String(100))
+    tags = db.Column(db.String(500))
+
+    # Visibility
+    is_public = db.Column(db.Boolean, default=True)
+
+    # Stats
+    view_count = db.Column(db.Integer, default=0)
+    follower_count = db.Column(db.Integer, default=0)  # Users who save this collection
+
+    # Timestamps
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationships
+    items = db.relationship('CollectionItem', backref='collection', lazy='dynamic', cascade='all, delete-orphan')
+
+    def __repr__(self):
+        return f'<ResourceCollection {self.title} by user {self.user_id}>'
+
+
+class CollectionItem(db.Model):
+    """Items in a resource collection (can be uploaded resources or external links)."""
+
+    __tablename__ = 'collection_items'
+
+    id = db.Column(db.Integer, primary_key=True)
+    collection_id = db.Column(db.Integer, db.ForeignKey('resource_collections.id'), nullable=False, index=True)
+
+    # Item can be either an uploaded resource or external link
+    resource_id = db.Column(db.Integer, db.ForeignKey('uploaded_resources.id'), nullable=True)
+    external_url = db.Column(db.String(500), nullable=True)
+    external_title = db.Column(db.String(200), nullable=True)
+    external_description = db.Column(db.Text, nullable=True)
+
+    # Notes and ordering
+    notes = db.Column(db.Text)  # Teacher's notes about this resource
+    display_order = db.Column(db.Integer, default=0)
+
+    # Timestamp
+    added_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<CollectionItem collection={self.collection_id} order={self.display_order}>'
+
+
 def init_db(app):
     """Initialize the database with the Flask app."""
     db.init_app(app)
