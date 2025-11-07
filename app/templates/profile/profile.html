@@ -293,7 +293,7 @@
             {% endif %}
 
             <!-- Contact/Links Section -->
-            {% if profile_user.website or (profile_user.twitter_handle if hasattr(profile_user, 'twitter_handle') else False) %}
+            {% if profile_user.website or (hasattr(profile_user, 'twitter_handle') and profile_user.twitter_handle) %}
             <div class="profile-section" style="border-color: {{ profile_user.accent_color }};">
                 <h2 style="color: {{ profile_user.accent_color }};">Connect</h2>
                 <div class="profile-links">

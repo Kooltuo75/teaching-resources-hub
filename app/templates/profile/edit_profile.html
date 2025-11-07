@@ -157,7 +157,7 @@
 
                 <div class="form-group">
                     <label for="open_to_collaboration">
-                        <input type="checkbox" id="open_to_collaboration" name="open_to_collaboration" {% if current_user.open_to_collaboration if hasattr(current_user, 'open_to_collaboration') else True %}checked{% endif %} style="width: auto; display: inline-block; margin-right: 0.5rem;">
+                        <input type="checkbox" id="open_to_collaboration" name="open_to_collaboration" {% if not hasattr(current_user, 'open_to_collaboration') or current_user.open_to_collaboration %}checked{% endif %} style="width: auto; display: inline-block; margin-right: 0.5rem;">
                         I'm open to collaboration requests
                     </label>
                     <small class="form-hint">When enabled, other teachers can see your collaboration board</small>
