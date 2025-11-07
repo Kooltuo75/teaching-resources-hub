@@ -84,8 +84,10 @@ class User(UserMixin, db.Model):
     helpful_votes_received = db.Column(db.Integer, default=0)  # Helpful votes on their reviews
 
     # Moderation
+    is_admin = db.Column(db.Boolean, default=False)
     is_moderator = db.Column(db.Boolean, default=False)
     is_verified_teacher = db.Column(db.Boolean, default=False)
+    is_banned = db.Column(db.Boolean, default=False)
 
     # Relationships
     favorites = db.relationship('Favorite', backref='user', lazy='dynamic', cascade='all, delete-orphan')

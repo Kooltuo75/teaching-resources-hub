@@ -244,3 +244,7 @@ register_submission_routes(bp)
 # Register social feature routes
 from app.social_routes import register_social_routes
 register_social_routes(bp)
+
+# Register admin routes
+from app.admin_routes import register_admin_routes
+register_admin_routes(bp)

@@ -170,4 +170,36 @@ with app.app_context():
         print(f"[ERROR] Failed to create tables: {e}")
         raise
 
+    # Phase 3: Admin system columns
+
+    try:
+        with db.engine.connect() as conn:
+            result = conn.execute(text("SELECT is_admin FROM users LIMIT 1"))
+            print("[INFO] is_admin column already exists")
+    except Exception as e:
+        print("[INFO] Adding is_admin column...")
+        try:
+            with db.engine.connect() as conn:
+                conn.execute(text("ALTER TABLE users ADD COLUMN is_admin BOOLEAN DEFAULT FALSE"))
+                conn.commit()
+            print("[OK] is_admin added!")
+        except Exception as err:
+            print(f"[ERROR] {err}")
+            raise
+
+    try:
+        with db.engine.connect() as conn:
+            result = conn.execute(text("SELECT is_banned FROM users LIMIT 1"))
+            print("[INFO] is_banned column already exists")
+    except Exception as e:
+        print("[INFO] Adding is_banned column...")
+        try:
+            with db.engine.connect() as conn:
+                conn.execute(text("ALTER TABLE users ADD COLUMN is_banned BOOLEAN DEFAULT FALSE"))
+                conn.commit()
+            print("[OK] is_banned added!")
+        except Exception as err:
+            print(f"[ERROR] {err}")
+            raise
+
     print("\n[SUCCESS] Database migration completed!")

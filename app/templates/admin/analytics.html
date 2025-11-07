@@ -1,0 +1,292 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics - Admin - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    <!-- Admin Navigation -->
+    <div class="admin-nav">
+        <h1>📊 Analytics Dashboard</h1>
+        <div class="admin-nav-links">
+            <a href="{{ url_for('main.admin_dashboard') }}" class="admin-nav-link">Dashboard</a>
+            <a href="{{ url_for('main.admin_users') }}" class="admin-nav-link">Users</a>
+            <a href="{{ url_for('main.admin_analytics') }}" class="admin-nav-link active">Analytics</a>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="charts-grid">
+        <!-- User Growth Chart -->
+        <div class="chart-card">
+            <h2>📈 User Growth (Last 30 Days)</h2>
+            <canvas id="userGrowthChart"></canvas>
+        </div>
+
+        <!-- Activity Growth Chart -->
+        <div class="chart-card">
+            <h2>🔥 Activity Growth (Last 30 Days)</h2>
+            <canvas id="activityGrowthChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Distribution Charts -->
+    <div class="distribution-grid">
+        <!-- Subject Distribution -->
+        <div class="chart-card">
+            <h2>📚 Top Subjects</h2>
+            <canvas id="subjectChart"></canvas>
+        </div>
+
+        <!-- Grade Level Distribution -->
+        <div class="chart-card">
+            <h2>🎓 Grade Levels</h2>
+            <canvas id="gradeChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Include Chart.js from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script>
+// Prepare data from Flask
+const userGrowthData = {{ user_growth | tojson }};
+const activityGrowthData = {{ activity_growth | tojson }};
+const subjectCounts = {{ subject_counts | tojson }};
+const gradeCounts = {{ grade_counts | tojson }};
+
+// User Growth Chart
+const userCtx = document.getElementById('userGrowthChart').getContext('2d');
+new Chart(userCtx, {
+    type: 'line',
+    data: {
+        labels: userGrowthData.map(d => d.date),
+        datasets: [{
+            label: 'New Users',
+            data: userGrowthData.map(d => d.count),
+            borderColor: '#667eea',
+            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    precision: 0
+                }
+            }
+        }
+    }
+});
+
+// Activity Growth Chart
+const activityCtx = document.getElementById('activityGrowthChart').getContext('2d');
+new Chart(activityCtx, {
+    type: 'bar',
+    data: {
+        labels: activityGrowthData.map(d => d.date),
+        datasets: [{
+            label: 'Activities',
+            data: activityGrowthData.map(d => d.count),
+            backgroundColor: 'rgba(16, 185, 129, 0.7)',
+            borderColor: '#10b981',
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    precision: 0
+                }
+            }
+        }
+    }
+});
+
+// Subject Distribution Chart
+const subjectCtx = document.getElementById('subjectChart').getContext('2d');
+new Chart(subjectCtx, {
+    type: 'doughnut',
+    data: {
+        labels: subjectCounts.map(s => s[0]),
+        datasets: [{
+            data: subjectCounts.map(s => s[1]),
+            backgroundColor: [
+                '#667eea',
+                '#764ba2',
+                '#f59e0b',
+                '#10b981',
+                '#ef4444',
+                '#8b5cf6',
+                '#ec4899',
+                '#06b6d4',
+                '#84cc16',
+                '#f97316'
+            ],
+            borderWidth: 2,
+            borderColor: '#fff'
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: {
+                position: 'right',
+                labels: {
+                    padding: 15,
+                    font: {
+                        size: 12
+                    }
+                }
+            }
+        }
+    }
+});
+
+// Grade Level Chart
+const gradeCtx = document.getElementById('gradeChart').getContext('2d');
+new Chart(gradeCtx, {
+    type: 'bar',
+    data: {
+        labels: gradeCounts.map(g => g[0]),
+        datasets: [{
+            label: 'Teachers',
+            data: gradeCounts.map(g => g[1]),
+            backgroundColor: 'rgba(139, 92, 246, 0.7)',
+            borderColor: '#8b5cf6',
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        indexAxis: 'y',
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            x: {
+                beginAtZero: true,
+                ticks: {
+                    precision: 0
+                }
+            }
+        }
+    }
+});
+</script>
+
+<style>
+.admin-container {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.admin-nav {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 30px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+}
+
+.admin-nav h1 {
+    margin: 0 0 20px 0;
+    font-size: 2em;
+}
+
+.admin-nav-links {
+    display: flex;
+    gap: 15px;
+}
+
+.admin-nav-link {
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.admin-nav-link:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.admin-nav-link.active {
+    background: rgba(255, 255, 255, 0.4);
+    font-weight: 600;
+}
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.distribution-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.chart-card {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.chart-card h2 {
+    margin: 0 0 25px 0;
+    color: #1f2937;
+    font-size: 1.4em;
+}
+
+.chart-card canvas {
+    max-height: 300px;
+}
+
+@media (max-width: 1200px) {
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .distribution-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-nav-links {
+        flex-direction: column;
+    }
+}
+</style>
+{% endblock %}

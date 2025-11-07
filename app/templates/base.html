@@ -31,7 +31,10 @@
                         <li><a href="/submit-resource">Submit Resource</a></li>
                         <li><a href="/profile/{{ current_user.username }}">My Room</a></li>
                         <li><a href="/favorites">My Favorites</a></li>
-                        {% if current_user.is_moderator %}
+                        {% if hasattr(current_user, 'is_admin') and current_user.is_admin or hasattr(current_user, 'is_moderator') and current_user.is_moderator %}
+                        <li><a href="/admin">🛠️ Admin</a></li>
+                        {% endif %}
+                        {% if hasattr(current_user, 'is_moderator') and current_user.is_moderator %}
                         <li><a href="/analytics/dashboard">📊 Analytics</a></li>
                         {% endif %}
                         <li><a href="/logout">Logout</a></li>
