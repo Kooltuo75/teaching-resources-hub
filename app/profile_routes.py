@@ -29,11 +29,16 @@ def register_profile_routes(bp):
     @bp.route('/profile/<username>')
     def profile(username):
         """Display a user's public profile 'Room'."""
-        # Get the profile owner
-        user = User.query.filter_by(username=username).first()
+        try:
+            # Get the profile owner
+            user = User.query.filter_by(username=username).first()
 
-        if not user:
-            flash(f'User {username} not found.', 'error')
+            if not user:
+                flash(f'User {username} not found.', 'error')
+                return redirect(url_for('main.index'))
+        except Exception as e:
+            logger.error(f'Error loading user profile: {e}')
+            flash('Error loading profile. Please try again.', 'error')
             return redirect(url_for('main.index'))
 
         # Check privacy settings
@@ -109,23 +114,34 @@ def register_profile_routes(bp):
             visitor_users = []
 
         # Load Phase 2 content
+        journey_events = []
+        classroom_photos = []
+        favorite_lessons = []
+
         try:
             from app.models import TeachingJourneyEvent, ClassroomPhoto, FavoriteLesson
 
             # Load timeline events (sorted by year DESC)
-            journey_events = TeachingJourneyEvent.query.filter_by(user_id=user.id).order_by(TeachingJourneyEvent.year.desc()).all()
+            try:
+                journey_events = TeachingJourneyEvent.query.filter_by(user_id=user.id).order_by(TeachingJourneyEvent.year.desc()).all()
+            except Exception as je:
+                logger.warning(f"Could not load journey events: {je}")
 
             # Load classroom photos (limit to 12)
-            classroom_photos = ClassroomPhoto.query.filter_by(user_id=user.id).order_by(ClassroomPhoto.uploaded_at.desc()).limit(12).all()
+            try:
+                classroom_photos = ClassroomPhoto.query.filter_by(user_id=user.id).order_by(ClassroomPhoto.uploaded_at.desc()).limit(12).all()
+            except Exception as pe:
+                logger.warning(f"Could not load classroom photos: {pe}")
 
             # Load favorite lessons (limit to 5, ordered by display_order)
-            favorite_lessons = FavoriteLesson.query.filter_by(user_id=user.id).order_by(FavoriteLesson.display_order).limit(5).all()
+            try:
+                favorite_lessons = FavoriteLesson.query.filter_by(user_id=user.id).order_by(FavoriteLesson.display_order).limit(5).all()
+            except Exception as le:
+                logger.warning(f"Could not load favorite lessons: {le}")
 
         except Exception as e:
-            logger.debug(f"Could not load Phase 2 content: {e}")
-            journey_events = []
-            classroom_photos = []
-            favorite_lessons = []
+            logger.warning(f"Could not import Phase 2 models: {e}")
+            # Continue with empty lists
 
         return render_template(
             'profile/profile.html',
