@@ -135,7 +135,7 @@ with app.app_context():
         print("[INFO] Adding current_unit_updated column...")
         try:
             with db.engine.connect() as conn:
-                conn.execute(text("ALTER TABLE users ADD COLUMN current_unit_updated DATETIME"))
+                conn.execute(text("ALTER TABLE users ADD COLUMN current_unit_updated TIMESTAMP"))
                 conn.commit()
             print("[OK] current_unit_updated added!")
         except Exception as err:
