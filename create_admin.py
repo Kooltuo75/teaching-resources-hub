@@ -51,7 +51,7 @@ with app.app_context():
         admin_data = {
             'username': admin_username,
             'email': admin_email,
-            'password': generate_password_hash(admin_password),
+            'password_hash': generate_password_hash(admin_password),
             'display_name': "Administrator",
             'profile_public': True,
             'bio': "System Administrator",
