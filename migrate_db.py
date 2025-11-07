@@ -73,7 +73,7 @@ with app.app_context():
         print("[INFO] Adding open_to_collaboration column to users table...")
         try:
             with db.engine.connect() as conn:
-                conn.execute(text("ALTER TABLE users ADD COLUMN open_to_collaboration BOOLEAN DEFAULT 1"))
+                conn.execute(text("ALTER TABLE users ADD COLUMN open_to_collaboration BOOLEAN DEFAULT TRUE"))
                 conn.commit()
             print("[OK] open_to_collaboration column added successfully!")
         except Exception as migration_error:
