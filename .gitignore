@@ -54,3 +54,8 @@ Thumbs.db
 # Uploaded profile pictures
 app/static/uploads/profiles/*
 !app/static/uploads/profiles/.gitkeep
+
+# Uploaded resources
+app/static/uploads/resources/*
+!app/static/uploads/resources/.gitkeep
+!app/static/uploads/.gitkeep

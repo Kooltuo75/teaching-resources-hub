@@ -248,3 +248,7 @@ register_social_routes(bp)
 # Register admin routes
 from app.admin_routes import register_admin_routes
 register_admin_routes(bp)
+
+# Register resource upload routes
+from app.resource_upload_routes import register_resource_upload_routes
+register_resource_upload_routes(bp)
