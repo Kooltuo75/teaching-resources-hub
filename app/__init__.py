@@ -57,6 +57,11 @@ def create_app(config_class=Config):
             return ''
         return text.replace('\n', '<br>\n')
 
+    # Add Python built-ins to Jinja context
+    app.jinja_env.globals.update({
+        'hasattr': hasattr,
+    })
+
     # Configure logging
     configure_logging(app)
 
