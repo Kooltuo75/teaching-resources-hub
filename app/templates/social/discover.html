@@ -52,6 +52,7 @@
 
             {% if request.args.get('grade_level') or request.args.get('subject') or (request.args.get('sort_by') and request.args.get('sort_by') != 'active') %}
             <div class="filter-group">
+                <label>&nbsp;</label>
                 <a href="{{ url_for('main.discover_teachers') }}" class="btn-clear-filters">
                     Clear Filters
                 </a>
