@@ -200,35 +200,62 @@
             {% endif %}
 
             <!-- Teaching Journey Timeline Section -->
-            {% if journey_events %}
+            {% if journey_events or is_own_profile %}
             <div class="profile-section teaching-journey" style="border-color: {{ profile_user.accent_color }};">
-                <h2 style="color: {{ profile_user.accent_color }};">📅 Teaching Journey</h2>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h2 style="color: {{ profile_user.accent_color }}; margin: 0;">📅 Teaching Journey</h2>
+                    {% if is_own_profile %}
+                    <button onclick="showAddEventModal()" class="btn-add" style="background-color: {{ profile_user.accent_color }};">+ Add Event</button>
+                    {% endif %}
+                </div>
+
+                {% if journey_events %}
                 <div class="timeline">
                     {% for event in journey_events %}
-                    <div class="timeline-event">
+                    <div class="timeline-event" data-event-id="{{ event.id }}">
                         <div class="timeline-year" style="background-color: {{ profile_user.accent_color }};">{{ event.year }}</div>
                         <div class="timeline-content">
-                            <h3>{{ event.title }}</h3>
-                            {% if event.description %}
-                            <p>{{ event.description }}</p>
-                            {% endif %}
-                            {% if event.event_type %}
-                            <span class="event-badge">{{ event.event_type }}</span>
-                            {% endif %}
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div style="flex: 1;">
+                                    <h3>{{ event.title }}</h3>
+                                    {% if event.description %}
+                                    <p>{{ event.description }}</p>
+                                    {% endif %}
+                                    {% if event.event_type %}
+                                    <span class="event-badge">{{ event.event_type }}</span>
+                                    {% endif %}
+                                </div>
+                                {% if is_own_profile %}
+                                <button onclick="deleteEvent({{ event.id }})" class="btn-delete" title="Delete event">×</button>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                     {% endfor %}
                 </div>
+                {% else %}
+                <p style="color: #7f8c8d; text-align: center; padding: 2rem;">No timeline events yet. Click "Add Event" to start building your teaching journey!</p>
+                {% endif %}
             </div>
             {% endif %}
 
             <!-- Classroom Showcase Gallery Section -->
-            {% if classroom_photos %}
+            {% if classroom_photos or is_own_profile %}
             <div class="profile-section classroom-gallery" style="border-color: {{ profile_user.accent_color }};">
-                <h2 style="color: {{ profile_user.accent_color }};">📸 Classroom Showcase</h2>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h2 style="color: {{ profile_user.accent_color }}; margin: 0;">📸 Classroom Showcase</h2>
+                    {% if is_own_profile %}
+                    <button onclick="showUploadPhotoModal()" class="btn-add" style="background-color: {{ profile_user.accent_color }};">+ Upload Photo</button>
+                    {% endif %}
+                </div>
+
+                {% if classroom_photos %}
                 <div class="photo-grid">
                     {% for photo in classroom_photos %}
-                    <div class="photo-item">
+                    <div class="photo-item" data-photo-id="{{ photo.id }}">
+                        {% if is_own_profile %}
+                        <button onclick="deletePhoto({{ photo.id }})" class="btn-delete-photo" title="Delete photo">×</button>
+                        {% endif %}
                         <img src="{{ photo.photo_path }}" alt="{{ photo.caption or 'Classroom photo' }}" loading="lazy">
                         {% if photo.caption %}
                         <p class="photo-caption">{{ photo.caption }}</p>
@@ -236,17 +263,32 @@
                     </div>
                     {% endfor %}
                 </div>
+                {% else %}
+                <p style="color: #7f8c8d; text-align: center; padding: 2rem;">No photos yet. Click "Upload Photo" to showcase your classroom!</p>
+                {% endif %}
             </div>
             {% endif %}
 
             <!-- Favorite Lessons Showcase Section -->
-            {% if favorite_lessons %}
+            {% if favorite_lessons or is_own_profile %}
             <div class="profile-section favorite-lessons" style="border-color: {{ profile_user.accent_color }};">
-                <h2 style="color: {{ profile_user.accent_color }};">⭐ Favorite Lessons</h2>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h2 style="color: {{ profile_user.accent_color }}; margin: 0;">⭐ Favorite Lessons</h2>
+                    {% if is_own_profile %}
+                    <button onclick="showAddLessonModal()" class="btn-add" style="background-color: {{ profile_user.accent_color }};">+ Add Lesson</button>
+                    {% endif %}
+                </div>
+
+                {% if favorite_lessons %}
                 <div class="lessons-showcase">
                     {% for lesson in favorite_lessons %}
-                    <div class="lesson-card">
-                        <h3 class="lesson-title">{{ lesson.title }}</h3>
+                    <div class="lesson-card" data-lesson-id="{{ lesson.id }}">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                            <h3 class="lesson-title" style="margin: 0;">{{ lesson.title }}</h3>
+                            {% if is_own_profile %}
+                            <button onclick="deleteLesson({{ lesson.id }})" class="btn-delete" title="Delete lesson">×</button>
+                            {% endif %}
+                        </div>
                         <div class="lesson-meta">
                             {% if lesson.subject %}<span class="lesson-subject">📚 {{ lesson.subject }}</span>{% endif %}
                             {% if lesson.grade_level %}<span class="lesson-grade">🎓 {{ lesson.grade_level }}</span>{% endif %}
@@ -268,6 +310,9 @@
                     </div>
                     {% endfor %}
                 </div>
+                {% else %}
+                <p style="color: #7f8c8d; text-align: center; padding: 2rem;">No favorite lessons yet. Click "Add Lesson" to showcase your best lessons! (Max 5)</p>
+                {% endif %}
             </div>
             {% endif %}
 
@@ -1057,5 +1102,469 @@
         justify-content: center;
     }
 }
+
+/* Button styles for CRUD operations */
+.btn-add {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-add:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.btn-delete {
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.btn-delete:hover {
+    background: #c82333;
+    transform: scale(1.1);
+}
+
+.btn-delete-photo {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: rgba(220, 53, 69, 0.9);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    transition: all 0.2s;
+    z-index: 10;
+}
+
+.btn-delete-photo:hover {
+    background: #c82333;
+    transform: scale(1.1);
+}
+
+/* Modal styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    animation: fadeIn 0.2s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 2rem;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+    animation: slideDown 0.3s;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #2c3e50;
+}
+
+.close {
+    font-size: 28px;
+    font-weight: bold;
+    color: #aaa;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.close:hover {
+    color: #000;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.btn-submit {
+    background-color: #667eea;
+    color: white;
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-submit:hover {
+    background-color: #5568d3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.photo-item {
+    position: relative;
+}
+
 </style>
+
+<!-- Modals -->
+{% if is_own_profile %}
+
+<!-- Add Timeline Event Modal -->
+<div id="eventModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Add Timeline Event</h3>
+            <span class="close" onclick="closeEventModal()">&times;</span>
+        </div>
+        <form id="eventForm" onsubmit="addEvent(event)">
+            <div class="form-group">
+                <label for="event_year">Year *</label>
+                <input type="number" id="event_year" name="year" required min="1950" max="2100">
+            </div>
+            <div class="form-group">
+                <label for="event_title">Title *</label>
+                <input type="text" id="event_title" name="title" required maxlength="200" placeholder="e.g., Started teaching at Lincoln Elementary">
+            </div>
+            <div class="form-group">
+                <label for="event_description">Description</label>
+                <textarea id="event_description" name="description" placeholder="Add details about this milestone..."></textarea>
+            </div>
+            <div class="form-group">
+                <label for="event_type">Event Type</label>
+                <select id="event_type" name="event_type">
+                    <option value="">Select type...</option>
+                    <option value="job">Job/Position</option>
+                    <option value="award">Award/Recognition</option>
+                    <option value="certification">Certification</option>
+                    <option value="milestone">Milestone</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-submit">Add Event</button>
+        </form>
+    </div>
+</div>
+
+<!-- Upload Photo Modal -->
+<div id="photoModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Upload Classroom Photo</h3>
+            <span class="close" onclick="closePhotoModal()">&times;</span>
+        </div>
+        <form id="photoForm" onsubmit="uploadPhoto(event)">
+            <div class="form-group">
+                <label for="photo_file">Photo * (Max 5MB)</label>
+                <input type="file" id="photo_file" name="photo" required accept="image/*">
+            </div>
+            <div class="form-group">
+                <label for="photo_caption">Caption</label>
+                <input type="text" id="photo_caption" name="caption" maxlength="500" placeholder="Describe your photo...">
+            </div>
+            <div class="form-group">
+                <label for="photo_type">Photo Type</label>
+                <select id="photo_type" name="photo_type">
+                    <option value="classroom">Classroom</option>
+                    <option value="project">Student Project</option>
+                    <option value="bulletin_board">Bulletin Board</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-submit">Upload Photo</button>
+        </form>
+    </div>
+</div>
+
+<!-- Add Lesson Modal -->
+<div id="lessonModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Add Favorite Lesson</h3>
+            <span class="close" onclick="closeLessonModal()">&times;</span>
+        </div>
+        <form id="lessonForm" onsubmit="addLesson(event)">
+            <div class="form-group">
+                <label for="lesson_title">Title *</label>
+                <input type="text" id="lesson_title" name="title" required maxlength="200" placeholder="Lesson name">
+            </div>
+            <div class="form-group">
+                <label for="lesson_subject">Subject</label>
+                <input type="text" id="lesson_subject" name="subject" maxlength="100" placeholder="e.g., Math, Science">
+            </div>
+            <div class="form-group">
+                <label for="lesson_grade">Grade Level</label>
+                <input type="text" id="lesson_grade" name="grade_level" maxlength="100" placeholder="e.g., 5th-6th grade">
+            </div>
+            <div class="form-group">
+                <label for="lesson_description">Description *</label>
+                <textarea id="lesson_description" name="description" required placeholder="What makes this lesson special?"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="lesson_objectives">Learning Objectives</label>
+                <textarea id="lesson_objectives" name="learning_objectives" placeholder="What will students learn?"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="lesson_materials">Materials Needed</label>
+                <textarea id="lesson_materials" name="materials_needed" placeholder="List materials required..."></textarea>
+            </div>
+            <div class="form-group">
+                <label for="lesson_duration">Duration</label>
+                <input type="text" id="lesson_duration" name="duration" maxlength="100" placeholder="e.g., 45 minutes, 2 class periods">
+            </div>
+            <button type="submit" class="btn-submit">Add Lesson</button>
+        </form>
+    </div>
+</div>
+
+<script>
+// Modal functions
+function showAddEventModal() {
+    document.getElementById('eventModal').style.display = 'block';
+}
+
+function closeEventModal() {
+    document.getElementById('eventModal').style.display = 'none';
+    document.getElementById('eventForm').reset();
+}
+
+function showUploadPhotoModal() {
+    document.getElementById('photoModal').style.display = 'block';
+}
+
+function closePhotoModal() {
+    document.getElementById('photoModal').style.display = 'none';
+    document.getElementById('photoForm').reset();
+}
+
+function showAddLessonModal() {
+    document.getElementById('lessonModal').style.display = 'block';
+}
+
+function closeLessonModal() {
+    document.getElementById('lessonModal').style.display = 'none';
+    document.getElementById('lessonForm').reset();
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    if (event.target.classList.contains('modal')) {
+        event.target.style.display = 'none';
+    }
+}
+
+// Timeline Event CRUD
+async function addEvent(e) {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+
+    try {
+        const response = await fetch('/profile/journey/add', {
+            method: 'POST',
+            body: formData
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            closeEventModal();
+            location.reload();
+        } else {
+            alert('Error: ' + (data.error || 'Failed to add event'));
+        }
+    } catch (error) {
+        alert('Error adding event: ' + error.message);
+    }
+}
+
+async function deleteEvent(eventId) {
+    if (!confirm('Delete this timeline event?')) return;
+
+    try {
+        const response = await fetch(`/profile/journey/${eventId}/delete`, {
+            method: 'POST'
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            document.querySelector(`[data-event-id="${eventId}"]`).remove();
+
+            // Show empty message if no events left
+            const timeline = document.querySelector('.timeline');
+            if (timeline && timeline.children.length === 0) {
+                location.reload();
+            }
+        } else {
+            alert('Error: ' + (data.error || 'Failed to delete event'));
+        }
+    } catch (error) {
+        alert('Error deleting event: ' + error.message);
+    }
+}
+
+// Photo CRUD
+async function uploadPhoto(e) {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+
+    try {
+        const response = await fetch('/profile/photos/upload', {
+            method: 'POST',
+            body: formData
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            closePhotoModal();
+            location.reload();
+        } else {
+            alert('Error: ' + (data.error || 'Failed to upload photo'));
+        }
+    } catch (error) {
+        alert('Error uploading photo: ' + error.message);
+    }
+}
+
+async function deletePhoto(photoId) {
+    if (!confirm('Delete this photo?')) return;
+
+    try {
+        const response = await fetch(`/profile/photos/${photoId}/delete`, {
+            method: 'POST'
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            document.querySelector(`[data-photo-id="${photoId}"]`).remove();
+
+            // Show empty message if no photos left
+            const photoGrid = document.querySelector('.photo-grid');
+            if (photoGrid && photoGrid.children.length === 0) {
+                location.reload();
+            }
+        } else {
+            alert('Error: ' + (data.error || 'Failed to delete photo'));
+        }
+    } catch (error) {
+        alert('Error deleting photo: ' + error.message);
+    }
+}
+
+// Lesson CRUD
+async function addLesson(e) {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+
+    try {
+        const response = await fetch('/profile/lessons/add', {
+            method: 'POST',
+            body: formData
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            closeLessonModal();
+            location.reload();
+        } else {
+            alert('Error: ' + (data.error || 'Failed to add lesson'));
+        }
+    } catch (error) {
+        alert('Error adding lesson: ' + error.message);
+    }
+}
+
+async function deleteLesson(lessonId) {
+    if (!confirm('Delete this lesson?')) return;
+
+    try {
+        const response = await fetch(`/profile/lessons/${lessonId}/delete`, {
+            method: 'POST'
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            document.querySelector(`[data-lesson-id="${lessonId}"]`).remove();
+
+            // Show empty message if no lessons left
+            const showcase = document.querySelector('.lessons-showcase');
+            if (showcase && showcase.children.length === 0) {
+                location.reload();
+            }
+        } else {
+            alert('Error: ' + (data.error || 'Failed to delete lesson'));
+        }
+    } catch (error) {
+        alert('Error deleting lesson: ' + error.message);
+    }
+}
+</script>
+
+{% endif %}
+
 {% endblock %}
