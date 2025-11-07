@@ -6,7 +6,7 @@ Allows teachers to follow each other, view activity feeds, and discover other te
 
 from flask import render_template, redirect, url_for, flash, request, jsonify, abort
 from flask_login import login_required, current_user
-from app.models import db, User, Follow, Activity, Review, Favorite
+from app.models import db, User, Follow, Activity, Review, Favorite, TeachingJourneyEvent, ClassroomPhoto, FavoriteLesson
 from sqlalchemy import or_, desc, func
 from datetime import datetime, timedelta
 import logging
@@ -97,8 +97,43 @@ def register_social_routes(bp):
                     logger.debug(f"Could not load following list: {e}")
                     following_ids = []
 
+            # Enhance each teacher with Phase 2 data and following status
+            teachers_with_data = []
+            for teacher in teachers_paginated.items:
+                # Add is_following flag
+                teacher.is_following = teacher.id in following_ids
+
+                # Load Phase 2 content counts
+                if hasattr(teacher, 'id'):
+                    try:
+                        teacher.timeline_count = TeachingJourneyEvent.query.filter_by(user_id=teacher.id).count()
+                        teacher.photo_count = ClassroomPhoto.query.filter_by(user_id=teacher.id).count()
+                        teacher.lesson_count = FavoriteLesson.query.filter_by(user_id=teacher.id).count()
+
+                        # Get latest photo for preview
+                        teacher.latest_photo = ClassroomPhoto.query.filter_by(user_id=teacher.id).order_by(
+                            ClassroomPhoto.uploaded_at.desc()
+                        ).first()
+
+                        # Get current teaching unit
+                        teacher.has_current_unit = (
+                            hasattr(teacher, 'current_unit_title') and
+                            teacher.current_unit_title
+                        )
+                    except Exception as e:
+                        logger.debug(f"Error loading Phase 2 data for teacher {teacher.id}: {e}")
+                        teacher.timeline_count = 0
+                        teacher.photo_count = 0
+                        teacher.lesson_count = 0
+                        teacher.latest_photo = None
+                        teacher.has_current_unit = False
+
+                teachers_with_data.append(teacher)
+
             return render_template('social/discover.html',
-                                 teachers=teachers_paginated.items,
+                                 teachers=teachers_with_data,
+                                 page=page,
+                                 total_pages=teachers_paginated.pages,
                                  pagination=teachers_paginated,
                                  following_ids=following_ids,
                                  grade_level=grade_level,

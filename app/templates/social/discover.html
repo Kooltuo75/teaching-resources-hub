@@ -111,6 +111,41 @@
                         {% endif %}
                     </div>
 
+                    <!-- What I'm Teaching Now -->
+                    {% if teacher.has_current_unit %}
+                    <div class="current-unit-preview">
+                        <div class="current-unit-label">📍 Currently Teaching</div>
+                        <div class="current-unit-title">{{ teacher.current_unit_title }}</div>
+                        {% if hasattr(teacher, 'current_unit_subject') and teacher.current_unit_subject %}
+                        <div class="current-unit-subject">{{ teacher.current_unit_subject }}</div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Phase 2 Content Badges -->
+                    {% if teacher.timeline_count > 0 or teacher.photo_count > 0 or teacher.lesson_count > 0 %}
+                    <div class="content-badges">
+                        {% if teacher.timeline_count > 0 %}
+                        <div class="content-badge" title="Teaching Journey Events">
+                            <span class="badge-icon">📅</span>
+                            <span class="badge-count">{{ teacher.timeline_count }}</span>
+                        </div>
+                        {% endif %}
+                        {% if teacher.photo_count > 0 %}
+                        <div class="content-badge" title="Classroom Photos">
+                            <span class="badge-icon">📸</span>
+                            <span class="badge-count">{{ teacher.photo_count }}</span>
+                        </div>
+                        {% endif %}
+                        {% if teacher.lesson_count > 0 %}
+                        <div class="content-badge" title="Favorite Lessons">
+                            <span class="badge-icon">⭐</span>
+                            <span class="badge-count">{{ teacher.lesson_count }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
                     <div class="teacher-stats">
                         <div class="stat">
                             <span class="stat-value">{{ teacher.reputation_score }}</span>
@@ -130,8 +165,8 @@
                 <div class="teacher-card-footer">
                     {% if current_user.is_authenticated and current_user.id != teacher.id %}
                         <button class="btn-follow {% if teacher.is_following %}following{% endif %}"
-                                data-user-id="{{ teacher.id }}"
-                                onclick="toggleFollow({{ teacher.id }})">
+                                data-username="{{ teacher.username }}"
+                                onclick="toggleFollow('{{ teacher.username }}')">
                             <span class="follow-text">
                                 {% if teacher.is_following %}Following{% else %}Follow{% endif %}
                             </span>
@@ -196,12 +231,16 @@
 </div>
 
 <script>
-function toggleFollow(userId) {
+function toggleFollow(username) {
     {% if current_user.is_authenticated %}
-    const button = document.querySelector(`button[data-user-id="${userId}"]`);
+    const button = document.querySelector(`button[data-username="${username}"]`);
     const originalText = button.querySelector('.follow-text').textContent;
+    const isFollowing = button.classList.contains('following');
 
-    fetch(`/user/${userId}/follow`, {
+    // Determine endpoint
+    const endpoint = isFollowing ? `/user/${username}/unfollow` : `/user/${username}/follow`;
+
+    fetch(endpoint, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -211,12 +250,14 @@ function toggleFollow(userId) {
     .then(data => {
         if (data.success) {
             const textSpan = button.querySelector('.follow-text');
-            if (data.action === 'followed') {
-                textSpan.textContent = 'Following';
-                button.classList.add('following');
-            } else {
+            if (isFollowing) {
+                // Was following, now unfollowed
                 textSpan.textContent = 'Follow';
                 button.classList.remove('following');
+            } else {
+                // Was not following, now following
+                textSpan.textContent = 'Following';
+                button.classList.add('following');
             }
         }
     })
@@ -424,6 +465,67 @@ function toggleFollow(userId) {
 
 .info-icon {
     font-size: 1em;
+}
+
+.current-unit-preview {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border-left: 4px solid #f59e0b;
+    padding: 12px;
+    border-radius: 8px;
+    margin: 15px 0;
+}
+
+.current-unit-label {
+    font-size: 0.75em;
+    font-weight: 600;
+    color: #92400e;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+    letter-spacing: 0.5px;
+}
+
+.current-unit-title {
+    font-weight: 600;
+    color: #78350f;
+    font-size: 0.95em;
+    margin-bottom: 3px;
+}
+
+.current-unit-subject {
+    font-size: 0.85em;
+    color: #92400e;
+}
+
+.content-badges {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin: 15px 0;
+}
+
+.content-badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: #f3f4f6;
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 0.85em;
+    color: #4b5563;
+    transition: all 0.3s ease;
+}
+
+.content-badge:hover {
+    background: #e5e7eb;
+    transform: translateY(-2px);
+}
+
+.badge-icon {
+    font-size: 1.1em;
+}
+
+.badge-count {
+    font-weight: 600;
 }
 
 .teacher-stats {
