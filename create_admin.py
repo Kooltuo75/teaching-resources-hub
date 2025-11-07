@@ -5,6 +5,23 @@ Run this script once to create your admin user.
 from app import create_app
 from app.models import db, User
 from werkzeug.security import generate_password_hash
+from sqlalchemy import text
+import subprocess
+import sys
+
+print("[INFO] Running database migrations first...")
+try:
+    result = subprocess.run([sys.executable, 'migrate_db.py'],
+                          capture_output=True,
+                          text=True,
+                          timeout=60)
+    print(result.stdout)
+    if result.returncode != 0:
+        print(result.stderr)
+        print("[WARNING] Migration had some issues, but continuing...")
+except Exception as e:
+    print(f"[WARNING] Could not run migration: {e}")
+    print("[INFO] Continuing anyway...")
 
 app = create_app()
 
@@ -19,28 +36,38 @@ with app.app_context():
 
     if existing_admin:
         print(f"[INFO] User '{admin_username}' already exists. Updating to admin...")
-        existing_admin.is_admin = True
-        existing_admin.is_moderator = True
-        existing_admin.is_verified_teacher = True
+        if hasattr(existing_admin, 'is_admin'):
+            existing_admin.is_admin = True
+        if hasattr(existing_admin, 'is_moderator'):
+            existing_admin.is_moderator = True
+        if hasattr(existing_admin, 'is_verified_teacher'):
+            existing_admin.is_verified_teacher = True
         db.session.commit()
         print(f"[SUCCESS] User '{admin_username}' is now an admin!")
     else:
         print(f"[INFO] Creating new admin user '{admin_username}'...")
 
-        # Create new admin user
-        admin_user = User(
-            username=admin_username,
-            email=admin_email,
-            password=generate_password_hash(admin_password),
-            display_name="Administrator",
-            is_admin=True,
-            is_moderator=True,
-            is_verified_teacher=True,
-            profile_public=True,
-            bio="System Administrator",
-            grade_level="All Grades",
-            subjects_taught="Administration"
-        )
+        # Create new admin user with basic fields
+        admin_data = {
+            'username': admin_username,
+            'email': admin_email,
+            'password': generate_password_hash(admin_password),
+            'display_name': "Administrator",
+            'profile_public': True,
+            'bio': "System Administrator",
+            'grade_level': "All Grades",
+            'subjects_taught': "Administration"
+        }
+
+        # Add optional fields if they exist in the model
+        if hasattr(User, 'is_admin'):
+            admin_data['is_admin'] = True
+        if hasattr(User, 'is_moderator'):
+            admin_data['is_moderator'] = True
+        if hasattr(User, 'is_verified_teacher'):
+            admin_data['is_verified_teacher'] = True
+
+        admin_user = User(**admin_data)
 
         db.session.add(admin_user)
         db.session.commit()
