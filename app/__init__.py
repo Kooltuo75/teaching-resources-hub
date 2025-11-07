@@ -49,6 +49,14 @@ def create_app(config_class=Config):
         from app.models import User
         return User.query.get(int(user_id))
 
+    # Register Jinja filters
+    @app.template_filter('nl2br')
+    def nl2br_filter(text):
+        """Convert newlines to HTML line breaks."""
+        if not text:
+            return ''
+        return text.replace('\n', '<br>\n')
+
     # Configure logging
     configure_logging(app)
 

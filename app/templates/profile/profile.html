@@ -160,6 +160,117 @@
             </div>
             {% endif %}
 
+            <!-- What I'm Teaching Now Section -->
+            {% if (hasattr(profile_user, 'current_unit_title') and profile_user.current_unit_title) or (hasattr(profile_user, 'current_unit_description') and profile_user.current_unit_description) %}
+            <div class="profile-section teaching-now" style="border-color: {{ profile_user.accent_color }};">
+                <h2 style="color: {{ profile_user.accent_color }};">📚 What I'm Teaching Now</h2>
+
+                {% if hasattr(profile_user, 'current_unit_updated') and profile_user.current_unit_updated %}
+                <p class="last-updated" style="color: #7f8c8d; font-size: 0.9rem; font-style: italic; margin-bottom: 1rem;">
+                    Last updated: {{ profile_user.current_unit_updated.strftime('%B %d, %Y') }}
+                </p>
+                {% endif %}
+
+                <div class="teaching-now-content">
+                    {% if hasattr(profile_user, 'current_unit_title') and profile_user.current_unit_title %}
+                    <h3 class="unit-title">{{ profile_user.current_unit_title }}</h3>
+                    {% endif %}
+
+                    {% if hasattr(profile_user, 'current_unit_subject') and profile_user.current_unit_subject %}
+                    <p class="unit-subject"><strong>Subject:</strong> {{ profile_user.current_unit_subject }}</p>
+                    {% endif %}
+
+                    {% if hasattr(profile_user, 'current_unit_description') and profile_user.current_unit_description %}
+                    <div class="unit-description">
+                        {{ profile_user.current_unit_description | nl2br | safe }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Professional Achievements Section -->
+            {% if hasattr(profile_user, 'achievements') and profile_user.achievements %}
+            <div class="profile-section achievements" style="border-color: {{ profile_user.accent_color }};">
+                <h2 style="color: {{ profile_user.accent_color }};">🏆 Professional Achievements</h2>
+                <div class="achievements-list">
+                    {{ profile_user.achievements | nl2br | safe }}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Teaching Journey Timeline Section -->
+            {% if journey_events %}
+            <div class="profile-section teaching-journey" style="border-color: {{ profile_user.accent_color }};">
+                <h2 style="color: {{ profile_user.accent_color }};">📅 Teaching Journey</h2>
+                <div class="timeline">
+                    {% for event in journey_events %}
+                    <div class="timeline-event">
+                        <div class="timeline-year" style="background-color: {{ profile_user.accent_color }};">{{ event.year }}</div>
+                        <div class="timeline-content">
+                            <h3>{{ event.title }}</h3>
+                            {% if event.description %}
+                            <p>{{ event.description }}</p>
+                            {% endif %}
+                            {% if event.event_type %}
+                            <span class="event-badge">{{ event.event_type }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Classroom Showcase Gallery Section -->
+            {% if classroom_photos %}
+            <div class="profile-section classroom-gallery" style="border-color: {{ profile_user.accent_color }};">
+                <h2 style="color: {{ profile_user.accent_color }};">📸 Classroom Showcase</h2>
+                <div class="photo-grid">
+                    {% for photo in classroom_photos %}
+                    <div class="photo-item">
+                        <img src="{{ photo.photo_path }}" alt="{{ photo.caption or 'Classroom photo' }}" loading="lazy">
+                        {% if photo.caption %}
+                        <p class="photo-caption">{{ photo.caption }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Favorite Lessons Showcase Section -->
+            {% if favorite_lessons %}
+            <div class="profile-section favorite-lessons" style="border-color: {{ profile_user.accent_color }};">
+                <h2 style="color: {{ profile_user.accent_color }};">⭐ Favorite Lessons</h2>
+                <div class="lessons-showcase">
+                    {% for lesson in favorite_lessons %}
+                    <div class="lesson-card">
+                        <h3 class="lesson-title">{{ lesson.title }}</h3>
+                        <div class="lesson-meta">
+                            {% if lesson.subject %}<span class="lesson-subject">📚 {{ lesson.subject }}</span>{% endif %}
+                            {% if lesson.grade_level %}<span class="lesson-grade">🎓 {{ lesson.grade_level }}</span>{% endif %}
+                            {% if lesson.duration %}<span class="lesson-duration">⏱️ {{ lesson.duration }}</span>{% endif %}
+                        </div>
+                        <p class="lesson-description">{{ lesson.description }}</p>
+                        {% if lesson.learning_objectives %}
+                        <div class="lesson-objectives">
+                            <strong>Learning Objectives:</strong>
+                            <p>{{ lesson.learning_objectives }}</p>
+                        </div>
+                        {% endif %}
+                        {% if lesson.materials_needed %}
+                        <div class="lesson-materials">
+                            <strong>Materials:</strong>
+                            <p>{{ lesson.materials_needed }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
             <!-- Favorite Resources Section -->
             {% if favorites %}
             <div class="profile-section profile-favorites" style="border-color: {{ profile_user.accent_color }};">
@@ -427,6 +538,196 @@
 .btn-collaborate:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+}
+
+/* What I'm Teaching Now */
+.teaching-now .unit-title {
+    font-size: 1.5rem;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.teaching-now .unit-subject {
+    color: #555;
+    margin-bottom: 1rem;
+}
+
+.teaching-now .unit-description {
+    background: rgba(255,255,255,0.5);
+    padding: 1rem;
+    border-radius: 8px;
+    color: #555;
+    line-height: 1.6;
+}
+
+/* Professional Achievements */
+.achievements-list {
+    background: rgba(255,255,255,0.5);
+    padding: 1.5rem;
+    border-radius: 8px;
+    color: #555;
+    line-height: 1.8;
+}
+
+/* Teaching Journey Timeline */
+.timeline {
+    position: relative;
+    padding-left: 3rem;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 0.5rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: rgba(0,0,0,0.1);
+}
+
+.timeline-event {
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.timeline-year {
+    position: absolute;
+    left: -3rem;
+    top: 0;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.timeline-content {
+    background: rgba(255,255,255,0.6);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-left: 1rem;
+}
+
+.timeline-content h3 {
+    margin: 0 0 0.5rem 0;
+    color: #2c3e50;
+}
+
+.timeline-content p {
+    margin: 0;
+    color: #555;
+    line-height: 1.6;
+}
+
+.event-badge {
+    display: inline-block;
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+}
+
+/* Classroom Gallery */
+.photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.photo-item {
+    border-radius: 8px;
+    overflow: hidden;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+
+.photo-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+
+.photo-item img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.photo-caption {
+    padding: 0.75rem;
+    color: #555;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+/* Favorite Lessons */
+.lessons-showcase {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.lesson-card {
+    background: rgba(255,255,255,0.6);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid #f39c12;
+}
+
+.lesson-title {
+    margin: 0 0 1rem 0;
+    color: #2c3e50;
+    font-size: 1.3rem;
+}
+
+.lesson-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.lesson-meta span {
+    background: rgba(255,255,255,0.8);
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.lesson-description {
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.lesson-objectives,
+.lesson-materials {
+    background: rgba(255,255,255,0.4);
+    padding: 1rem;
+    border-radius: 6px;
+    margin-top: 1rem;
+}
+
+.lesson-objectives strong,
+.lesson-materials strong {
+    color: #2c3e50;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.lesson-objectives p,
+.lesson-materials p {
+    margin: 0;
+    color: #555;
+    line-height: 1.6;
 }
 
 .profile-header {
@@ -722,6 +1023,21 @@
     }
 
     .collaboration-content {
+        grid-template-columns: 1fr;
+    }
+
+    .timeline {
+        padding-left: 2rem;
+    }
+
+    .timeline-year {
+        left: -2rem;
+        width: 3rem;
+        height: 3rem;
+        font-size: 0.8rem;
+    }
+
+    .photo-grid {
         grid-template-columns: 1fr;
     }
 

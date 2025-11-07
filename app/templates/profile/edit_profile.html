@@ -176,6 +176,42 @@
                 </div>
             </div>
 
+            <!-- What I'm Teaching Now -->
+            <div class="form-section teaching-now-section">
+                <h2>📚 What I'm Teaching Now</h2>
+                <p class="section-description">Share your current units and lessons - help other teachers find colleagues teaching similar content!</p>
+
+                <div class="form-group">
+                    <label for="current_unit_title">Current Unit/Topic</label>
+                    <input type="text" id="current_unit_title" name="current_unit_title" value="{{ current_user.current_unit_title if hasattr(current_user, 'current_unit_title') else '' }}" placeholder="e.g., The American Revolution, Fractions and Decimals">
+                    <small class="form-hint">What unit or topic are you currently teaching?</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="current_unit_subject">Subject</label>
+                    <input type="text" id="current_unit_subject" name="current_unit_subject" value="{{ current_user.current_unit_subject if hasattr(current_user, 'current_unit_subject') else '' }}" placeholder="e.g., U.S. History, Mathematics, Science">
+                    <small class="form-hint">What subject area?</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="current_unit_description">Description</label>
+                    <textarea id="current_unit_description" name="current_unit_description" rows="4" placeholder="Share details about what you're teaching, any special activities or projects, challenges you're facing, etc.">{{ current_user.current_unit_description if hasattr(current_user, 'current_unit_description') else '' }}</textarea>
+                    <small class="form-hint">What makes this unit interesting? What are students working on?</small>
+                </div>
+            </div>
+
+            <!-- Professional Achievements -->
+            <div class="form-section achievements-section">
+                <h2>🏆 Professional Achievements</h2>
+                <p class="section-description">Highlight your awards, certifications, publications, presentations, and other accomplishments!</p>
+
+                <div class="form-group">
+                    <label for="achievements">Achievements</label>
+                    <textarea id="achievements" name="achievements" rows="6" placeholder="List your professional achievements, one per line. Examples:&#10;• National Board Certified Teacher (2019)&#10;• Published 'Innovative Math Strategies' in Education Today (2021)&#10;• District Teacher of the Year (2020)&#10;• Google Certified Educator Level 2&#10;• Presented at NCTM Annual Conference (2022)">{{ current_user.achievements if hasattr(current_user, 'achievements') else '' }}</textarea>
+                    <small class="form-hint">Use bullet points or separate lines for each achievement</small>
+                </div>
+            </div>
+
             <!-- Theme Customization -->
             <div class="form-section theme-section">
                 <h2>🎨 Theme Customization</h2>

@@ -108,6 +108,25 @@ def register_profile_routes(bp):
             logger.debug(f"Could not load recent visitors: {e}")
             visitor_users = []
 
+        # Load Phase 2 content
+        try:
+            from app.models import TeachingJourneyEvent, ClassroomPhoto, FavoriteLesson
+
+            # Load timeline events (sorted by year DESC)
+            journey_events = TeachingJourneyEvent.query.filter_by(user_id=user.id).order_by(TeachingJourneyEvent.year.desc()).all()
+
+            # Load classroom photos (limit to 12)
+            classroom_photos = ClassroomPhoto.query.filter_by(user_id=user.id).order_by(ClassroomPhoto.uploaded_at.desc()).limit(12).all()
+
+            # Load favorite lessons (limit to 5, ordered by display_order)
+            favorite_lessons = FavoriteLesson.query.filter_by(user_id=user.id).order_by(FavoriteLesson.display_order).limit(5).all()
+
+        except Exception as e:
+            logger.debug(f"Could not load Phase 2 content: {e}")
+            journey_events = []
+            classroom_photos = []
+            favorite_lessons = []
+
         return render_template(
             'profile/profile.html',
             profile_user=user,
@@ -115,7 +134,10 @@ def register_profile_routes(bp):
             favorites=favorited_resources,
             total_favorites=total_favorites,
             total_visits=total_visits,
-            recent_visitors=visitor_users
+            recent_visitors=visitor_users,
+            journey_events=journey_events,
+            classroom_photos=classroom_photos,
+            favorite_lessons=favorite_lessons
         )
 
     @bp.route('/profile/edit', methods=['GET', 'POST'])
@@ -180,6 +202,23 @@ def register_profile_routes(bp):
             if hasattr(current_user, 'open_to_collaboration'):
                 current_user.open_to_collaboration = request.form.get('open_to_collaboration') == 'on'
 
+            # What I'm Teaching Now (Phase 2)
+            if hasattr(current_user, 'current_unit_title'):
+                current_user.current_unit_title = request.form.get('current_unit_title', '').strip()
+            if hasattr(current_user, 'current_unit_subject'):
+                current_user.current_unit_subject = request.form.get('current_unit_subject', '').strip()
+            if hasattr(current_user, 'current_unit_description'):
+                desc = request.form.get('current_unit_description', '').strip()
+                current_user.current_unit_description = desc
+                # Update timestamp if content changed
+                if desc and hasattr(current_user, 'current_unit_updated'):
+                    from datetime import datetime
+                    current_user.current_unit_updated = datetime.utcnow()
+
+            # Professional Achievements (Phase 2)
+            if hasattr(current_user, 'achievements'):
+                current_user.achievements = request.form.get('achievements', '').strip()
+
             # Update customization
             current_user.background_color = request.form.get('background_color', '#ffffff')
             current_user.text_color = request.form.get('text_color', '#333333')
@@ -228,3 +267,222 @@ def register_profile_routes(bp):
                 'profile_theme': data.get('profile_theme', 'light')
             }
         })
+
+    # ========== Teaching Journey Timeline Routes ==========
+
+    @bp.route('/profile/journey/add', methods=['POST'])
+    @login_required
+    def add_journey_event():
+        """Add a new teaching journey timeline event."""
+        from flask import jsonify
+        from app.models import TeachingJourneyEvent
+
+        try:
+            year = int(request.form.get('year', 0))
+            title = request.form.get('title', '').strip()
+            description = request.form.get('description', '').strip()
+            event_type = request.form.get('event_type', '').strip()
+
+            if not year or not title:
+                return jsonify({'success': False, 'error': 'Year and title are required'}), 400
+
+            event = TeachingJourneyEvent(
+                user_id=current_user.id,
+                year=year,
+                title=title,
+                description=description,
+                event_type=event_type
+            )
+            db.session.add(event)
+            db.session.commit()
+
+            logger.info(f'User {current_user.username} added timeline event: {title}')
+            return jsonify({'success': True, 'event_id': event.id})
+
+        except Exception as e:
+            logger.error(f'Error adding timeline event: {e}')
+            db.session.rollback()
+            return jsonify({'success': False, 'error': str(e)}), 500
+
+    @bp.route('/profile/journey/<int:event_id>/delete', methods=['POST'])
+    @login_required
+    def delete_journey_event(event_id):
+        """Delete a teaching journey timeline event."""
+        from flask import jsonify
+        from app.models import TeachingJourneyEvent
+
+        try:
+            event = TeachingJourneyEvent.query.filter_by(id=event_id, user_id=current_user.id).first()
+            if not event:
+                return jsonify({'success': False, 'error': 'Event not found'}), 404
+
+            db.session.delete(event)
+            db.session.commit()
+
+            logger.info(f'User {current_user.username} deleted timeline event {event_id}')
+            return jsonify({'success': True})
+
+        except Exception as e:
+            logger.error(f'Error deleting timeline event: {e}')
+            db.session.rollback()
+            return jsonify({'success': False, 'error': str(e)}), 500
+
+    # ========== Classroom Photo Gallery Routes ==========
+
+    @bp.route('/profile/photos/upload', methods=['POST'])
+    @login_required
+    def upload_classroom_photo():
+        """Upload a classroom photo."""
+        from flask import jsonify
+        from app.models import ClassroomPhoto
+
+        try:
+            if 'photo' not in request.files:
+                return jsonify({'success': False, 'error': 'No photo uploaded'}), 400
+
+            file = request.files['photo']
+            if not file or not file.filename:
+                return jsonify({'success': False, 'error': 'No photo selected'}), 400
+
+            if not allowed_file(file.filename):
+                return jsonify({'success': False, 'error': 'Invalid file type. Please upload an image.'}), 400
+
+            # Check file size
+            file.seek(0, os.SEEK_END)
+            file_length = file.tell()
+            if file_length > MAX_FILE_SIZE:
+                return jsonify({'success': False, 'error': 'File is too large. Maximum size is 5MB.'}), 400
+            file.seek(0)
+
+            # Generate unique filename
+            filename = secure_filename(file.filename)
+            unique_filename = f"{current_user.id}_classroom_{datetime.now().strftime('%Y%m%d%H%M%S')}_{filename}"
+
+            # Save file
+            upload_folder = os.path.join(current_app.root_path, 'static', 'uploads', 'classroom')
+            os.makedirs(upload_folder, exist_ok=True)
+            file_path = os.path.join(upload_folder, unique_filename)
+            file.save(file_path)
+
+            # Add to database
+            caption = request.form.get('caption', '').strip()
+            photo_type = request.form.get('photo_type', 'classroom').strip()
+
+            photo = ClassroomPhoto(
+                user_id=current_user.id,
+                photo_path=f'/static/uploads/classroom/{unique_filename}',
+                caption=caption,
+                photo_type=photo_type
+            )
+            db.session.add(photo)
+            db.session.commit()
+
+            logger.info(f'User {current_user.username} uploaded classroom photo')
+            return jsonify({'success': True, 'photo_id': photo.id, 'photo_url': photo.photo_path})
+
+        except Exception as e:
+            logger.error(f'Error uploading photo: {e}')
+            db.session.rollback()
+            return jsonify({'success': False, 'error': str(e)}), 500
+
+    @bp.route('/profile/photos/<int:photo_id>/delete', methods=['POST'])
+    @login_required
+    def delete_classroom_photo(photo_id):
+        """Delete a classroom photo."""
+        from flask import jsonify
+        from app.models import ClassroomPhoto
+
+        try:
+            photo = ClassroomPhoto.query.filter_by(id=photo_id, user_id=current_user.id).first()
+            if not photo:
+                return jsonify({'success': False, 'error': 'Photo not found'}), 404
+
+            # Delete file from filesystem
+            try:
+                file_path = os.path.join(current_app.root_path, photo.photo_path.lstrip('/'))
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+            except Exception as file_error:
+                logger.warning(f'Could not delete photo file: {file_error}')
+
+            db.session.delete(photo)
+            db.session.commit()
+
+            logger.info(f'User {current_user.username} deleted classroom photo {photo_id}')
+            return jsonify({'success': True})
+
+        except Exception as e:
+            logger.error(f'Error deleting photo: {e}')
+            db.session.rollback()
+            return jsonify({'success': False, 'error': str(e)}), 500
+
+    # ========== Favorite Lessons Routes ==========
+
+    @bp.route('/profile/lessons/add', methods=['POST'])
+    @login_required
+    def add_favorite_lesson():
+        """Add a new favorite lesson."""
+        from flask import jsonify
+        from app.models import FavoriteLesson
+
+        try:
+            title = request.form.get('title', '').strip()
+            subject = request.form.get('subject', '').strip()
+            grade_level = request.form.get('grade_level', '').strip()
+            description = request.form.get('description', '').strip()
+            materials_needed = request.form.get('materials_needed', '').strip()
+            duration = request.form.get('duration', '').strip()
+            learning_objectives = request.form.get('learning_objectives', '').strip()
+
+            if not title or not description:
+                return jsonify({'success': False, 'error': 'Title and description are required'}), 400
+
+            # Check if user already has 5 lessons (limit)
+            lesson_count = FavoriteLesson.query.filter_by(user_id=current_user.id).count()
+            if lesson_count >= 5:
+                return jsonify({'success': False, 'error': 'Maximum 5 favorite lessons allowed'}), 400
+
+            lesson = FavoriteLesson(
+                user_id=current_user.id,
+                title=title,
+                subject=subject,
+                grade_level=grade_level,
+                description=description,
+                materials_needed=materials_needed,
+                duration=duration,
+                learning_objectives=learning_objectives,
+                display_order=lesson_count
+            )
+            db.session.add(lesson)
+            db.session.commit()
+
+            logger.info(f'User {current_user.username} added favorite lesson: {title}')
+            return jsonify({'success': True, 'lesson_id': lesson.id})
+
+        except Exception as e:
+            logger.error(f'Error adding favorite lesson: {e}')
+            db.session.rollback()
+            return jsonify({'success': False, 'error': str(e)}), 500
+
+    @bp.route('/profile/lessons/<int:lesson_id>/delete', methods=['POST'])
+    @login_required
+    def delete_favorite_lesson(lesson_id):
+        """Delete a favorite lesson."""
+        from flask import jsonify
+        from app.models import FavoriteLesson
+
+        try:
+            lesson = FavoriteLesson.query.filter_by(id=lesson_id, user_id=current_user.id).first()
+            if not lesson:
+                return jsonify({'success': False, 'error': 'Lesson not found'}), 404
+
+            db.session.delete(lesson)
+            db.session.commit()
+
+            logger.info(f'User {current_user.username} deleted favorite lesson {lesson_id}')
+            return jsonify({'success': True})
+
+        except Exception as e:
+            logger.error(f'Error deleting favorite lesson: {e}')
+            db.session.rollback()
+            return jsonify({'success': False, 'error': str(e)}), 500

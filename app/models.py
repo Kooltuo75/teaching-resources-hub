@@ -61,6 +61,15 @@ class User(UserMixin, db.Model):
     can_help_with = db.Column(db.Text)  # What expertise they can offer
     open_to_collaboration = db.Column(db.Boolean, default=True)  # Toggle for collaboration requests
 
+    # What I'm Teaching Now (Phase 2)
+    current_unit_title = db.Column(db.String(200))  # e.g., "The American Revolution"
+    current_unit_subject = db.Column(db.String(100))  # e.g., "U.S. History"
+    current_unit_description = db.Column(db.Text)  # Detailed description of current work
+    current_unit_updated = db.Column(db.DateTime)  # Last time this was updated
+
+    # Professional Achievements (Phase 2)
+    achievements = db.Column(db.Text)  # Awards, certifications, publications (formatted text)
+
     # Google Classroom Integration
     google_id = db.Column(db.String(100), unique=True, nullable=True)  # Google account ID
     google_access_token = db.Column(db.Text, nullable=True)  # Encrypted access token
@@ -107,6 +116,11 @@ class User(UserMixin, db.Model):
                                  backref='user',
                                  lazy='dynamic',
                                  cascade='all, delete-orphan')
+
+    # Phase 2 relationships
+    journey_events = db.relationship('TeachingJourneyEvent', backref='teacher', lazy='dynamic', cascade='all, delete-orphan')
+    classroom_photos = db.relationship('ClassroomPhoto', backref='teacher', lazy='dynamic', cascade='all, delete-orphan')
+    favorite_lessons = db.relationship('FavoriteLesson', backref='teacher', lazy='dynamic', cascade='all, delete-orphan')
 
     def set_password(self, password):
         """Hash and set the user's password."""
@@ -427,6 +441,71 @@ class PageView(db.Model):
 
     def __repr__(self):
         return f'<PageView {self.path} at {self.viewed_at}>'
+
+
+class TeachingJourneyEvent(db.Model):
+    """Timeline events for a teacher's career journey (Phase 2)."""
+    __tablename__ = 'teaching_journey_events'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+
+    # Event details
+    year = db.Column(db.Integer, nullable=False)  # Year of the event
+    title = db.Column(db.String(200), nullable=False)  # e.g., "Started teaching at Lincoln Elementary"
+    description = db.Column(db.Text)  # Optional details
+    event_type = db.Column(db.String(50))  # e.g., "job", "award", "certification", "milestone"
+
+    # Metadata
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<TeachingJourneyEvent {self.year}: {self.title}>'
+
+
+class ClassroomPhoto(db.Model):
+    """Photos for classroom showcase gallery (Phase 2)."""
+    __tablename__ = 'classroom_photos'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+
+    # Photo details
+    photo_path = db.Column(db.String(500), nullable=False)  # Path to uploaded photo
+    caption = db.Column(db.String(500))  # Optional caption
+    photo_type = db.Column(db.String(50))  # e.g., "classroom", "project", "bulletin_board"
+    display_order = db.Column(db.Integer, default=0)  # For sorting
+
+    # Metadata
+    uploaded_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<ClassroomPhoto {self.id} by user {self.user_id}>'
+
+
+class FavoriteLesson(db.Model):
+    """Showcase of favorite/best lessons (Phase 2)."""
+    __tablename__ = 'favorite_lessons'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+
+    # Lesson details
+    title = db.Column(db.String(200), nullable=False)  # Lesson title
+    subject = db.Column(db.String(100))  # Subject area
+    grade_level = db.Column(db.String(100))  # Grade level(s)
+    description = db.Column(db.Text, nullable=False)  # What makes it special
+    materials_needed = db.Column(db.Text)  # Required materials
+    duration = db.Column(db.String(100))  # e.g., "2 class periods", "45 minutes"
+    learning_objectives = db.Column(db.Text)  # What students will learn
+
+    # Metadata
+    display_order = db.Column(db.Integer, default=0)  # For sorting (max 5 lessons)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<FavoriteLesson {self.title} by user {self.user_id}>'
 
 
 def init_db(app):
