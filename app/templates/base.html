@@ -25,12 +25,14 @@
                 <ul>
                     <li><a href="/">Home</a></li>
                     <li><a href="/resources">Resources</a></li>
+                    <li><a href="/browse-resources">Browse Uploads</a></li>
                     {% if current_user.is_authenticated %}
                         <li><a href="/feed">Activity Feed</a></li>
                         <li><a href="/discover">Discover</a></li>
                         <li><a href="/submit-resource">Submit Resource</a></li>
                         <li><a href="/profile/{{ current_user.username }}">My Room</a></li>
                         <li><a href="/favorites">My Favorites</a></li>
+                        <li><a href="/my-resources">My Resources</a></li>
                         {% if hasattr(current_user, 'is_admin') and current_user.is_admin or hasattr(current_user, 'is_moderator') and current_user.is_moderator %}
                         <li><a href="/admin">🛠️ Admin</a></li>
                         {% endif %}

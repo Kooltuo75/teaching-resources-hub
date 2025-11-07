@@ -1,0 +1,398 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Resource - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="edit-container">
+    <div class="edit-header">
+        <h1>✏️ Edit Resource</h1>
+        <p>Update your teaching material details</p>
+    </div>
+
+    <form method="POST" class="edit-form" id="editForm">
+        <!-- Resource Details -->
+        <div class="form-section">
+            <h2>📝 Resource Details</h2>
+
+            <div class="current-file-info">
+                <div class="file-preview-card">
+                    <div class="file-icon-large">
+                        {% if resource.file_type in ['pdf'] %}📄
+                        {% elif resource.file_type in ['doc', 'docx'] %}📝
+                        {% elif resource.file_type in ['ppt', 'pptx'] %}📊
+                        {% elif resource.file_type in ['xls', 'xlsx'] %}📈
+                        {% elif resource.file_type in ['jpg', 'jpeg', 'png', 'gif'] %}🖼️
+                        {% elif resource.file_type in ['zip'] %}🗜️
+                        {% else %}📁
+                        {% endif %}
+                    </div>
+                    <div class="file-info">
+                        <div class="file-name">{{ resource.title }}</div>
+                        <div class="file-meta">
+                            <span class="file-type-badge">{{ resource.file_type.upper() }}</span>
+                            <span class="file-size">{{ (resource.file_size / 1024 / 1024)|round(2) }} MB</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="file-note">
+                    <strong>Note:</strong> To change the file, please delete this resource and upload a new one.
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="title">Title *</label>
+                <input type="text"
+                       name="title"
+                       id="title"
+                       required
+                       maxlength="200"
+                       value="{{ resource.title }}"
+                       class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea name="description"
+                          id="description"
+                          rows="4"
+                          placeholder="Describe what this resource is for, how to use it, and what makes it valuable..."
+                          class="form-control">{{ resource.description or '' }}</textarea>
+            </div>
+        </div>
+
+        <!-- Metadata -->
+        <div class="form-section">
+            <h2>🏷️ Metadata</h2>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="category">Subject/Category</label>
+                    <select name="category" id="category" class="form-control">
+                        <option value="">Select a category...</option>
+                        <option value="Mathematics" {% if resource.category == 'Mathematics' %}selected{% endif %}>Mathematics</option>
+                        <option value="Science" {% if resource.category == 'Science' %}selected{% endif %}>Science</option>
+                        <option value="English/Language Arts" {% if resource.category == 'English/Language Arts' %}selected{% endif %}>English/Language Arts</option>
+                        <option value="Social Studies" {% if resource.category == 'Social Studies' %}selected{% endif %}>Social Studies</option>
+                        <option value="Computer Science" {% if resource.category == 'Computer Science' %}selected{% endif %}>Computer Science</option>
+                        <option value="Arts" {% if resource.category == 'Arts' %}selected{% endif %}>Arts</option>
+                        <option value="Physical Education" {% if resource.category == 'Physical Education' %}selected{% endif %}>Physical Education</option>
+                        <option value="Special Education" {% if resource.category == 'Special Education' %}selected{% endif %}>Special Education</option>
+                        <option value="Other" {% if resource.category == 'Other' %}selected{% endif %}>Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="grade_level">Grade Level</label>
+                    <select name="grade_level" id="grade_level" class="form-control">
+                        <option value="">Select grade level...</option>
+                        <option value="Pre-K" {% if resource.grade_level == 'Pre-K' %}selected{% endif %}>Pre-K</option>
+                        <option value="Kindergarten" {% if resource.grade_level == 'Kindergarten' %}selected{% endif %}>Kindergarten</option>
+                        <option value="1st Grade" {% if resource.grade_level == '1st Grade' %}selected{% endif %}>1st Grade</option>
+                        <option value="2nd Grade" {% if resource.grade_level == '2nd Grade' %}selected{% endif %}>2nd Grade</option>
+                        <option value="3rd Grade" {% if resource.grade_level == '3rd Grade' %}selected{% endif %}>3rd Grade</option>
+                        <option value="4th Grade" {% if resource.grade_level == '4th Grade' %}selected{% endif %}>4th Grade</option>
+                        <option value="5th Grade" {% if resource.grade_level == '5th Grade' %}selected{% endif %}>5th Grade</option>
+                        <option value="6th Grade" {% if resource.grade_level == '6th Grade' %}selected{% endif %}>6th Grade</option>
+                        <option value="7th Grade" {% if resource.grade_level == '7th Grade' %}selected{% endif %}>7th Grade</option>
+                        <option value="8th Grade" {% if resource.grade_level == '8th Grade' %}selected{% endif %}>8th Grade</option>
+                        <option value="9th Grade" {% if resource.grade_level == '9th Grade' %}selected{% endif %}>9th Grade</option>
+                        <option value="10th Grade" {% if resource.grade_level == '10th Grade' %}selected{% endif %}>10th Grade</option>
+                        <option value="11th Grade" {% if resource.grade_level == '11th Grade' %}selected{% endif %}>11th Grade</option>
+                        <option value="12th Grade" {% if resource.grade_level == '12th Grade' %}selected{% endif %}>12th Grade</option>
+                        <option value="College" {% if resource.grade_level == 'College' %}selected{% endif %}>College</option>
+                        <option value="All Grades" {% if resource.grade_level == 'All Grades' %}selected{% endif %}>All Grades</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="difficulty">Difficulty</label>
+                    <select name="difficulty" id="difficulty" class="form-control">
+                        <option value="Easy" {% if resource.difficulty == 'Easy' %}selected{% endif %}>Easy</option>
+                        <option value="Medium" {% if resource.difficulty == 'Medium' %}selected{% endif %}>Medium</option>
+                        <option value="Hard" {% if resource.difficulty == 'Hard' %}selected{% endif %}>Hard</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="duration">Duration</label>
+                    <input type="text"
+                           name="duration"
+                           id="duration"
+                           placeholder="e.g., 45 minutes, 1 class period"
+                           value="{{ resource.duration or '' }}"
+                           class="form-control">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="tags">Tags (comma-separated)</label>
+                <input type="text"
+                       name="tags"
+                       id="tags"
+                       placeholder="e.g., fractions, decimals, word problems"
+                       value="{{ resource.tags or '' }}"
+                       class="form-control">
+                <small class="form-hint">Add keywords to help others find your resource</small>
+            </div>
+
+            <div class="form-group">
+                <label for="standards">Educational Standards</label>
+                <input type="text"
+                       name="standards"
+                       id="standards"
+                       placeholder="e.g., Common Core Math 5.NF.A.1"
+                       value="{{ resource.standards or '' }}"
+                       class="form-control">
+            </div>
+        </div>
+
+        <!-- Visibility -->
+        <div class="form-section">
+            <h2>👁️ Visibility</h2>
+
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" name="is_public" value="true" {% if resource.is_public %}checked{% endif %}>
+                    <span class="checkbox-text">
+                        <strong>Make this resource public</strong><br>
+                        <small>Other teachers will be able to view and download this resource</small>
+                    </span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Submit Buttons -->
+        <div class="form-actions">
+            <a href="{{ url_for('main.my_resources') }}" class="btn-cancel">Cancel</a>
+            <button type="submit" class="btn-submit">
+                💾 Save Changes
+            </button>
+        </div>
+    </form>
+</div>
+
+<style>
+.edit-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.edit-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.edit-header h1 {
+    margin: 0 0 10px 0;
+    color: #1f2937;
+    font-size: 2.5em;
+}
+
+.edit-header p {
+    color: #6b7280;
+    font-size: 1.1em;
+}
+
+.edit-form {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.form-section {
+    padding: 30px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.form-section:last-of-type {
+    border-bottom: none;
+}
+
+.form-section h2 {
+    margin: 0 0 20px 0;
+    color: #1f2937;
+    font-size: 1.4em;
+}
+
+.current-file-info {
+    background: #f9fafb;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+.file-preview-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 15px;
+}
+
+.file-icon-large {
+    font-size: 4em;
+}
+
+.file-info {
+    flex: 1;
+}
+
+.file-name {
+    font-weight: 600;
+    color: #1f2937;
+    font-size: 1.2em;
+    margin-bottom: 10px;
+}
+
+.file-meta {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.file-type-badge {
+    background: #667eea;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.9em;
+    font-weight: 600;
+}
+
+.file-size {
+    color: #6b7280;
+    font-size: 0.9em;
+}
+
+.file-note {
+    padding: 12px;
+    background: #fef3c7;
+    border-left: 4px solid #f59e0b;
+    border-radius: 6px;
+    color: #92400e;
+    font-size: 0.9em;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 8px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 1em;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+textarea.form-control {
+    resize: vertical;
+    font-family: inherit;
+}
+
+.form-hint {
+    display: block;
+    margin-top: 6px;
+    font-size: 0.85em;
+    color: #6b7280;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+    margin-top: 4px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.checkbox-text {
+    color: #4b5563;
+}
+
+.form-actions {
+    padding: 30px;
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+}
+
+.btn-cancel {
+    padding: 12px 30px;
+    background: #f3f4f6;
+    color: #4b5563;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-cancel:hover {
+    background: #e5e7eb;
+}
+
+.btn-submit {
+    padding: 12px 30px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-submit:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+    }
+
+    .btn-cancel, .btn-submit {
+        width: 100%;
+        text-align: center;
+    }
+}
+</style>
+{% endblock %}
